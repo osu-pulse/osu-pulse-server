@@ -1,8 +1,6 @@
 import { SystemController } from './system.controller';
 import { SubscriptionsService } from '../../shared/services/subscriptions.service';
 import { Test } from '@nestjs/testing';
-import { RoleGuard } from 'nest-keycloak-connect';
-import { KeycloakGuard } from '../../auth/guards/keycloak.guard';
 import { createMock } from '@golevelup/ts-jest';
 import Mock = jest.Mock;
 
@@ -22,12 +20,7 @@ describe('SystemController', () => {
       providers: [
         { provide: SubscriptionsService, useValue: subscriptionsServiceMock },
       ],
-    })
-      .overrideGuard(KeycloakGuard)
-      .useValue({})
-      .overrideGuard(RoleGuard)
-      .useValue({})
-      .compile();
+    }).compile();
 
     systemController = moduleRef.get(SystemController);
   });
