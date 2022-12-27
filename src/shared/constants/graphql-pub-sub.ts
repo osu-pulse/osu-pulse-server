@@ -1,0 +1,1 @@
+export const GRAPHQL_PUB_SUB = 'GRAPHQL_PUB_SUB';
