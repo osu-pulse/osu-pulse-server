@@ -54,4 +54,13 @@ export class EnvironmentDto {
 
   @IsString()
   MI_HOST: string;
+
+  /*
+   * Osu
+   */
+  @IsString()
+  OSU_CLIENT_ID: string;
+
+  @IsString()
+  OSU_CLIENT_SECRET: string;
 }
