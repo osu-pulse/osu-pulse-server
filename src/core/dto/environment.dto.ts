@@ -28,7 +28,7 @@ export class EnvironmentDto {
   DB_NAME: string;
 
   @IsString()
-  DB_USER: string;
+  DB_USERNAME: string;
 
   @IsString()
   DB_PASSWORD: string;
@@ -47,11 +47,20 @@ export class EnvironmentDto {
   MI_BUCKET: string;
 
   @IsString()
-  MI_ACCESS_KEY: string;
+  MI_USERNAME: string;
 
   @IsString()
-  MI_SECRET_KEY: string;
+  MI_PASSWORD: string;
 
   @IsString()
   MI_HOST: string;
+
+  /*
+   * Osu
+   */
+  @IsString()
+  OSU_CLIENT_ID: string;
+
+  @IsString()
+  OSU_CLIENT_SECRET: string;
 }

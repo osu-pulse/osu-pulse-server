@@ -55,8 +55,8 @@ describe('getEnvPath', () => {
 });
 
 describe('validateConfig', () => {
-  let configMock: Record<string, unknown>;
-  let configInvalidMock: Record<string, unknown>;
+  let configMock: Record<keyof EnvironmentDto, string>;
+  let configInvalidMock: Partial<Record<keyof EnvironmentDto, string>>;
 
   beforeEach(() => {
     configMock = {
@@ -65,28 +65,21 @@ describe('validateConfig', () => {
       DEBUG: 'true',
       DB_HOST: '127.0.0.1:27017',
       DB_NAME: 'dtts',
-      DB_USER: 't1mon',
+      DB_USERNAME: 't1mon',
       DB_PASSWORD: '1234',
       MI_ENDPOINT: '127.0.0.1',
       MI_PORT: '9000',
       MI_BUCKET: 'dtts',
-      MI_ACCESS_KEY: 'access_key',
-      MI_SECRET_KEY: 'secret_key',
+      MI_USERNAME: 'access_key',
+      MI_PASSWORD: 'secret_key',
       MI_HOST: 'http://127.0.0.1:9000',
-      KC_URL: 'http://127.0.0.1:8180/auth',
-      KC_REALM: 'dtts',
-      KC_CLIENT_ID: 'dtts-server',
-      KC_CLIENT_SECRET: 'AGZtw8PlDmZ97HOysPpVUm6tOcYj6eT3',
-      KC_ADMIN_USERNAME: 'admin-client',
-      KC_ADMIN_PASSWORD: '1234',
+      OSU_CLIENT_ID: '123',
+      OSU_CLIENT_SECRET: 'secret',
     };
     configInvalidMock = {
-      NODE_ENV: 'hiasef',
-      LOG_LEVELS: 'ii',
-      EXTERNAL_HOST: 'jij',
       DB_HOST: 'jisjef',
       DB_NAME: 'jih',
-      DB_USER: undefined,
+      DB_USERNAME: undefined,
       DB_PASSWORD: undefined,
     };
   });

@@ -34,7 +34,7 @@ import { lowercaseKeys } from '../shared/helpers/case.helper';
         dbName: configService.get('DB_NAME'),
         autoCreate: true,
         auth: {
-          username: configService.get('DB_USER'),
+          username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
         },
       }),
