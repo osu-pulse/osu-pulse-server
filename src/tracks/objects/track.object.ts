@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsInstance,
@@ -13,7 +13,7 @@ import { CoverObject } from './cover.object';
 @ObjectType('Track')
 export class TrackObject {
   @ApiProperty()
-  @Field(() => ID)
+  @Field()
   @IsNumber()
   id: number;
 

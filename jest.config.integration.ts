@@ -13,21 +13,10 @@ const config: Config = {
   testEnvironment: 'node',
   moduleFileExtensions: ['js', 'ts'],
   rootDir: '.',
-  testRegex: '.*\\.spec\\.ts$',
+  testRegex: '.*\\.spec\\.integration\\.ts$',
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-  collectCoverageFrom: [
-    '**/services/*.service.ts',
-    '**/resolvers/*.resolver.ts',
-    '**/controllers/*.controller.ts',
-    '**/gateways/*.gateway.ts',
-    '**/helpers/*.helper.ts',
-    '**/convertors/*.convertor.ts',
-    '**/interceptors/*.interceptor.ts',
-    '**/guards/*.guard.ts',
-  ],
-  coverageDirectory: 'coverage',
 };
 
 export default config;

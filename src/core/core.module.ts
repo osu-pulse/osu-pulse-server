@@ -48,7 +48,7 @@ import { lowercaseKeys } from '../shared/helpers/case.helper';
         debug: configService.get('DEBUG'),
         playground: configService.get('DEBUG'),
         introspection: configService.get('DEBUG'),
-        autoSchemaFile: configService.get('DEBUG'),
+        autoSchemaFile: configService.get('DEBUG') && 'schema.gql',
         cache: 'bounded',
         csrfPrevention: true,
         fieldResolverEnhancers: ['guards'],

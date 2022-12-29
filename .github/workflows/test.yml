@@ -24,8 +24,11 @@ jobs:
       - name: Run linter
         run: yarn run lint
 
-      - name: Run tests
+      - name: Run unit tests
         run: yarn run test:cov
+
+      - name: Run integration tests
+        run: yarn run test:integration
 
       - name: Save coverage
         uses: actions/upload-artifact@v3

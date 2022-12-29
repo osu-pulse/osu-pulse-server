@@ -10,9 +10,9 @@
     "lint": "eslint . --fix",
     "format": "prettier . --write",
     "test": "cross-env NODE_ENV=test jest",
+    "test:integration": "cross-env NODE_ENV=test jest -c jest.config.integration.ts",
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
-    "test:watch": "cross-env NODE_ENV=test jest --watch",
-    "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:watch": "cross-env NODE_ENV=test jest --watch"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.0.22",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.5.0",
-    "@golevelup/ts-jest": "^0.3.3",
+    "@golevelup/ts-jest": "^0.3.4",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^9.0.11",
@@ -65,8 +65,9 @@
     "jest": "28.1.1",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
-    "supertest": "^6.2.4",
+    "supertest": "^6.3.3",
     "supertest-graphql": "^1.1.4",
+    "testcontainers": "^9.1.1",
     "ts-jest": "28.0.4",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",

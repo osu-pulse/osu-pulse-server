@@ -1,28 +1,35 @@
 import { INestApplication } from '@nestjs/common';
 import { setupCors } from './cors.helper';
 import { Test } from '@nestjs/testing';
-import { createMock } from '@golevelup/ts-jest';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import Mock = jest.Mock;
+import { EnvironmentDto } from '../dto/environment.dto';
+import { switchAssign } from '../../shared/helpers/switch.helper';
 
 describe('setupCors', () => {
-  let getMock: Mock;
   let app: INestApplication;
+  let configService: ConfigService;
 
-  beforeEach(async () => {
-    getMock = jest.fn();
-
-    const configServiceMock = createMock<ConfigService>({ get: getMock });
-
-    const moduleRef = await Test.createTestingModule({
-      providers: [{ provide: ConfigService, useValue: configServiceMock }],
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      imports: [ConfigModule],
     }).compile();
-    app = moduleRef.createNestApplication();
+    configService = module.get(ConfigService);
+
+    app = module.createNestApplication();
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   it('should call enableCors with given config', () => {
+    jest.spyOn(configService, 'get').mockImplementation((key) =>
+      switchAssign(key, {
+        CORS: true,
+      }),
+    );
     const enableCorsSpy = jest.spyOn(app, 'enableCors');
-    getMock.mockReturnValue(true);
 
     setupCors(app);
 

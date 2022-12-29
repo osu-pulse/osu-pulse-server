@@ -1,0 +1,27 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Cover {
+  small: String!
+  normal: String!
+}
+
+type Track {
+  id: Float!
+  title: String!
+  artist: String!
+  cover: Cover!
+  url: String!
+}
+
+type TracksWithCursor {
+  cursor: String!
+  tracks: [Track!]!
+}
+
+type Query {
+  health: Boolean!
+  tracks(search: String, cursor: String): TracksWithCursor!
+  track(trackId: Float!): Track!
+}

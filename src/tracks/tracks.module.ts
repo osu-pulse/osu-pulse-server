@@ -6,5 +6,6 @@ import { TracksService } from './services/tracks.service';
 @Module({
   imports: [OsuModule],
   providers: [TracksService, TracksResolver],
+  exports: [TracksService],
 })
 export class TracksModule {}
