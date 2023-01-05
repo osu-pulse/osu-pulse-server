@@ -1,41 +1,24 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsInstance,
-  IsNumber,
-  IsString,
-  IsUrl,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { CoverObject } from './cover.object';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { TrackCoverObject } from './track-cover.object';
+import { TrackUrlObject } from './track-url.object';
 
 @ObjectType('Track')
 export class TrackObject {
-  @ApiProperty()
-  @Field(() => ID)
-  @IsNumber()
-  id: number;
+  @Field(() => String)
+  id: string;
 
-  @ApiProperty()
-  @Field()
-  @IsString()
+  @Field(() => String)
   title: string;
 
-  @ApiProperty()
-  @Field()
-  @IsString()
+  @Field(() => String)
   artist: string;
 
-  @ApiProperty()
-  @Field(() => CoverObject)
-  @Type(() => CoverObject)
-  @IsInstance(CoverObject)
-  @ValidateNested()
-  cover: CoverObject;
+  @Field(() => TrackCoverObject)
+  cover: TrackCoverObject;
 
-  @ApiProperty()
-  @Field()
-  @IsUrl()
-  url: string;
+  @Field(() => TrackUrlObject)
+  url: TrackUrlObject;
+
+  @Field(() => Boolean)
+  cached: boolean;
 }

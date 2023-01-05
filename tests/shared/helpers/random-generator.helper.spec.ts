@@ -1,4 +1,4 @@
-import { randomGenerator } from './random-generator.helper';
+import { randomGenerator } from '../../../src/shared/helpers/random-generator.helper';
 
 describe('randomGenerator', () => {
   describe('bucketObject', () => {

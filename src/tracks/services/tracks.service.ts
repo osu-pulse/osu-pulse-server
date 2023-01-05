@@ -1,12 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { OsuService } from '../../osu/services/osu.service';
 import { trackConvertor } from '../convertors/track.convertor';
 import { TracksWithCursorModel } from '../models/tracks-with-cursor.model';
 import { TrackModel } from '../models/track.model';
+import { BucketService } from '../../bucket/services/bucket.service';
+import { KitsuService } from '../../osu/services/kitsu.service';
+import { BucketName } from '../../bucket/constants/bucket-name';
+import { AudioFileType } from '../../bucket/constants/file-type';
+import { GRAPHQL_PUB_SUB } from '../../shared/constants/injections';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class TracksService {
-  constructor(private osuService: OsuService) {}
+  constructor(
+    private osuService: OsuService,
+    private kitsuService: KitsuService,
+    private bucketService: BucketService,
+    @Inject(GRAPHQL_PUB_SUB) private pubSub: PubSub,
+  ) {}
 
   async getAll(
     search?: string,
@@ -23,8 +34,24 @@ export class TracksService {
     };
   }
 
-  async getById(trackId: number): Promise<TrackModel> {
+  async getById(trackId: string): Promise<TrackModel> {
     const beatmapSet = await this.osuService.getBeatmapSetById(trackId);
     return trackConvertor.fromBeatmapSet(beatmapSet);
+  }
+
+  async isCached(trackId: string): Promise<boolean> {
+    return this.bucketService.exists(BucketName.TRACKS, trackId);
+  }
+
+  async cache(trackId: string): Promise<void> {
+    const file = await this.kitsuService.getFile(trackId);
+    await this.bucketService.create(
+      BucketName.TRACKS,
+      trackId,
+      file,
+      AudioFileType.MP3,
+    );
+
+    await this.pubSub.publish('trackCached', { trackCached: trackId });
   }
 }

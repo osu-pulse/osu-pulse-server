@@ -30,7 +30,9 @@ import { lowercaseKeys } from '../shared/helpers/case.helper';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService<EnvironmentDto, true>) => ({
-        uri: `mongodb://${configService.get('DB_HOST')}`,
+        uri: `mongodb://${configService.get('DB_ENDPOINT')}:${configService.get(
+          'DB_PORT',
+        )}`,
         dbName: configService.get('DB_NAME'),
         autoCreate: true,
         auth: {
@@ -48,7 +50,7 @@ import { lowercaseKeys } from '../shared/helpers/case.helper';
         debug: configService.get('DEBUG'),
         playground: configService.get('DEBUG'),
         introspection: configService.get('DEBUG'),
-        autoSchemaFile: configService.get('DEBUG'),
+        autoSchemaFile: configService.get('DEBUG') && 'schema.gql',
         cache: 'bounded',
         csrfPrevention: true,
         fieldResolverEnhancers: ['guards'],

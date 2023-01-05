@@ -11,8 +11,7 @@
     "format": "prettier . --write",
     "test": "cross-env NODE_ENV=test jest",
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
-    "test:watch": "cross-env NODE_ENV=test jest --watch",
-    "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:watch": "cross-env NODE_ENV=test jest --watch"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.0.22",
@@ -35,7 +34,6 @@
     "graphql-ws": "^5.11.2",
     "mongoose": "^6.3.6",
     "nestjs-minio-client": "^1.2.0",
-    "osu-api-extended": "^2.5.12",
     "passport": "^0.6.0",
     "passport-http-bearer": "^1.0.1",
     "reflect-metadata": "^0.1.13",
@@ -45,7 +43,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.5.0",
-    "@golevelup/ts-jest": "^0.3.3",
+    "@golevelup/ts-jest": "^0.3.4",
+    "@jbiskur/nestjs-test-utilities": "^3.11.0",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^9.0.11",
@@ -65,8 +64,9 @@
     "jest": "28.1.1",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
-    "supertest": "^6.2.4",
+    "supertest": "^6.3.3",
     "supertest-graphql": "^1.1.4",
+    "testcontainers": "^9.1.1",
     "ts-jest": "28.0.4",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",

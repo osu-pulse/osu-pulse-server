@@ -1,5 +1,5 @@
 import { NodeEnv } from '../constants/node-env';
-import { IsBoolean, IsIn, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsString } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
 export class EnvironmentDto {
@@ -22,7 +22,10 @@ export class EnvironmentDto {
    * Database
    */
   @IsString()
-  DB_HOST: string;
+  DB_ENDPOINT: string;
+
+  @IsString()
+  DB_PORT: string;
 
   @IsString()
   DB_NAME: string;
@@ -39,12 +42,8 @@ export class EnvironmentDto {
   @IsString()
   MI_ENDPOINT: string;
 
-  @Type(() => Number)
-  @IsNumber()
-  MI_PORT: number;
-
   @IsString()
-  MI_BUCKET: string;
+  MI_PORT: number;
 
   @IsString()
   MI_USERNAME: string;

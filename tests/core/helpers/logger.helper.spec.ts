@@ -1,19 +1,25 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { setupLogger } from './logger.helper';
+import { Test, TestingModule } from '@nestjs/testing';
+import { setupLogger } from '../../../src/core/helpers/logger.helper';
 import { ConfigService } from '@nestjs/config';
 
 describe('setupLogger', () => {
+  let module: TestingModule;
   let app: INestApplication;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [ConfigService],
     })
       .overrideProvider(ConfigService)
       .useValue({ get: () => [] })
       .compile();
-    app = moduleRef.createNestApplication();
+    app = module.createNestApplication();
+  });
+
+  afterEach(async () => {
+    await module.close();
+    await app.close();
   });
 
   it('should call enableCors', () => {

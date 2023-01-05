@@ -1,20 +1,19 @@
 import fs from 'fs';
-import { getEnvPath, validateEnv } from './config-env.helper';
-import { EnvironmentDto } from '../dto/environment.dto';
-import SpyInstance = jest.SpyInstance;
+import {
+  getEnvPath,
+  validateEnv,
+} from '../../../src/core/helpers/config-env.helper';
+import { EnvironmentDto } from '../../../src/core/dto/environment.dto';
 
 describe('getEnvPath', () => {
-  let existsSyncMock: SpyInstance;
-
   beforeEach(() => {
-    existsSyncMock = jest.spyOn(fs, 'existsSync');
     process.env.NODE_ENV = 'production';
   });
 
   it('should return local exact env if exist', () => {
-    existsSyncMock.mockImplementation(
-      (path) => path == '.env.production.local',
-    );
+    jest
+      .spyOn(fs, 'existsSync')
+      .mockImplementation((path) => path == '.env.production.local');
 
     const result = getEnvPath();
 
@@ -22,7 +21,9 @@ describe('getEnvPath', () => {
   });
 
   it('should return exact env path if exist and local exact not exist', () => {
-    existsSyncMock.mockImplementation((path) => path == '.env.production');
+    jest
+      .spyOn(fs, 'existsSync')
+      .mockImplementation((path) => path == '.env.production');
 
     const result = getEnvPath();
 
@@ -30,7 +31,7 @@ describe('getEnvPath', () => {
   });
 
   it('should return local generic env path if exist and local exact, exact envs not exist', () => {
-    existsSyncMock.mockImplementation((path) => path == '.env');
+    jest.spyOn(fs, 'existsSync').mockImplementation((path) => path == '.env');
 
     const result = getEnvPath();
 
@@ -38,7 +39,7 @@ describe('getEnvPath', () => {
   });
 
   it('should return generic env path if exist and generic local, local exact, exact envs not exist', () => {
-    existsSyncMock.mockImplementation((path) => path == '.env');
+    jest.spyOn(fs, 'existsSync').mockImplementation((path) => path == '.env');
 
     const result = getEnvPath();
 
@@ -46,7 +47,7 @@ describe('getEnvPath', () => {
   });
 
   it('should return undefined if no env exist', () => {
-    existsSyncMock.mockImplementation(() => false);
+    jest.spyOn(fs, 'existsSync').mockImplementation(() => false);
 
     const result = getEnvPath();
 
@@ -63,13 +64,13 @@ describe('validateConfig', () => {
       NODE_ENV: 'development',
       CORS: 'true',
       DEBUG: 'true',
-      DB_HOST: '127.0.0.1:27017',
-      DB_NAME: 'dtts',
+      DB_ENDPOINT: '127.0.0.1',
+      DB_PORT: '27017',
+      DB_NAME: 'pulse',
       DB_USERNAME: 't1mon',
       DB_PASSWORD: '1234',
       MI_ENDPOINT: '127.0.0.1',
       MI_PORT: '9000',
-      MI_BUCKET: 'dtts',
       MI_USERNAME: 'access_key',
       MI_PASSWORD: 'secret_key',
       MI_HOST: 'http://127.0.0.1:9000',
@@ -77,7 +78,7 @@ describe('validateConfig', () => {
       OSU_CLIENT_SECRET: 'secret',
     };
     configInvalidMock = {
-      DB_HOST: 'jisjef',
+      DB_ENDPOINT: 'jisjef',
       DB_NAME: 'jih',
       DB_USERNAME: undefined,
       DB_PASSWORD: undefined,

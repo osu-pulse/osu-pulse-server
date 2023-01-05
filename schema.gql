@@ -1,0 +1,42 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type TrackCover {
+  small: String!
+  normal: String!
+}
+
+type TrackUrl {
+  page: String!
+  file: String!
+  audio: String!
+}
+
+type Track {
+  id: String!
+  title: String!
+  artist: String!
+  cover: TrackCover!
+  url: TrackUrl!
+  cached: Boolean!
+}
+
+type TracksWithCursor {
+  cursor: String!
+  tracks: [Track!]!
+}
+
+type Query {
+  health: Boolean!
+  tracks(search: String, cursor: String): TracksWithCursor!
+  track(trackId: String!): Track!
+}
+
+type Mutation {
+  cacheTrack(trackId: String!): ID!
+}
+
+type Subscription {
+  trackCached(trackId: String!): Track!
+}

@@ -24,7 +24,7 @@ jobs:
       - name: Run linter
         run: yarn run lint
 
-      - name: Run tests
+      - name: Run unit tests
         run: yarn run test:cov
 
       - name: Save coverage

@@ -1,14 +1,20 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { SwaggerModule } from '@nestjs/swagger';
-import { setupSwagger } from './swagger.helper';
+import { setupSwagger } from '../../../src/core/helpers/swagger.helper';
 
 describe('setupSwagger', () => {
+  let module: TestingModule;
   let app: INestApplication;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({}).compile();
-    app = moduleRef.createNestApplication();
+    module = await Test.createTestingModule({}).compile();
+    app = module.createNestApplication();
+  });
+
+  afterEach(async () => {
+    await module.close();
+    await app.close();
   });
 
   it('should call enableCors', () => {

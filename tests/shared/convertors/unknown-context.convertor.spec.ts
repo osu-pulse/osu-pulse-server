@@ -1,6 +1,6 @@
 import { ExecutionContext } from '@nestjs/common';
 import { createMock } from '@golevelup/ts-jest';
-import { unknownContextConvertor } from './unknown-context.convertor';
+import { unknownContextConvertor } from '../../../src/shared/convertors/unknown-context.convertor';
 
 describe('unknownContextConvertor', () => {
   let requestMock: { headers: { field: string } };

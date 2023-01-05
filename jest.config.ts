@@ -1,7 +1,8 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  maxWorkers: '100%',
+  maxWorkers: '50%',
+  detectOpenHandles: true,
   setupFiles: ['./jest-setup-file.ts'],
   globals: {
     'ts-jest': {
