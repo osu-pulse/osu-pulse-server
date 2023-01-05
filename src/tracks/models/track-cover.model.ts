@@ -1,4 +1,4 @@
-export class CoverModel {
+export class TrackCoverModel {
   small: string;
   normal: string;
 }

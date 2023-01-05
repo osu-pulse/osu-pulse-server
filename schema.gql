@@ -2,17 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Cover {
+type TrackCover {
   small: String!
   normal: String!
 }
 
+type TrackUrl {
+  page: String!
+  file: String!
+  audio: String!
+}
+
 type Track {
-  id: Float!
+  id: String!
   title: String!
   artist: String!
-  cover: Cover!
-  url: String!
+  cover: TrackCover!
+  url: TrackUrl!
+  cached: Boolean!
 }
 
 type TracksWithCursor {
@@ -23,5 +30,13 @@ type TracksWithCursor {
 type Query {
   health: Boolean!
   tracks(search: String, cursor: String): TracksWithCursor!
-  track(trackId: Float!): Track!
+  track(trackId: String!): Track!
+}
+
+type Mutation {
+  cacheTrack(trackId: String!): ID!
+}
+
+type Subscription {
+  trackCached(trackId: String!): Track!
 }

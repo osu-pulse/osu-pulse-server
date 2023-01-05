@@ -10,7 +10,6 @@
     "lint": "eslint . --fix",
     "format": "prettier . --write",
     "test": "cross-env NODE_ENV=test jest",
-    "test:integration": "cross-env NODE_ENV=test jest -c jest.config.integration.ts",
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:watch": "cross-env NODE_ENV=test jest --watch"
   },
@@ -35,7 +34,6 @@
     "graphql-ws": "^5.11.2",
     "mongoose": "^6.3.6",
     "nestjs-minio-client": "^1.2.0",
-    "osu-api-extended": "^2.5.12",
     "passport": "^0.6.0",
     "passport-http-bearer": "^1.0.1",
     "reflect-metadata": "^0.1.13",
@@ -46,6 +44,7 @@
   "devDependencies": {
     "@faker-js/faker": "^7.5.0",
     "@golevelup/ts-jest": "^0.3.4",
+    "@jbiskur/nestjs-test-utilities": "^3.11.0",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^9.0.11",

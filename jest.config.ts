@@ -1,8 +1,7 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  maxWorkers: '100%',
-  testTimeout: 30000,
+  maxWorkers: '50%',
   detectOpenHandles: true,
   setupFiles: ['./jest-setup-file.ts'],
   globals: {

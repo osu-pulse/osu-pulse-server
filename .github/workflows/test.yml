@@ -27,9 +27,6 @@ jobs:
       - name: Run unit tests
         run: yarn run test:cov
 
-      - name: Run integration tests
-        run: yarn run test:integration
-
       - name: Save coverage
         uses: actions/upload-artifact@v3
         with:

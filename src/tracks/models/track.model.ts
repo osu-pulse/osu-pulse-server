@@ -1,9 +1,10 @@
-import { CoverModel } from './cover.model';
+import { TrackCoverModel } from './track-cover.model';
+import { TrackUrlModel } from './track-url.model';
 
 export class TrackModel {
-  id: number;
+  id: string;
   title: string;
   artist: string;
-  cover: CoverModel;
-  url: string;
+  cover: TrackCoverModel;
+  url: TrackUrlModel;
 }
