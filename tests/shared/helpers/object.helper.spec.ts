@@ -1,9 +1,4 @@
-import {
-  keys,
-  map,
-  omit,
-  pick,
-} from '../../../src/shared/helpers/object.helper';
+import { keys, map, omit, pick } from '../../../src/shared/helpers/object';
 
 describe('omit', () => {
   it('removes fields', () => {

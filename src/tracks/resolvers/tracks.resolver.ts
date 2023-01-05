@@ -16,16 +16,14 @@ import { TracksWithCursorModel } from '../models/tracks-with-cursor.model';
 import { AlreadyCachedException } from '../exceptions/already-cached.exception';
 import { OsuService } from '../../osu/services/osu.service';
 import { BeatmapSetNotFoundException } from '../exceptions/beatmap-set-not-found.exception';
-import { Inject } from '@nestjs/common';
-import { GRAPHQL_PUB_SUB } from '../../shared/constants/injections';
-import { PubSub } from 'graphql-subscriptions';
+import { TracksSubService } from '../services/tracks-sub.service';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
   constructor(
     private tracksService: TracksService,
     private osuService: OsuService,
-    @Inject(GRAPHQL_PUB_SUB) private pubSub: PubSub,
+    private tracksSubService: TracksSubService,
   ) {}
 
   @Query(() => TracksWithCursorObject)
@@ -73,7 +71,7 @@ export class TracksResolver {
       throw new BeatmapSetNotFoundException();
     }
 
-    return this.pubSub.asyncIterator('trackCached');
+    return this.tracksSubService.iterator('trackCached');
   }
 
   @ResolveField(() => Boolean)

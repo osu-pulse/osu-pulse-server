@@ -1,4 +1,4 @@
-import { pick } from '../../shared/helpers/object.helper';
+import { pick } from '../../shared/helpers/object';
 import { kitsuApiUrl, osuUrl } from '../../osu/constants/api-url';
 import { TrackModel } from '../models/track.model';
 import { BeatmapSetDto } from '../../osu/dto/beatmap-set.dto';

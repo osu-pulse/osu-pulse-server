@@ -1,4 +1,4 @@
-import { map } from './object.helper';
+import { map } from './object';
 
 export function lowercaseKeys<O extends Record<string, any>>(
   obj: O,
