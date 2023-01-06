@@ -6,7 +6,7 @@ describe('randomGenerator', () => {
       const result = randomGenerator.refreshToken();
 
       expect(typeof result).toBe('string');
-      expect(result).toHaveLength(100);
+      expect(result).toHaveLength(200);
     });
   });
 });

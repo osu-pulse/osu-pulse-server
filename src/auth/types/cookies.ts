@@ -1,1 +1,1 @@
-export type Cookies = Record<string, string>;
+export type Cookies<K extends string = string> = Record<K, string>;

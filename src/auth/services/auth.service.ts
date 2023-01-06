@@ -20,7 +20,7 @@ export class AuthService {
     return refreshToken.value;
   }
 
-  async generateTokenPair(refreshToken: string): Promise<TokenSet | null> {
+  async rotateToken(refreshToken: string): Promise<TokenSet | null> {
     const newRefreshToken = await this.refreshTokensService.refreshValue(
       refreshToken,
     );

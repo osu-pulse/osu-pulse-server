@@ -14,7 +14,7 @@ export class OsuStrategy
     super({
       clientID: configService.get('OSU_CLIENT_ID'),
       clientSecret: configService.get('OSU_CLIENT_SECRET'),
-      callbackURL: `http://${configService.get('HOST')}/auth/callback`,
+      callbackURL: `http://${configService.get('HOST')}/oauth/callback`,
     });
   }
 
@@ -23,6 +23,6 @@ export class OsuStrategy
     refreshToken: string,
     profile: PassportProfile,
   ): AuthContext {
-    return String(profile.id);
+    return refreshToken;
   }
 }
