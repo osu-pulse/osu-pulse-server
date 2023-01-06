@@ -1,13 +1,13 @@
 import { pick } from '../../shared/helpers/object';
 import { kitsuApiUrl, osuUrl } from '../../osu/constants/api-url';
 import { TrackModel } from '../models/track.model';
-import { BeatmapSetDto } from '../../osu/dto/beatmap-set.dto';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentDto } from '../../core/dto/environment.dto';
 import { BucketName } from '../../bucket/constants/bucket-name';
+import { BeatmapSet } from '../../osu/types/beatmap-set';
 
 export const trackConvertor = {
-  fromBeatmapSet(beatmapSet: BeatmapSetDto): TrackModel {
+  fromBeatmapSet(beatmapSet: BeatmapSet): TrackModel {
     const configService = new ConfigService<EnvironmentDto, true>();
     const host = configService.get('MI_HOST');
     const bucket = BucketName.TRACKS;
