@@ -18,6 +18,15 @@ export class EnvironmentDto {
   @IsBoolean()
   DEBUG: boolean;
 
+  @IsString()
+  HOST: string;
+
+  @IsString()
+  JWT_SECRET: string;
+
+  @IsString()
+  COOKIE_SECRET: string;
+
   /*
    * Database
    */

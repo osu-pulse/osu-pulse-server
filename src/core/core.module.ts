@@ -9,7 +9,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { EnvironmentDto } from './dto/environment.dto';
 import { validationOptions } from '../shared/constants/validation-options';
 import { LoggingExceptionFilter } from './filters/logging-exception.filter';
-import { lowercaseKeys } from '../shared/helpers/case.helper';
+import { lowercaseKeys } from '../shared/helpers/case';
 
 @Module({
   imports: [

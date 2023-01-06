@@ -38,5 +38,5 @@ type Mutation {
 }
 
 type Subscription {
-  trackCached(trackId: String!): Track!
+  trackCached(trackId: String!): String!
 }

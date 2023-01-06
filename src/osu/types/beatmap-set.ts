@@ -1,4 +1,4 @@
-export interface BeatmapSetDto {
+export interface BeatmapSet {
   id: number;
   title: string;
   artist: string;

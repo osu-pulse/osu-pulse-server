@@ -16,18 +16,19 @@ import { TracksWithCursorModel } from '../models/tracks-with-cursor.model';
 import { AlreadyCachedException } from '../exceptions/already-cached.exception';
 import { OsuService } from '../../osu/services/osu.service';
 import { BeatmapSetNotFoundException } from '../exceptions/beatmap-set-not-found.exception';
-import { Inject } from '@nestjs/common';
-import { GRAPHQL_PUB_SUB } from '../../shared/constants/injections';
-import { PubSub } from 'graphql-subscriptions';
+import { TracksSubService } from '../services/tracks-sub.service';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
   constructor(
     private tracksService: TracksService,
     private osuService: OsuService,
-    @Inject(GRAPHQL_PUB_SUB) private pubSub: PubSub,
+    private tracksSubService: TracksSubService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Query(() => TracksWithCursorObject)
   async tracks(
     @Args('search', { nullable: true })
@@ -38,6 +39,7 @@ export class TracksResolver {
     return this.tracksService.getAll(search, cursor);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Query(() => TrackObject)
   async track(
     @Args('trackId')
@@ -46,6 +48,7 @@ export class TracksResolver {
     return this.tracksService.getById(trackId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => ID)
   async cacheTrack(
     @Args('trackId')
@@ -60,6 +63,7 @@ export class TracksResolver {
     return trackId;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Subscription(() => String, {
     async filter({ trackCached }, { trackId }) {
       const cachedTrack: TrackModel = await trackCached;
@@ -73,7 +77,7 @@ export class TracksResolver {
       throw new BeatmapSetNotFoundException();
     }
 
-    return this.pubSub.asyncIterator('trackCached');
+    return this.tracksSubService.iterator('trackCached');
   }
 
   @ResolveField(() => Boolean)
