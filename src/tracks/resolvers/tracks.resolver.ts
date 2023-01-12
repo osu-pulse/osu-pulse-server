@@ -14,18 +14,12 @@ import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
 import { TrackModel } from '../models/track.model';
 import { TracksWithCursorModel } from '../models/tracks-with-cursor.model';
 import { AlreadyCachedException } from '../exceptions/already-cached.exception';
-import { OsuService } from '../../osu/services/osu.service';
-import { TracksSubService } from '../services/tracks-sub.service';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
-  constructor(
-    private tracksService: TracksService,
-    private osuService: OsuService,
-    private tracksSubService: TracksSubService,
-  ) {}
+  constructor(private tracksService: TracksService) {}
 
   @UseGuards(OauthGuard)
   @Query(() => TracksWithCursorObject)
@@ -48,18 +42,18 @@ export class TracksResolver {
   }
 
   @UseGuards(OauthGuard)
-  @Mutation(() => ID)
+  @Mutation(() => TrackObject)
   async cacheTrack(
     @Args('trackId')
     trackId: string,
-  ): Promise<string> {
+  ): Promise<TrackModel> {
     const isCached = await this.tracksService.isCached(trackId);
     if (isCached) {
       throw new AlreadyCachedException();
     }
 
     await this.tracksService.cache(trackId);
-    return trackId;
+    return this.tracksService.getById(trackId);
   }
 
   @ResolveField(() => Boolean)
