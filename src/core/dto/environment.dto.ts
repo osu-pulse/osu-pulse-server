@@ -22,9 +22,6 @@ export class EnvironmentDto {
   HOST: string;
 
   @IsString()
-  JWT_SECRET: string;
-
-  @IsString()
   COOKIE_SECRET: string;
 
   /*

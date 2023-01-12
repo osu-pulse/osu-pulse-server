@@ -1,5 +1,5 @@
 import { pick } from '../../shared/helpers/object';
-import { kitsuApiUrl, osuUrl } from '../../osu/constants/api-url';
+import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
 import { TrackModel } from '../models/track.model';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentDto } from '../../core/dto/environment.dto';
@@ -20,7 +20,7 @@ export const trackConvertor = {
         normal: beatmapSet.covers['list@2x'],
       },
       url: {
-        page: `${osuUrl}/beatmapsets/${beatmapSet.id}`,
+        page: `${osuOauthUrl}/beatmapsets/${beatmapSet.id}`,
         file: `${kitsuApiUrl}/audio/${beatmapSet.id}`,
         audio: `${host}/${bucket}/${beatmapSet.id}`,
       },

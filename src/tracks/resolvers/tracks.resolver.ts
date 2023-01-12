@@ -15,10 +15,9 @@ import { TrackModel } from '../models/track.model';
 import { TracksWithCursorModel } from '../models/tracks-with-cursor.model';
 import { AlreadyCachedException } from '../exceptions/already-cached.exception';
 import { OsuService } from '../../osu/services/osu.service';
-import { BeatmapSetNotFoundException } from '../exceptions/beatmap-set-not-found.exception';
 import { TracksSubService } from '../services/tracks-sub.service';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { OauthGuard } from '../../auth/guards/oauth.guard';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
@@ -28,7 +27,7 @@ export class TracksResolver {
     private tracksSubService: TracksSubService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OauthGuard)
   @Query(() => TracksWithCursorObject)
   async tracks(
     @Args('search', { nullable: true })
@@ -39,7 +38,7 @@ export class TracksResolver {
     return this.tracksService.getAll(search, cursor);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OauthGuard)
   @Query(() => TrackObject)
   async track(
     @Args('trackId')
@@ -48,7 +47,7 @@ export class TracksResolver {
     return this.tracksService.getById(trackId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OauthGuard)
   @Mutation(() => ID)
   async cacheTrack(
     @Args('trackId')
@@ -61,23 +60,6 @@ export class TracksResolver {
 
     await this.tracksService.cache(trackId);
     return trackId;
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Subscription(() => String, {
-    async filter({ trackCached }, { trackId }) {
-      const cachedTrack: TrackModel = await trackCached;
-      return cachedTrack.id === trackId;
-    },
-  })
-  async trackCached(@Args('trackId') trackId: string) {
-    const beatmapSetExists = await this.osuService.beatmapSetExists(trackId);
-
-    if (!beatmapSetExists) {
-      throw new BeatmapSetNotFoundException();
-    }
-
-    return this.tracksSubService.iterator('trackCached');
   }
 
   @ResolveField(() => Boolean)

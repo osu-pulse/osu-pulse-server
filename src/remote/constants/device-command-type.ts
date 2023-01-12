@@ -1,0 +1,7 @@
+export enum DeviceCommandType {
+  PLAY = 'PLAY',
+  PAUSE = 'PAUSE',
+  CHANGE_TRACK = 'CHANGE_TRACK',
+  CHANGE_VOLUME = 'CHANGE_VOLUME',
+  CHANGE_PROGRESS = 'CHANGE_PROGRESS',
+}

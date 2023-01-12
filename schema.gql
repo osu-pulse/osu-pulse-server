@@ -27,10 +27,37 @@ type TracksWithCursor {
   tracks: [Track!]!
 }
 
+type DeviceInfo {
+  type: DeviceType!
+  device: String!
+  client: String!
+}
+
+enum DeviceType {
+  MOBILE
+  DESKTOP
+  OTHER
+}
+
+type DeviceStatus {
+  playing: Boolean
+  volume: Float
+  progress: Float
+  trackId: String
+}
+
+type Device {
+  deviceId: ID!
+  userId: String!
+  info: DeviceInfo!
+  status: DeviceStatus!
+}
+
 type Query {
   health: Boolean!
   tracks(search: String, cursor: String): TracksWithCursor!
   track(trackId: String!): Track!
+  devices: [Device!]!
 }
 
 type Mutation {
@@ -38,5 +65,6 @@ type Mutation {
 }
 
 type Subscription {
-  trackCached(trackId: String!): String!
+  trackCached: Track!
+  deviceStatusUpdated: Device!
 }

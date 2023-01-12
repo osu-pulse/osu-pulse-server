@@ -1,6 +1,6 @@
 import { ExecutionContext } from '@nestjs/common';
-import { AuthRequest } from './auth-request';
+import { Request } from 'express';
 
 export interface GuardWithUnknownContext {
-  getRequest(context: ExecutionContext): AuthRequest;
+  getRequest(context: ExecutionContext): Request;
 }
