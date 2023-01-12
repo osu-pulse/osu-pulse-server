@@ -4,4 +4,4 @@ import { unknownContextConvertor } from '../../shared/convertors/unknown-context
 import { GuardWithUnknownContext } from '../types/guard-with-unknown-context';
 
 @Injectable()
-export class OsuAuthGuard extends AuthGuard('osu') {}
+export class OsuGuard extends AuthGuard('osu') {}

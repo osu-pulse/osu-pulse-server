@@ -7,7 +7,7 @@ export function switchAssign<
   fallback?: M[Exclude<typeof value, null | undefined>],
 ): M[Exclude<typeof value, null | undefined>] | undefined {
   if (value != null) {
-    return map[value as Exclude<typeof value, null | undefined>];
+    return map[value as Exclude<V, null | undefined>];
   }
   return fallback;
 }
@@ -21,7 +21,7 @@ export function switchExec<
   fallback?: M[Exclude<typeof value, null | undefined>],
 ): ReturnType<M[Exclude<typeof value, null | undefined>]> | undefined {
   if (value != null) {
-    const handler = map[value as Exclude<typeof value, null | undefined>];
+    const handler = map[value as Exclude<V, null | undefined>];
     if (handler) {
       return handler(value) as any;
     }
@@ -36,7 +36,7 @@ export function switchThrow<
   M extends Record<Exclude<V, null | undefined>, unknown>,
 >(value: V, map: M, fallback?: unknown): never | void {
   if (value != null) {
-    const reason = map[value as Exclude<typeof value, null | undefined>];
+    const reason = map[value as Exclude<V, null | undefined>];
     if (reason) {
       throw reason;
     }

@@ -7,7 +7,6 @@ import { BucketService } from '../../bucket/services/bucket.service';
 import { KitsuService } from '../../osu/services/kitsu.service';
 import { BucketName } from '../../bucket/constants/bucket-name';
 import { AudioFileType } from '../../bucket/constants/file-type';
-import { TracksSubService } from './tracks-sub.service';
 
 @Injectable()
 export class TracksService {
@@ -15,7 +14,6 @@ export class TracksService {
     private osuService: OsuService,
     private kitsuService: KitsuService,
     private bucketService: BucketService,
-    private tracksSubService: TracksSubService,
   ) {}
 
   async getAll(
@@ -50,7 +48,5 @@ export class TracksService {
       file,
       AudioFileType.MP3,
     );
-
-    await this.tracksSubService.publish('trackCached', trackId);
   }
 }
