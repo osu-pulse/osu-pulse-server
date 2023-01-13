@@ -61,10 +61,9 @@ type Query {
 }
 
 type Mutation {
-  cacheTrack(trackId: String!): ID!
+  cacheTrack(trackId: String!): Track!
 }
 
 type Subscription {
-  trackCached: Track!
   deviceStatusUpdated: Device!
 }

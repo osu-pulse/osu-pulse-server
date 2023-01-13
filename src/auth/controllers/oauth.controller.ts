@@ -24,13 +24,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { OsuService } from '../../osu/services/osu.service';
+import { OsuAuthService } from '../../osu/services/osu-auth.service';
 
 @ApiTags('Authorization')
 @Controller('oauth')
 export class OauthController {
   constructor(
     private configService: ConfigService<EnvironmentDto, true>,
-    private osuService: OsuService,
+    private osuAuthService: OsuAuthService,
   ) {}
 
   @ApiOperation({
@@ -80,7 +81,7 @@ export class OauthController {
     @Res() res: Response,
     @ReqCookies() cookies: Cookies<'refreshToken'>,
   ): Promise<void> {
-    const tokenSet = await this.osuService.getTokenByRefreshToken(
+    const tokenSet = await this.osuAuthService.getTokenByRefreshToken(
       this.configService.get('OSU_CLIENT_ID'),
       this.configService.get('OSU_CLIENT_SECRET'),
       cookies.refreshToken,

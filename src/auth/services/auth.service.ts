@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { OsuService } from '../../osu/services/osu.service';
 import { parseJwt } from '../helpers/jwt';
+import { OsuAuthService } from '../../osu/services/osu-auth.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private osuService: OsuService) {}
+  constructor(private osuAuthService: OsuAuthService) {}
 
   async validateToken(token: string): Promise<string | null> {
-    const tokenValid = await this.osuService.validateToken(token);
+    const tokenValid = await this.osuAuthService.validateToken(token);
     if (!tokenValid) {
       return null;
     }

@@ -9,6 +9,7 @@ import {
 } from './constants/injections';
 import { kitsuApiUrl, osuApiUrl, osuOauthUrl } from './constants/api-url';
 import { KitsuService } from './services/kitsu.service';
+import { OsuAuthService } from './services/osu-auth.service';
 
 @Module({
   imports: [ConfigModule],
@@ -19,9 +20,10 @@ import { KitsuService } from './services/kitsu.service';
     },
     { provide: AXIOS_OSU_API, useValue: axios.create({ baseURL: osuApiUrl }) },
     { provide: AXIOS_KITSU, useValue: axios.create({ baseURL: kitsuApiUrl }) },
+    OsuAuthService,
     OsuService,
     KitsuService,
   ],
-  exports: [OsuService, KitsuService],
+  exports: [OsuService, OsuAuthService, KitsuService],
 })
 export class OsuModule {}
