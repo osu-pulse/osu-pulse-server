@@ -37,5 +37,5 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/${{ github.event.repository.owner }}/${{ github.event.repository.name }}:${{ env.VERSION }}
-            ghcr.io/${{ github.event.repository.owner }}/${{ github.event.repository.name }}:latest
+            ghcr.io/${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}:${{ env.VERSION }}
+            ghcr.io/${{ github.event.repository.owner.login }}/${{ github.event.repository.name }}:latest
