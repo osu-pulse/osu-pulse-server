@@ -9,7 +9,7 @@ import { BeatmapSet } from '../../osu/types/beatmap-set';
 export const trackConvertor = {
   fromBeatmapSet(beatmapSet: BeatmapSet): TrackModel {
     const configService = new ConfigService<EnvironmentDto, true>();
-    const host = configService.get('MI_HOST');
+    const host = configService.get('URL_MINIO');
     const bucket = BucketName.TRACKS;
 
     return {

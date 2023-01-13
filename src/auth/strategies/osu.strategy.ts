@@ -13,7 +13,7 @@ export class OsuStrategy
     super({
       authorizationURL: 'https://osu.ppy.sh/oauth/authorize',
       tokenURL: 'https://osu.ppy.sh/oauth/token',
-      callbackURL: `http://${configService.get('HOST')}/oauth/callback`,
+      callbackURL: `${configService.get('URL_API')}/oauth/callback`,
       clientID: configService.get('OSU_CLIENT_ID'),
       clientSecret: configService.get('OSU_CLIENT_SECRET'),
       scope: 'identify',

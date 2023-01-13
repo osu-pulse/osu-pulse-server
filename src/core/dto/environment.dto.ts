@@ -1,5 +1,5 @@
 import { NodeEnv } from '../constants/node-env';
-import { IsBoolean, IsIn, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsString, IsUrl } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
 export class EnvironmentDto {
@@ -18,9 +18,21 @@ export class EnvironmentDto {
   @IsBoolean()
   DEBUG: boolean;
 
+  /*
+   * URLs
+   */
   @IsString()
-  HOST: string;
+  URL_API: string;
 
+  @IsString()
+  URL_WEB_CLIENT: string;
+
+  @IsString()
+  URL_MINIO: string;
+
+  /*
+   * Secrets
+   */
   @IsString()
   SECRET_COOKIE: string;
 
@@ -56,9 +68,6 @@ export class EnvironmentDto {
 
   @IsString()
   MI_PASSWORD: string;
-
-  @IsString()
-  MI_HOST: string;
 
   /*
    * Osu

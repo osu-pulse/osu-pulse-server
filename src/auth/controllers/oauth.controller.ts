@@ -64,7 +64,7 @@ export class OauthController {
   ): Promise<void> {
     res
       .cookie('refreshToken', refreshToken, this.cookieOptions)
-      .redirect(302, `http://${this.configService.get('HOST')}`);
+      .redirect(302, this.configService.get('URL_WEB_CLIENT'));
   }
 
   @ApiOperation({
