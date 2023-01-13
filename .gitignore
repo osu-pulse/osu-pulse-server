@@ -4,8 +4,8 @@
 /s3
 
 # Environment
-.env
-.env*.local
+\.env
+\.env*.local
 
 # Logs
 logs
