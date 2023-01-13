@@ -66,7 +66,7 @@ describe('validateConfig', () => {
       DEBUG: 'true',
       HOST: '127.0.0.1:5000',
       JWT_SECRET: '1234',
-      COOKIE_SECRET: '1234',
+      SECRET_COOKIE: '1234',
       DB_ENDPOINT: '127.0.0.1',
       DB_PORT: '27017',
       DB_NAME: 'pulse',

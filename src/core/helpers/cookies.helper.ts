@@ -6,5 +6,5 @@ import cookieParser from 'cookie-parser';
 export function setupCookies(app: INestApplication) {
   const configService = app.get(ConfigService<EnvironmentDto, true>);
 
-  app.use(cookieParser(configService.get('COOKIE_SECRET')));
+  app.use(cookieParser(configService.get('SECRET_COOKIE')));
 }

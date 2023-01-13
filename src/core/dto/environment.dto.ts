@@ -22,7 +22,7 @@ export class EnvironmentDto {
   HOST: string;
 
   @IsString()
-  COOKIE_SECRET: string;
+  SECRET_COOKIE: string;
 
   /*
    * Database
