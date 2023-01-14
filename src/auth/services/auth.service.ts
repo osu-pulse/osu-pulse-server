@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { parseJwt } from '../helpers/jwt';
 import { OsuAuthService } from '../../osu/services/osu-auth.service';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
       return null;
     }
 
-    const payload = jwtDecode<JwtPayload>(token);
-    return payload.sub;
+    const payload = parseJwt(token);
+    return payload?.sub;
   }
 }

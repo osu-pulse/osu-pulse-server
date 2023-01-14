@@ -2,6 +2,7 @@ import { Strategy } from 'passport-http-bearer';
 import { AbstractStrategy, PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
+import { UnauthorizedException } from '../exceptions/unauthorized.exception';
 
 @Injectable()
 export class OauthStrategy
@@ -13,6 +14,12 @@ export class OauthStrategy
   }
 
   async validate(token: string): Promise<string> {
-    return await this.authService.validateToken(token);
+    const userId = await this.authService.validateToken(token);
+
+    if (!userId) {
+      throw new UnauthorizedException();
+    }
+
+    return userId;
   }
 }
