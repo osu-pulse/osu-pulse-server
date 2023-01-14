@@ -42,7 +42,7 @@
     "nestjs-minio-client": "^1.2.0",
     "passport": "^0.6.0",
     "passport-http-bearer": "^1.0.1",
-    "passport-oauth2": "^1.6.1",
+    "passport-osu": "^1.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",

@@ -3,9 +3,9 @@ import { EnvironmentDto } from '../../core/dto/environment.dto';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError, AxiosInstance } from 'axios';
 import { AXIOS_OSU_OAUTH, AXIOS_OSU_API } from '../constants/injections';
-import { TokenSet } from '../types/token-set';
-import { BeatmapSetsWithCursor } from '../types/beatmap-sets-with-cursor';
-import { BeatmapSet } from '../types/beatmap-set';
+import { OsuTokenSet } from '../types/osu-token-set';
+import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
+import { OsuBeatmapSet } from '../types/osu-beatmap-set';
 import { OsuException } from '../exceptions/osu.exception';
 
 @Injectable()
@@ -40,9 +40,9 @@ export class OsuAuthService {
   async getTokenByClientCredentials(
     clientId: string,
     clientSecret: string,
-  ): Promise<TokenSet> {
+  ): Promise<OsuTokenSet> {
     try {
-      const { data } = await this.axiosOsuOauth.post<TokenSet>('token', {
+      const { data } = await this.axiosOsuOauth.post<OsuTokenSet>('token', {
         grant_type: 'client_credentials',
         client_id: clientId,
         client_secret: clientSecret,
@@ -59,9 +59,9 @@ export class OsuAuthService {
     clientId: string,
     clientSecret: string,
     refreshToken: string,
-  ): Promise<TokenSet> {
+  ): Promise<OsuTokenSet | null> {
     try {
-      const { data } = await this.axiosOsuOauth.post<TokenSet>('token', {
+      const { data } = await this.axiosOsuOauth.post<OsuTokenSet>('token', {
         grant_type: 'refresh_token',
         client_id: clientId,
         client_secret: clientSecret,
@@ -70,8 +70,15 @@ export class OsuAuthService {
       });
       return data;
     } catch (e) {
-      const { message } = e as AxiosError;
-      throw new OsuException(message);
+      const {
+        message,
+        response: { status },
+      } = e as AxiosError;
+      if (status == 401) {
+        return null;
+      } else {
+        throw new OsuException(message);
+      }
     }
   }
 }

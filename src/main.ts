@@ -4,7 +4,6 @@ import { setupSwagger } from './core/helpers/swagger.helper';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { setupCors } from './core/helpers/cors.helper';
 import { setupLogger } from './core/helpers/logger.helper';
-import { setupCookies } from './core/helpers/cookies.helper';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -12,7 +11,6 @@ async function bootstrap() {
   setupCors(app);
   setupSwagger(app);
   setupLogger(app);
-  setupCookies(app);
 
   await app.listen(5000, '0.0.0.0');
 }

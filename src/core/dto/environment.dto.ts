@@ -25,16 +25,13 @@ export class EnvironmentDto {
   URL_API: string;
 
   @IsString()
+  URL_OAUTH: string;
+
+  @IsString()
   URL_WEB_CLIENT: string;
 
   @IsString()
   URL_MINIO: string;
-
-  /*
-   * Secrets
-   */
-  @IsString()
-  SECRET_COOKIE: string;
 
   /*
    * Database

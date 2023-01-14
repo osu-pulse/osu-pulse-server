@@ -4,10 +4,10 @@ import { TrackModel } from '../models/track.model';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentDto } from '../../core/dto/environment.dto';
 import { BucketName } from '../../bucket/constants/bucket-name';
-import { BeatmapSet } from '../../osu/types/beatmap-set';
+import { OsuBeatmapSet } from '../../osu/types/osu-beatmap-set';
 
 export const trackConvertor = {
-  fromBeatmapSet(beatmapSet: BeatmapSet): TrackModel {
+  fromBeatmapSet(beatmapSet: OsuBeatmapSet): TrackModel {
     const configService = new ConfigService<EnvironmentDto, true>();
     const host = configService.get('URL_MINIO');
     const bucket = BucketName.TRACKS;

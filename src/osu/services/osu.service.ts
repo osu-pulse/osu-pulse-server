@@ -3,9 +3,9 @@ import { EnvironmentDto } from '../../core/dto/environment.dto';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError, AxiosInstance } from 'axios';
 import { AXIOS_OSU_OAUTH, AXIOS_OSU_API } from '../constants/injections';
-import { TokenSet } from '../types/token-set';
-import { BeatmapSetsWithCursor } from '../types/beatmap-sets-with-cursor';
-import { BeatmapSet } from '../types/beatmap-set';
+import { OsuTokenSet } from '../types/osu-token-set';
+import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
+import { OsuBeatmapSet } from '../types/osu-beatmap-set';
 import { OsuException } from '../exceptions/osu.exception';
 import { OsuAuthService } from './osu-auth.service';
 // TODO: Разделить на два сервиса
@@ -49,7 +49,7 @@ export class OsuService implements OnModuleInit {
   async getBeatmapSets(
     search?: string,
     cursor?: string,
-  ): Promise<BeatmapSetsWithCursor> {
+  ): Promise<OsuBeatmapSetsWithCursor> {
     try {
       const { data } = await this.axiosOsuApi.get('beatmapsets/search', {
         headers: { Authorization: `Bearer ${this.token}` },
@@ -62,7 +62,7 @@ export class OsuService implements OnModuleInit {
     }
   }
 
-  async getBeatmapSetById(beatmapSetId: string): Promise<BeatmapSet> {
+  async getBeatmapSetById(beatmapSetId: string): Promise<OsuBeatmapSet> {
     try {
       const { data } = await this.axiosOsuApi.get(
         `beatmapsets/${beatmapSetId}`,

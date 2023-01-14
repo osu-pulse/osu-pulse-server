@@ -1,4 +1,4 @@
-export interface BeatmapSet {
+export interface OsuBeatmapSet {
   id: number;
   title: string;
   artist: string;

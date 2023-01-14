@@ -1,8 +1,9 @@
-import { Strategy } from 'passport-oauth2';
+import Strategy from 'passport-osu';
 import { AbstractStrategy, PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentDto } from '../../core/dto/environment.dto';
+import { TokenSetModel } from '../models/token-set.model';
 
 @Injectable()
 export class OsuStrategy
@@ -11,16 +12,16 @@ export class OsuStrategy
 {
   constructor(private configService: ConfigService<EnvironmentDto, true>) {
     super({
-      authorizationURL: 'https://osu.ppy.sh/oauth/authorize',
-      tokenURL: 'https://osu.ppy.sh/oauth/token',
-      callbackURL: `${configService.get('URL_API')}/oauth/callback`,
+      callbackURL: `${configService.get('URL_OAUTH')}/callback`,
       clientID: configService.get('OSU_CLIENT_ID'),
       clientSecret: configService.get('OSU_CLIENT_SECRET'),
-      scope: 'identify',
     });
   }
 
-  validate(accessToken: string, refreshToken: string): string {
-    return refreshToken;
+  validate(accessToken: string, refreshToken: string): TokenSetModel {
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }
