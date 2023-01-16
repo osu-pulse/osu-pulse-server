@@ -1,5 +1,5 @@
 import { CustomParamFactory } from '@nestjs/common/interfaces';
-import { ReqAuth } from '../../../src/auth/decorators/req-auth.decorator';
+import { Auth } from '../../../src/auth/decorators/auth.decorator';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { ExecutionContext } from '@nestjs/common';
 import { createMock } from '@golevelup/ts-jest';
@@ -14,7 +14,7 @@ describe('Auth', () => {
     getRequestMock = jest.fn();
 
     class MockController {
-      mockRequest(@ReqAuth() user) {}
+      mockRequest(@Auth() user) {}
     }
     const args = Reflect.getMetadata(
       ROUTE_ARGS_METADATA,

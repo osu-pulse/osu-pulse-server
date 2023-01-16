@@ -7,6 +7,8 @@ import { BucketService } from '../../bucket/services/bucket.service';
 import { KitsuService } from '../../osu/services/kitsu.service';
 import { BucketName } from '../../bucket/constants/bucket-name';
 import { AudioFileType } from '../../bucket/constants/file-type';
+import { TrackCachesService } from './track-caches.service';
+import { pick } from '../../shared/helpers/object';
 
 @Injectable()
 export class TracksService {
@@ -14,37 +16,56 @@ export class TracksService {
     private osuService: OsuService,
     private kitsuService: KitsuService,
     private bucketService: BucketService,
+    private trackCachesService: TrackCachesService,
   ) {}
+
+  async existsById(trackId: string): Promise<boolean> {
+    return this.osuService.existsBeatmapById(trackId);
+  }
 
   async getAll(
     search?: string,
     cursor?: string,
   ): Promise<TracksWithCursorModel> {
-    const { beatmapsets, cursor_string } = await this.osuService.getBeatmapSets(
-      search,
-      cursor,
-    );
-    const tracks = beatmapsets.map(trackConvertor.fromBeatmapSet);
+    const response = await this.osuService.getAllBeatmapSets(search, cursor);
+    const tracks = response.data.map(trackConvertor.fromBeatmapSet);
     return {
-      cursor: cursor_string,
-      tracks,
+      data: tracks,
+      cursor: response.cursor,
+    };
+  }
+
+  async getAllByIds(
+    trackIds: string[],
+    cursor?: string,
+  ): Promise<TracksWithCursorModel> {
+    const cursorPos = trackIds.findIndex((id) => id === cursor);
+    const slicedIds = trackIds.slice(cursorPos + 1, cursorPos + 51);
+    const beatmaps = await this.osuService.getBeatmapsByIds(slicedIds);
+    const tracks = beatmaps.map(trackConvertor.fromBeatmap);
+    return {
+      cursor: tracks.at(cursorPos + 50)?.id,
+      data: tracks,
     };
   }
 
   async getById(trackId: string): Promise<TrackModel> {
-    const beatmapSet = await this.osuService.getBeatmapSetById(trackId);
-    return trackConvertor.fromBeatmapSet(beatmapSet);
+    const beatmap = await this.osuService.getBeatmapById(trackId);
+    return trackConvertor.fromBeatmap(beatmap);
   }
 
   async isCached(trackId: string): Promise<boolean> {
-    return this.bucketService.exists(BucketName.TRACKS, trackId);
+    return this.trackCachesService.existsByTrackId(trackId);
   }
 
   async cache(trackId: string): Promise<void> {
-    const file = await this.kitsuService.getFile(trackId);
+    await this.trackCachesService.create(trackId);
+
+    const track = await this.getById(trackId);
+    const file = await this.kitsuService.getFile(track.beatmapSetId);
     await this.bucketService.create(
       BucketName.TRACKS,
-      trackId,
+      track.id,
       file,
       AudioFileType.MP3,
     );

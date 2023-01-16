@@ -1,6 +1,6 @@
 import { DeviceInfoModel } from '../models/device-info.model';
 import DeviceDetector from 'device-detector-js';
-import { switchAssign } from '../../shared/helpers/switch.helper';
+import { switchAssign } from '../../shared/helpers/switch';
 import { DeviceType } from '../constants/device-type';
 
 export const userAgentConvertor = {

@@ -2,7 +2,7 @@ import {
   switchAssign,
   switchExec,
   switchThrow,
-} from '../../../src/shared/helpers/switch.helper';
+} from '../../../src/shared/helpers/switch';
 import Mock = jest.Mock;
 
 describe('switchAssign', () => {

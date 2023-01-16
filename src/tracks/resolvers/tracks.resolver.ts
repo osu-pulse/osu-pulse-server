@@ -16,10 +16,19 @@ import { TracksWithCursorModel } from '../models/tracks-with-cursor.model';
 import { AlreadyCachedException } from '../exceptions/already-cached.exception';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
+import { TrackUrlObject } from '../objects/track-url.object';
+import { TrackUrlModel } from '../models/track-url.model';
+import { ConfigService } from '@nestjs/config';
+import { BucketName } from '../../bucket/constants/bucket-name';
+import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
+import { Env } from '../../core/types/env';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
-  constructor(private tracksService: TracksService) {}
+  constructor(
+    private tracksService: TracksService,
+    private configService: ConfigService<Env, true>,
+  ) {}
 
   @UseGuards(OauthGuard)
   @Query(() => TracksWithCursorObject)
@@ -54,6 +63,18 @@ export class TracksResolver {
 
     await this.tracksService.cache(trackId);
     return this.tracksService.getById(trackId);
+  }
+
+  @ResolveField(() => TrackUrlObject)
+  async url(@Parent() track: TrackModel): Promise<TrackUrlModel> {
+    const minioUrl = this.configService.get('URL_MINIO');
+    const bucket = BucketName.TRACKS;
+
+    return {
+      page: `${osuOauthUrl}/beatmapsets/${track.beatmapSetId}`,
+      file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
+      audio: `${minioUrl}/${bucket}/${track.beatmapSetId}`,
+    };
   }
 
   @ResolveField(() => Boolean)

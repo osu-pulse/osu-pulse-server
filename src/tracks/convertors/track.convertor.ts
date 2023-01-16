@@ -1,28 +1,36 @@
 import { pick } from '../../shared/helpers/object';
-import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
 import { TrackModel } from '../models/track.model';
-import { ConfigService } from '@nestjs/config';
-import { EnvironmentDto } from '../../core/dto/environment.dto';
-import { BucketName } from '../../bucket/constants/bucket-name';
 import { OsuBeatmapSet } from '../../osu/types/osu-beatmap-set';
+import { OsuBeatmap } from '../../osu/types/osu-beatmap';
 
 export const trackConvertor = {
   fromBeatmapSet(beatmapSet: OsuBeatmapSet): TrackModel {
-    const configService = new ConfigService<EnvironmentDto, true>();
-    const host = configService.get('URL_MINIO');
-    const bucket = BucketName.TRACKS;
+    const beatmapId = Math.min(...beatmapSet.beatmaps.map(({ id }) => id));
 
     return {
       ...pick(beatmapSet, ['title', 'artist']),
-      id: String(beatmapSet.id),
+      id: String(beatmapId),
+      beatmapId: String(beatmapId),
+      beatmapSetId: String(beatmapSet.id),
+      played: beatmapSet.play_count,
+      liked: beatmapSet.favourite_count,
       cover: {
         small: beatmapSet.covers['list'],
         normal: beatmapSet.covers['list@2x'],
       },
-      url: {
-        page: `${osuOauthUrl}/beatmapsets/${beatmapSet.id}`,
-        file: `${kitsuApiUrl}/audio/${beatmapSet.id}`,
-        audio: `${host}/${bucket}/${beatmapSet.id}`,
+    };
+  },
+  fromBeatmap(beatmap: OsuBeatmap): TrackModel {
+    return {
+      ...pick(beatmap.beatmapset, ['title', 'artist']),
+      id: String(beatmap.id),
+      beatmapId: String(beatmap.id),
+      beatmapSetId: String(beatmap.beatmapset.id),
+      played: beatmap.beatmapset.play_count,
+      liked: beatmap.beatmapset.favourite_count,
+      cover: {
+        small: beatmap.beatmapset.covers['list'],
+        normal: beatmap.beatmapset.covers['list@2x'],
       },
     };
   },
