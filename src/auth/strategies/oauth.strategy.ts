@@ -13,8 +13,8 @@ export class OauthStrategy
     super();
   }
 
-  async validate(token: string): Promise<string> {
-    const userId = await this.authService.validateToken(token);
+  async validate(accessToken: string): Promise<string> {
+    const userId = await this.authService.validateToken(accessToken);
 
     if (!userId) {
       throw new UnauthorizedException();

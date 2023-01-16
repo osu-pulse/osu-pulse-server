@@ -2,14 +2,17 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE, BaseExceptionFilter } from '@nestjs/core';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getEnvPath, validateEnv } from './helpers/config-env.helper';
+import { getEnvPath, validateEnv } from './helpers/env';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { EnvironmentDto } from './dto/environment.dto';
 import { validationOptions } from '../shared/constants/validation-options';
 import { LoggingExceptionFilter } from './filters/logging-exception.filter';
 import { lowercaseKeys } from '../shared/helpers/case';
+import mongooseLeanGetters from 'mongoose-lean-getters';
+import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
+import mongoose from 'mongoose';
+import { Env } from './types/env';
 
 @Module({
   imports: [
@@ -18,18 +21,10 @@ import { lowercaseKeys } from '../shared/helpers/case';
       validate: validateEnv,
       cache: true,
     }),
-    MulterModule.register({
-      limits: {
-        parts: 10,
-        fields: 1,
-        files: 2,
-        fileSize: 10 * 1024 ** 2,
-      },
-    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<EnvironmentDto, true>) => ({
+      useFactory: (configService: ConfigService<Env, true>) => ({
         uri: `mongodb://${configService.get('DB_ENDPOINT')}:${configService.get(
           'DB_PORT',
         )}`,
@@ -39,14 +34,19 @@ import { lowercaseKeys } from '../shared/helpers/case';
           username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
         },
+        connectionFactory: (connection: mongoose.Connection) => {
+          connection.plugin(mongooseLeanGetters);
+          connection.plugin(mongooseLeanVirtuals);
+          return connection;
+        },
       }),
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       imports: [ConfigModule],
       inject: [ConfigService],
       driver: ApolloDriver,
-      useFactory: (configService: ConfigService<EnvironmentDto, true>) => ({
-        cors: configService.get('CORS'),
+      useFactory: (configService: ConfigService<Env, true>) => ({
+        cors: configService.get('CORS') && { origin: true, credentials: true },
         debug: configService.get('DEBUG'),
         playground: configService.get('DEBUG'),
         introspection: configService.get('DEBUG'),
@@ -84,6 +84,6 @@ import { lowercaseKeys } from '../shared/helpers/case';
       useValue: new ValidationPipe(validationOptions),
     },
   ],
-  exports: [ConfigModule, MulterModule, MongooseModule, GraphQLModule],
+  exports: [MongooseModule, GraphQLModule],
 })
 export class CoreModule {}

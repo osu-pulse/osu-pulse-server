@@ -1,8 +1,8 @@
-import { NodeEnv } from '../constants/node-env';
-import { IsBoolean, IsIn, IsString, IsUrl } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
+import { IsBoolean, IsIn, IsString } from 'class-validator';
+import { NodeEnv } from '../constants/node-env';
 
-export class EnvironmentDto {
+export class Env {
   /*
    * Server
    */

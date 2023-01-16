@@ -13,6 +13,12 @@ export class TrackObject {
   @Field(() => String)
   artist: string;
 
+  @Field(() => Number)
+  played: number;
+
+  @Field(() => Number)
+  liked: number;
+
   @Field(() => TrackCoverObject)
   cover: TrackCoverObject;
 

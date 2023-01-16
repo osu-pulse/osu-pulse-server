@@ -1,6 +1,6 @@
 import { GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 import { ExecutionContext } from '@nestjs/common';
-import { switchExec } from '../helpers/switch.helper';
+import { switchExec } from '../helpers/switch';
 import { Request } from 'express';
 
 export const unknownContextConvertor = {

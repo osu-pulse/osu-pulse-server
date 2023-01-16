@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { setupCors } from '../../../src/core/helpers/cors.helper';
+import { setupCors } from '../../../src/core/helpers/cors';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { switchAssign } from '../../../src/shared/helpers/switch.helper';
+import { switchAssign } from '../../../src/shared/helpers/switch';
 
 describe('setupCors', () => {
   let module: TestingModule;
