@@ -1,7 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SwaggerModule } from '@nestjs/swagger';
-import { setupSwagger } from '../../../src/core/helpers/swagger.helper';
+import { setupDocs } from '../../../src/core/helpers/docs';
+import { RedocModule } from 'nestjs-redoc';
 
 describe('setupSwagger', () => {
   let module: TestingModule;
@@ -18,10 +19,12 @@ describe('setupSwagger', () => {
   });
 
   it('should call enableCors', () => {
-    const setupSpy = jest.spyOn(SwaggerModule, 'setup');
+    const setupSwaggerSpy = jest.spyOn(SwaggerModule, 'setup');
+    const setupRedocSpy = jest.spyOn(RedocModule, 'setup');
 
-    setupSwagger(app);
+    setupDocs(app);
 
-    expect(setupSpy).toBeCalledTimes(1);
+    expect(setupSwaggerSpy).toBeCalledTimes(1);
+    expect(setupRedocSpy).toBeCalledTimes(1);
   });
 });

@@ -1,17 +1,15 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { EnvironmentDto } from '../../core/dto/environment.dto';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError, AxiosInstance } from 'axios';
-import { AXIOS_OSU_OAUTH, AXIOS_OSU_API } from '../constants/injections';
+import { AXIOS_OSU_API, AXIOS_OSU_OAUTH } from '../constants/injections';
 import { OsuTokenSet } from '../types/osu-token-set';
-import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
-import { OsuBeatmapSet } from '../types/osu-beatmap-set';
 import { OsuException } from '../exceptions/osu.exception';
+import { Env } from '../../core/types/env';
 
 @Injectable()
 export class OsuAuthService {
   constructor(
-    private configService: ConfigService<EnvironmentDto, true>,
+    private configService: ConfigService<Env, true>,
     @Inject(AXIOS_OSU_OAUTH)
     private axiosOsuOauth: AxiosInstance,
     @Inject(AXIOS_OSU_API)

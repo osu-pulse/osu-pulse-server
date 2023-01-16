@@ -7,8 +7,6 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { ConfigService } from '@nestjs/config';
-import { EnvironmentDto } from '../../core/dto/environment.dto';
 import { ClientsService } from '../services/clients.service';
 import { userAgentConvertor } from '../convertors/user-agent.convertor';
 import { DevicesService } from '../services/devices.service';
@@ -16,15 +14,17 @@ import { AuthService } from '../../auth/services/auth.service';
 import { DeviceTargetCommand } from '../constants/device-target-command';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
-import { ReqAuth } from '../../auth/decorators/req-auth.decorator';
+import { Auth } from '../../auth/decorators/auth.decorator';
 import { RemoteControlService } from '../services/remote-control.service';
 import { NotConnectedException } from '../exceptions/not-connected.exception';
+import { ConfigService } from '@nestjs/config';
+import { Env } from '../../core/types/env';
 
-const configService = new ConfigService<EnvironmentDto, true>();
+const configService = new ConfigService<Env, true>();
 
 @WebSocketGateway({
   namespace: '/remote',
-  cors: configService.get('CORS') && { origin: '*', credentials: true },
+  cors: configService.get('CORS') && { origin: true, credentials: true },
 })
 export class RemoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
@@ -67,7 +67,7 @@ export class RemoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @UseGuards(OauthGuard)
   async command(
     @MessageBody() data: DeviceTargetCommand,
-    @ReqAuth() userId: string,
+    @Auth() userId: string,
   ): Promise<void> {
     const deviceValid = this.devicesService.existsByUserIdAndDeviceId(
       userId,
