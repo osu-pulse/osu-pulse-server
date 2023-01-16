@@ -11,8 +11,9 @@ import {
 } from '@nestjs/common';
 import { OsuGuard } from '../guards/osu.guard';
 import { Response } from 'express';
+import { EnvironmentDto } from '../../core/dto/environment.dto';
 import { ConfigService } from '@nestjs/config';
-import { Auth } from '../decorators/auth.decorator';
+import { ReqAuth } from '../decorators/req-auth.decorator';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -25,19 +26,17 @@ import { TokenSetModel } from '../models/token-set.model';
 import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
-import { plainToInstance } from 'class-transformer';
-import { Env } from '../../core/types/env';
 
 @ApiTags('Authorization')
 @Controller('oauth')
 export class OauthController {
   constructor(
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvironmentDto, true>,
     private osuAuthService: OsuAuthService,
   ) {}
 
   @ApiOperation({
-    summary: 'Oauth authorize',
+    summary: 'Redirects to the oauth app authentication page',
   })
   @ApiResponse({
     status: HttpStatus.TEMPORARY_REDIRECT,
@@ -49,7 +48,8 @@ export class OauthController {
   async auth() {}
 
   @ApiOperation({
-    summary: 'Oauth callback',
+    summary:
+      'Receives the authorization code from oauth app and redirects to the root of app',
   })
   @ApiResponse({
     status: HttpStatus.TEMPORARY_REDIRECT,
@@ -61,7 +61,7 @@ export class OauthController {
   @Get('callback')
   async callback(
     @Res() res: Response,
-    @Auth() tokenSet: TokenSetModel,
+    @ReqAuth() tokenSet: TokenSetModel,
   ): Promise<void> {
     const query = tokenSetDtoConvertor.fromTokenSetModel(tokenSet);
     const queryString = new URLSearchParams(query as any);
@@ -73,7 +73,7 @@ export class OauthController {
   }
 
   @ApiOperation({
-    summary: 'Token rotate',
+    summary: 'Rotates the tokens',
   })
   @ApiOkResponse({
     description: 'The token has been successfully rotated',
@@ -98,12 +98,9 @@ export class OauthController {
     if (!tokenSet) {
       return res.status(401);
     } else {
-      const dto = plainToInstance(
-        TokenSetDto,
-        tokenSetDtoConvertor.fromOsuTokenSet(tokenSet),
-      );
-
-      return res.status(200).send(dto);
+      return res
+        .status(200)
+        .send(tokenSetDtoConvertor.fromOsuTokenSet(tokenSet));
     }
   }
 }

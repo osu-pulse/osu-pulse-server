@@ -4,8 +4,8 @@ import { DeviceInfoModel } from '../models/device-info.model';
 import { DeviceStatusModel } from '../models/device-status.model';
 import { DevicesSubService } from './devices-sub.service';
 
-type UserId = string;
-type DeviceId = string;
+export type UserId = string;
+export type DeviceId = string;
 
 @Injectable()
 export class DevicesService {

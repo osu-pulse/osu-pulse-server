@@ -2,7 +2,7 @@ import { Query, Resolver, Subscription } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { DeviceObject } from '../objects/device.object';
-import { Auth } from '../../auth/decorators/auth.decorator';
+import { ReqAuth } from '../../auth/decorators/req-auth.decorator';
 import { DeviceModel } from '../models/device.model';
 import { DevicesService } from '../services/devices.service';
 import { DevicesSubService } from '../services/devices-sub.service';
@@ -16,7 +16,7 @@ export class DevicesResolver {
 
   @UseGuards(OauthGuard)
   @Query(() => [DeviceObject])
-  async devices(@Auth() userId: string): Promise<DeviceModel[]> {
+  async devices(@ReqAuth() userId: string): Promise<DeviceModel[]> {
     return this.devicesService.getAllByUserId(userId);
   }
 

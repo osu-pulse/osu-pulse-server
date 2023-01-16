@@ -3,7 +3,7 @@ import { ClientsService } from './clients.service';
 import { DeviceTargetCommand } from '../constants/device-target-command';
 import { omit } from '../../shared/helpers/object';
 import { DevicesService } from './devices.service';
-import { switchAssign } from '../../shared/helpers/switch';
+import { switchAssign } from '../../shared/helpers/switch.helper';
 import { DeviceCommandType } from '../constants/device-command-type';
 
 @Injectable()

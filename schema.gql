@@ -17,16 +17,14 @@ type Track {
   id: String!
   title: String!
   artist: String!
-  played: Float!
-  liked: Float!
   cover: TrackCover!
   url: TrackUrl!
   cached: Boolean!
 }
 
 type TracksWithCursor {
-  data: [Track!]!
-  cursor: String
+  cursor: String!
+  tracks: [Track!]!
 }
 
 type DeviceInfo {
@@ -60,14 +58,10 @@ type Query {
   tracks(search: String, cursor: String): TracksWithCursor!
   track(trackId: String!): Track!
   devices: [Device!]!
-  libraryTracks(cursor: String): TracksWithCursor!
 }
 
 type Mutation {
   cacheTrack(trackId: String!): Track!
-  addLibraryTrack(trackId: String!): Track!
-  removeLibraryTrack(trackId: String!): Track!
-  moveLibraryTrack(trackId: String!, position: Float!): Track!
 }
 
 type Subscription {

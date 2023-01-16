@@ -3,9 +3,9 @@ import { TrackObject } from './track.object';
 
 @ObjectType('TracksWithCursor')
 export class TracksWithCursorObject {
-  @Field(() => [TrackObject])
-  data: TrackObject[];
+  @Field(() => String)
+  cursor: string;
 
-  @Field(() => String, { nullable: true })
-  cursor?: string;
+  @Field(() => [TrackObject])
+  tracks: TrackObject[];
 }

@@ -5,7 +5,6 @@ import { SystemModule } from './system/system.module';
 import { TracksModule } from './tracks/tracks.module';
 import { AuthModule } from './auth/auth.module';
 import { RemoteModule } from './remote/remote.module';
-import { LibrariesModule } from './library/libraries.module';
 
 @Module({
   imports: [
@@ -15,7 +14,6 @@ import { LibrariesModule } from './library/libraries.module';
     SystemModule,
     TracksModule,
     RemoteModule,
-    LibrariesModule,
   ],
 })
 export class AppModule {}

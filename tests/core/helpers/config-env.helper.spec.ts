@@ -1,6 +1,9 @@
 import fs from 'fs';
-import { getEnvPath, validateEnv } from '../../../src/core/helpers/env';
-import { Env } from '../../../src/core/types/env';
+import {
+  getEnvPath,
+  validateEnv,
+} from '../../../src/core/helpers/config-env.helper';
+import { EnvironmentDto } from '../../../src/core/dto/environment.dto';
 
 describe('getEnvPath', () => {
   beforeEach(() => {
@@ -10,7 +13,7 @@ describe('getEnvPath', () => {
   it('should return local exact env if exist', () => {
     jest
       .spyOn(fs, 'existsSync')
-      .mockImplementation((path) => path === '.env.production.local');
+      .mockImplementation((path) => path == '.env.production.local');
 
     const result = getEnvPath();
 
@@ -20,7 +23,7 @@ describe('getEnvPath', () => {
   it('should return exact env path if exist and local exact not exist', () => {
     jest
       .spyOn(fs, 'existsSync')
-      .mockImplementation((path) => path === '.env.production');
+      .mockImplementation((path) => path == '.env.production');
 
     const result = getEnvPath();
 
@@ -28,7 +31,7 @@ describe('getEnvPath', () => {
   });
 
   it('should return local generic env path if exist and local exact, exact envs not exist', () => {
-    jest.spyOn(fs, 'existsSync').mockImplementation((path) => path === '.env');
+    jest.spyOn(fs, 'existsSync').mockImplementation((path) => path == '.env');
 
     const result = getEnvPath();
 
@@ -36,7 +39,7 @@ describe('getEnvPath', () => {
   });
 
   it('should return generic env path if exist and generic local, local exact, exact envs not exist', () => {
-    jest.spyOn(fs, 'existsSync').mockImplementation((path) => path === '.env');
+    jest.spyOn(fs, 'existsSync').mockImplementation((path) => path == '.env');
 
     const result = getEnvPath();
 
@@ -53,8 +56,8 @@ describe('getEnvPath', () => {
 });
 
 describe('validateConfig', () => {
-  let configMock: Record<keyof Env, string>;
-  let configInvalidMock: Partial<Record<keyof Env, string>>;
+  let configMock: Record<keyof EnvironmentDto, string>;
+  let configInvalidMock: Partial<Record<keyof EnvironmentDto, string>>;
 
   beforeEach(() => {
     configMock = {
@@ -88,7 +91,7 @@ describe('validateConfig', () => {
   it('should parse config if config is valid', () => {
     const env = validateEnv(configMock);
 
-    expect(env).toBeInstanceOf(Env);
+    expect(env).toBeInstanceOf(EnvironmentDto);
   });
 
   it('should throw if config is invalid', () => {
