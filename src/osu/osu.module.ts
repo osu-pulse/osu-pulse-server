@@ -10,23 +10,16 @@ import {
 import { kitsuApiUrl, osuApiUrl, osuOauthUrl } from './constants/api-url';
 import { KitsuService } from './services/kitsu.service';
 import { OsuAuthService } from './services/osu-auth.service';
-import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [ConfigModule, AuthModule],
+  imports: [ConfigModule],
   providers: [
     {
       provide: AXIOS_OSU_OAUTH,
       useValue: axios.create({ baseURL: osuOauthUrl }),
     },
-    {
-      provide: AXIOS_OSU_API,
-      useValue: axios.create({ baseURL: osuApiUrl }),
-    },
-    {
-      provide: AXIOS_KITSU,
-      useValue: axios.create({ baseURL: kitsuApiUrl }),
-    },
+    { provide: AXIOS_OSU_API, useValue: axios.create({ baseURL: osuApiUrl }) },
+    { provide: AXIOS_KITSU, useValue: axios.create({ baseURL: kitsuApiUrl }) },
     OsuAuthService,
     OsuService,
     KitsuService,

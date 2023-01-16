@@ -1,15 +1,14 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { EnvironmentDto } from '../../core/dto/environment.dto';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError, AxiosInstance } from 'axios';
-import { AXIOS_OSU_API } from '../constants/injections';
+import { AXIOS_OSU_OAUTH, AXIOS_OSU_API } from '../constants/injections';
+import { OsuTokenSet } from '../types/osu-token-set';
+import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
 import { OsuBeatmapSet } from '../types/osu-beatmap-set';
 import { OsuException } from '../exceptions/osu.exception';
 import { OsuAuthService } from './osu-auth.service';
-import { OsuBeatmap } from '../types/osu-beatmap';
-import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
-import { AccessTokenHolderService } from '../../auth/services/access-token-holder.service';
-import { Env } from '../../core/types/env';
-
+// TODO: Разделить на два сервиса
 @Injectable()
 export class OsuService implements OnModuleInit {
   private readonly logger = new Logger(OsuService.name);
@@ -17,9 +16,8 @@ export class OsuService implements OnModuleInit {
   private token: string;
 
   constructor(
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvironmentDto, true>,
     private osuAuthService: OsuAuthService,
-    private accessTokenHolderService: AccessTokenHolderService,
     @Inject(AXIOS_OSU_API)
     private axiosOsuApi: AxiosInstance,
   ) {}
@@ -48,55 +46,15 @@ export class OsuService implements OnModuleInit {
     }
   }
 
-  async existsBeatmapById(beatmapId): Promise<boolean> {
-    try {
-      await this.axiosOsuApi(`beatmaps/${beatmapId}`, {
-        headers: { Authorization: `Bearer ${this.token}` },
-      });
-      return true;
-    } catch (e) {
-      const {
-        message,
-        response: { status },
-      } = e as AxiosError;
-      if (status == 404) {
-        return false;
-      } else {
-        throw new OsuException(message);
-      }
-    }
-  }
-
-  async getAllBeatmapSets(
+  async getBeatmapSets(
     search?: string,
     cursor?: string,
   ): Promise<OsuBeatmapSetsWithCursor> {
     try {
-      const { data } = await this.axiosOsuApi.get<{
-        beatmapsets: OsuBeatmapSet[];
-        cursor_string?: string;
-      }>('beatmapsets/search', {
+      const { data } = await this.axiosOsuApi.get('beatmapsets/search', {
         headers: { Authorization: `Bearer ${this.token}` },
         params: { q: search, cursor_string: cursor },
       });
-      return {
-        data: data.beatmapsets,
-        cursor: data.cursor_string,
-      };
-    } catch (e) {
-      const { message } = e as AxiosError;
-      throw new OsuException(message);
-    }
-  }
-
-  async getBeatmapById(beatmapId: string): Promise<OsuBeatmap> {
-    try {
-      const { data } = await this.axiosOsuApi.get<OsuBeatmap>(
-        `beatmaps/${beatmapId}`,
-        {
-          headers: { Authorization: `Bearer ${this.token}` },
-        },
-      );
       return data;
     } catch (e) {
       const { message } = e as AxiosError;
@@ -104,19 +62,15 @@ export class OsuService implements OnModuleInit {
     }
   }
 
-  async getBeatmapsByIds(beatmapIds: string[]): Promise<OsuBeatmap[]> {
+  async getBeatmapSetById(beatmapSetId: string): Promise<OsuBeatmapSet> {
     try {
-      const { data } = await this.axiosOsuApi.get<{
-        beatmaps: OsuBeatmap[];
-      }>(`beatmaps`, {
-        headers: { Authorization: `Bearer ${this.token}` },
-        params: Object.fromEntries(
-          beatmapIds.map((id, i) => [`ids[${i}]`, Number(id)]),
-        ),
-      });
-      return beatmapIds
-        .map(Number)
-        .map((beatmapId) => data.beatmaps.find(({ id }) => id === beatmapId));
+      const { data } = await this.axiosOsuApi.get(
+        `beatmapsets/${beatmapSetId}`,
+        {
+          headers: { Authorization: `Bearer ${this.token}` },
+        },
+      );
+      return data;
     } catch (e) {
       const { message } = e as AxiosError;
       throw new OsuException(message);
