@@ -2,7 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { BaseModel } from '../../shared/models/base.model';
 
-@Schema({ collection: 'userTrackMappings' })
+@Schema({
+  collection: 'userTrackMappings',
+  versionKey: false,
+  timestamps: true,
+})
 export class UserTrackMappingModel extends BaseModel {
   @Prop({ type: String, required: true, immutable: true })
   userId: string;
