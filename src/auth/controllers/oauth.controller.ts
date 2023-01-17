@@ -27,6 +27,9 @@ import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
 import { plainToInstance } from 'class-transformer';
 import { Env } from '../../core/types/env';
+import { AuthService } from '../services/auth.service';
+import { parseJwt } from '../helpers/jwt';
+import { use } from 'passport';
 
 @ApiTags('Authorization')
 @Controller('oauth')
@@ -34,6 +37,7 @@ export class OauthController {
   constructor(
     private configService: ConfigService<Env, true>,
     private osuAuthService: OsuAuthService,
+    private authService: AuthService,
   ) {}
 
   @ApiOperation({
@@ -65,6 +69,9 @@ export class OauthController {
   ): Promise<void> {
     const query = tokenSetDtoConvertor.fromTokenSetModel(tokenSet);
     const queryString = new URLSearchParams(query as any);
+
+    const userId = parseJwt(tokenSet.accessToken).sub;
+    await this.authService.registerUser(userId);
 
     return res.redirect(
       302,

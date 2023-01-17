@@ -56,10 +56,10 @@ type Device {
 }
 
 type Query {
-  health: Boolean!
   tracks(search: String, cursor: String): TracksWithCursor!
   track(trackId: String!): Track!
-  myTracks(cursor: String, limit: Float): TracksWithCursor!
+  myTracks(cursor: String, limit: Float = 50): TracksWithCursor!
+  health: Boolean!
   devices: [Device!]!
 }
 

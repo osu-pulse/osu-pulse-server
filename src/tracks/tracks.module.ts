@@ -4,13 +4,11 @@ import { TracksResolver } from './resolvers/tracks.resolver';
 import { TracksService } from './services/tracks.service';
 import { BucketModule } from '../bucket/bucket.module';
 import { ConfigModule } from '@nestjs/config';
-import { UserTrackMappingsService } from './services/user-track-mappings.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  UserTrackMappingModel,
-  UserTrackMappingSchema,
-} from './models/user-track-mapping.model';
 import { MyTracksResolver } from './resolvers/my-tracks.resolver';
+import { LibraryModel, LibrarySchema } from './models/library.model';
+import { LibrariesService } from './services/libraries.service';
+import { LibraryTracksService } from './services/library-tracks.service';
 
 @Module({
   imports: [
@@ -18,15 +16,16 @@ import { MyTracksResolver } from './resolvers/my-tracks.resolver';
     BucketModule,
     ConfigModule,
     MongooseModule.forFeature([
-      { name: UserTrackMappingModel.name, schema: UserTrackMappingSchema },
+      { name: LibraryModel.name, schema: LibrarySchema },
     ]),
   ],
   providers: [
     TracksService,
-    UserTrackMappingsService,
+    LibrariesService,
+    LibraryTracksService,
     TracksResolver,
     MyTracksResolver,
   ],
-  exports: [TracksService],
+  exports: [TracksService, LibrariesService],
 })
 export class TracksModule {}
