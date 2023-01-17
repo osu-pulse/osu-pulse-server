@@ -12,7 +12,7 @@ import { TracksService } from '../services/tracks.service';
 import { TrackObject } from '../objects/track.object';
 import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
 import { TrackModel } from '../models/track.model';
-import { WithCursor } from '../types/with-cursor';
+import { WithCursor } from '../../shared/types/with-cursor';
 import { AlreadyCachedException } from '../exceptions/already-cached.exception';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';

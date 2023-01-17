@@ -6,7 +6,7 @@ import {
   UserTrackMappingModel,
 } from '../models/user-track-mapping.model';
 import { UserTrackMapping } from '../types/user-track-mapping';
-import { WithCursor } from '../types/with-cursor';
+import { WithCursor } from '../../shared/types/with-cursor';
 import { cursorConvertor } from '../../shared/convertors/cursor.convertor';
 
 @Injectable()
@@ -78,12 +78,14 @@ export class UserTrackMappingsService {
   ): Promise<UserTrackMapping | null> {
     const next = await this.userTrackMappingModel
       .findOne({ userId })
+      .select('order')
       .sort({ order: 1 })
       .skip(position)
       .lean();
 
     const prev = await this.userTrackMappingModel
       .findOne({ userId, order: { $lt: next.order } })
+      .select('order')
       .sort({ order: -1 })
       .lean();
 

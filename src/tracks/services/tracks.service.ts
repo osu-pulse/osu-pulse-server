@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OsuService } from '../../osu/services/osu.service';
 import { trackConvertor } from '../convertors/track.convertor';
-import { WithCursor } from '../types/with-cursor';
+import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackModel } from '../models/track.model';
 import { BucketService } from '../../bucket/services/bucket.service';
 import { KitsuService } from '../../osu/services/kitsu.service';

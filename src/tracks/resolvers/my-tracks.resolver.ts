@@ -4,7 +4,7 @@ import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
 import { TrackObject } from '../objects/track.object';
 import { TracksService } from '../services/tracks.service';
-import { WithCursor } from '../types/with-cursor';
+import { WithCursor } from '../../shared/types/with-cursor';
 import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
 import { TrackNotFoundException } from '../exceptions/track-not-found.exception';
 import { TrackModel } from '../models/track.model';
