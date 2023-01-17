@@ -1,6 +1,5 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
-import { RedocModule } from 'nestjs-redoc';
 
 export function setupDocs(app: INestApplication) {
   const config = new DocumentBuilder()
@@ -12,5 +11,5 @@ export function setupDocs(app: INestApplication) {
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('/swagger', app, document, { explorer: true });
+  SwaggerModule.setup('/', app, document, { explorer: true });
 }
