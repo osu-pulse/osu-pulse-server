@@ -7,8 +7,6 @@ import { BucketService } from '../../bucket/services/bucket.service';
 import { KitsuService } from '../../osu/services/kitsu.service';
 import { BucketName } from '../../bucket/constants/bucket-name';
 import { AudioFileType } from '../../bucket/constants/file-type';
-import { TrackCachesService } from './track-caches.service';
-import { pick } from '../../shared/helpers/object';
 
 @Injectable()
 export class TracksService {
@@ -16,7 +14,6 @@ export class TracksService {
     private osuService: OsuService,
     private kitsuService: KitsuService,
     private bucketService: BucketService,
-    private trackCachesService: TrackCachesService,
   ) {}
 
   async existsById(trackId: string): Promise<boolean> {
@@ -55,12 +52,10 @@ export class TracksService {
   }
 
   async isCached(trackId: string): Promise<boolean> {
-    return this.trackCachesService.existsByTrackId(trackId);
+    return this.bucketService.exists(BucketName.TRACKS, trackId);
   }
 
   async cache(trackId: string): Promise<void> {
-    await this.trackCachesService.create(trackId);
-
     const track = await this.getById(trackId);
     const file = await this.kitsuService.getFile(track.beatmapSetId);
     await this.bucketService.create(
