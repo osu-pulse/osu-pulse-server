@@ -1,37 +1,46 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { LibraryTracksService } from '../services/library-tracks.service';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
-import { TrackObject } from '../../tracks/objects/track.object';
-import { TracksService } from '../../tracks/services/tracks.service';
-import { TracksWithCursorModel } from '../../tracks/models/tracks-with-cursor.model';
-import { TracksWithCursorObject } from '../../tracks/objects/tracks-with-cursor.object';
-import { TrackNotFoundException } from '../../tracks/exceptions/track-not-found.exception';
-import { TrackModel } from '../../tracks/models/track.model';
+import { TrackObject } from '../objects/track.object';
+import { TracksService } from '../services/tracks.service';
+import { WithCursor } from '../types/with-cursor';
+import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
+import { TrackNotFoundException } from '../exceptions/track-not-found.exception';
+import { TrackModel } from '../models/track.model';
+import { UserTrackMappingsService } from '../services/user-track-mappings.service';
 
 @Resolver(() => TrackObject)
-export class LibraryTracksResolver {
+export class MyTracksResolver {
   constructor(
-    private librariesService: LibraryTracksService,
+    private userTrackMappingsService: UserTrackMappingsService,
     private tracksService: TracksService,
   ) {}
 
   @UseGuards(OauthGuard)
   @Query(() => TracksWithCursorObject)
-  async libraryTracks(
+  async myTracks(
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
+    @Args('limit', { nullable: true })
+    limit: number | undefined = 50,
     @Auth()
     userId: string,
-  ): Promise<TracksWithCursorModel> {
-    const { trackIds } = await this.librariesService.getByUserId(userId);
-    return this.tracksService.getAllByIds(trackIds, cursor);
+  ): Promise<WithCursor<TrackModel>> {
+    const mappings = await this.userTrackMappingsService.getAllByUserId(
+      userId,
+      cursor,
+      limit,
+    );
+    const trackIds = mappings.data.map(({ trackId }) => trackId);
+
+    const data = await this.tracksService.getAllByIds(trackIds);
+    return { data, cursor: mappings.cursor };
   }
 
   @UseGuards(OauthGuard)
   @Mutation(() => TrackObject)
-  async addLibraryTrack(
+  async addMyTrack(
     @Args('trackId')
     trackId: string,
     @Auth()
@@ -42,13 +51,13 @@ export class LibraryTracksResolver {
       throw new TrackNotFoundException();
     }
 
-    await this.librariesService.addTrackIdByUserId(userId, trackId);
+    await this.userTrackMappingsService.create({ userId, trackId });
     return this.tracksService.getById(trackId);
   }
 
   @UseGuards(OauthGuard)
   @Mutation(() => TrackObject)
-  async removeLibraryTrack(
+  async removeMyTrack(
     @Args('trackId')
     trackId: string,
     @Auth()
@@ -59,13 +68,13 @@ export class LibraryTracksResolver {
       throw new TrackNotFoundException();
     }
 
-    await this.librariesService.removeTrackIdByUserId(userId, trackId);
+    await this.userTrackMappingsService.remove({ userId, trackId });
     return this.tracksService.getById(trackId);
   }
 
   @UseGuards(OauthGuard)
   @Mutation(() => TrackObject)
-  async moveLibraryTrack(
+  async moveMyTrack(
     @Args('trackId')
     trackId: string,
     @Args('position')
@@ -78,7 +87,7 @@ export class LibraryTracksResolver {
       throw new TrackNotFoundException();
     }
 
-    await this.librariesService.moveTrackByUserId(userId, trackId, position);
+    await this.userTrackMappingsService.move({ userId, trackId }, position);
     return this.tracksService.getById(trackId);
   }
 }

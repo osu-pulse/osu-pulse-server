@@ -12,7 +12,7 @@ import { TracksService } from '../services/tracks.service';
 import { TrackObject } from '../objects/track.object';
 import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
 import { TrackModel } from '../models/track.model';
-import { TracksWithCursorModel } from '../models/tracks-with-cursor.model';
+import { WithCursor } from '../types/with-cursor';
 import { AlreadyCachedException } from '../exceptions/already-cached.exception';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
@@ -37,8 +37,8 @@ export class TracksResolver {
     search: string | undefined,
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
-  ): Promise<TracksWithCursorModel> {
-    return this.tracksService.getAll(search, cursor);
+  ): Promise<WithCursor<TrackModel>> {
+    return this.tracksService.getAllBySearch(search, cursor);
   }
 
   @UseGuards(OauthGuard)

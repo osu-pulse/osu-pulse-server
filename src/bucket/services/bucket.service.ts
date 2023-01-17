@@ -48,7 +48,7 @@ export class BucketService implements OnModuleInit {
     try {
       await this.client.statObject(bucket, object);
       return true;
-    } catch {
+    } catch (e) {
       return false;
     }
   }
