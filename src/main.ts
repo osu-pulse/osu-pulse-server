@@ -8,7 +8,7 @@ import { setupLogger } from './core/helpers/logger';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  await setupDocs(app);
+  setupDocs(app);
   setupCors(app);
   setupLogger(app);
 

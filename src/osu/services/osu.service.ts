@@ -9,6 +9,7 @@ import { OsuBeatmap } from '../types/osu-beatmap';
 import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
 import { AccessTokenHolderService } from '../../auth/services/access-token-holder.service';
 import { Env } from '../../core/types/env';
+import { splitChunks } from '../../shared/helpers/array';
 
 @Injectable()
 export class OsuService implements OnModuleInit {
@@ -106,17 +107,23 @@ export class OsuService implements OnModuleInit {
 
   async getBeatmapsByIds(beatmapIds: string[]): Promise<OsuBeatmap[]> {
     try {
-      const { data } = await this.axiosOsuApi.get<{
-        beatmaps: OsuBeatmap[];
-      }>(`beatmaps`, {
-        headers: { Authorization: `Bearer ${this.token}` },
-        params: Object.fromEntries(
-          beatmapIds.map((id, i) => [`ids[${i}]`, Number(id)]),
+      const chunks = await Promise.all(
+        splitChunks(beatmapIds, 50).map((ids) =>
+          this.axiosOsuApi.get<{
+            beatmaps: OsuBeatmap[];
+          }>(`beatmaps`, {
+            headers: { Authorization: `Bearer ${this.token}` },
+            params: Object.fromEntries(
+              ids.map((id, i) => [`ids[${i}]`, Number(id)]),
+            ),
+          }),
         ),
-      });
+      );
+      const beatmaps = chunks.flatMap(({ data: { beatmaps } }) => beatmaps);
+
       return beatmapIds
         .map(Number)
-        .map((beatmapId) => data.beatmaps.find(({ id }) => id === beatmapId));
+        .map((beatmapId) => beatmaps.find(({ id }) => id === beatmapId));
     } catch (e) {
       const { message } = e as AxiosError;
       throw new OsuException(message);

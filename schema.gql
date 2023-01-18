@@ -56,18 +56,18 @@ type Device {
 }
 
 type Query {
-  health: Boolean!
   tracks(search: String, cursor: String): TracksWithCursor!
   track(trackId: String!): Track!
+  myTracks(cursor: String, limit: Float = 50): TracksWithCursor!
+  health: Boolean!
   devices: [Device!]!
-  libraryTracks(cursor: String): TracksWithCursor!
 }
 
 type Mutation {
   cacheTrack(trackId: String!): Track!
-  addLibraryTrack(trackId: String!): Track!
-  removeLibraryTrack(trackId: String!): Track!
-  moveLibraryTrack(trackId: String!, position: Float!): Track!
+  addMyTrack(trackId: String!): Track!
+  removeMyTrack(trackId: String!): Track!
+  moveMyTrack(trackId: String!, position: Float!): Track!
 }
 
 type Subscription {

@@ -1,21 +1,19 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
-import { RedocModule } from 'nestjs-redoc';
+import { ConfigService } from '@nestjs/config';
+import { Env } from '../types/env';
 
-export async function setupDocs(app: INestApplication) {
+const configService = new ConfigService<Env, true>();
+
+export function setupDocs(app: INestApplication) {
   const config = new DocumentBuilder()
     .setTitle('osu! Pulse')
     .setDescription('The multifunctional music player for osu')
     .setVersion('1.0')
-    .addServer('/api')
+    .addServer(configService.get('URL_API'))
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('/swagger', app, document, { explorer: true });
-  await RedocModule.setup('/redoc', app, document, {
-    logo: {
-      url: 'https://github.com/osu-pulse/.github/blob/main/assets/icon.png?raw=true',
-    },
-  });
+  SwaggerModule.setup('/', app, document, { explorer: true });
 }

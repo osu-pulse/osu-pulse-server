@@ -1,17 +1,18 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { LibraryTracksService } from '../services/library-tracks.service';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
-import { TrackObject } from '../../tracks/objects/track.object';
-import { TracksService } from '../../tracks/services/tracks.service';
-import { TracksWithCursorModel } from '../../tracks/models/tracks-with-cursor.model';
-import { TracksWithCursorObject } from '../../tracks/objects/tracks-with-cursor.object';
-import { TrackNotFoundException } from '../../tracks/exceptions/track-not-found.exception';
-import { TrackModel } from '../../tracks/models/track.model';
+import { TrackObject } from '../objects/track.object';
+import { TracksService } from '../services/tracks.service';
+import { TrackModel } from '../models/track.model';
+import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
+import { WithCursor } from '../../shared/types/with-cursor';
+import { TrackNotFoundException } from '../exceptions/track-not-found.exception';
+import { LibrariesService } from '../services/libraries.service';
+import { LibraryTracksService } from '../services/library-tracks.service';
 
 @Resolver(() => TrackObject)
-export class LibraryTracksResolver {
+export class MyTracksResolver {
   constructor(
     private librariesService: LibraryTracksService,
     private tracksService: TracksService,
@@ -19,19 +20,20 @@ export class LibraryTracksResolver {
 
   @UseGuards(OauthGuard)
   @Query(() => TracksWithCursorObject)
-  async libraryTracks(
+  async myTracks(
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
+    @Args('limit', { nullable: true, defaultValue: 50 })
+    limit: number | undefined,
     @Auth()
     userId: string,
-  ): Promise<TracksWithCursorModel> {
-    const { trackIds } = await this.librariesService.getByUserId(userId);
-    return this.tracksService.getAllByIds(trackIds, cursor);
+  ): Promise<WithCursor<TrackModel>> {
+    return this.librariesService.getAllTracksByUserId(userId, cursor, limit);
   }
 
   @UseGuards(OauthGuard)
   @Mutation(() => TrackObject)
-  async addLibraryTrack(
+  async addMyTrack(
     @Args('trackId')
     trackId: string,
     @Auth()
@@ -48,7 +50,7 @@ export class LibraryTracksResolver {
 
   @UseGuards(OauthGuard)
   @Mutation(() => TrackObject)
-  async removeLibraryTrack(
+  async removeMyTrack(
     @Args('trackId')
     trackId: string,
     @Auth()
@@ -65,7 +67,7 @@ export class LibraryTracksResolver {
 
   @UseGuards(OauthGuard)
   @Mutation(() => TrackObject)
-  async moveLibraryTrack(
+  async moveMyTrack(
     @Args('trackId')
     trackId: string,
     @Args('position')

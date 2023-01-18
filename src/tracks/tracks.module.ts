@@ -3,10 +3,12 @@ import { OsuModule } from '../osu/osu.module';
 import { TracksResolver } from './resolvers/tracks.resolver';
 import { TracksService } from './services/tracks.service';
 import { BucketModule } from '../bucket/bucket.module';
-import { TrackCachesService } from './services/track-caches.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { TrackCacheModel, TrackCacheSchema } from './models/track-cache.model';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MyTracksResolver } from './resolvers/my-tracks.resolver';
+import { LibraryModel, LibrarySchema } from './models/library.model';
+import { LibrariesService } from './services/libraries.service';
+import { LibraryTracksService } from './services/library-tracks.service';
 
 @Module({
   imports: [
@@ -14,10 +16,16 @@ import { ConfigModule } from '@nestjs/config';
     BucketModule,
     ConfigModule,
     MongooseModule.forFeature([
-      { name: TrackCacheModel.name, schema: TrackCacheSchema },
+      { name: LibraryModel.name, schema: LibrarySchema },
     ]),
   ],
-  providers: [TracksService, TrackCachesService, TracksResolver],
-  exports: [TracksService],
+  providers: [
+    TracksService,
+    LibrariesService,
+    LibraryTracksService,
+    TracksResolver,
+    MyTracksResolver,
+  ],
+  exports: [TracksService, LibrariesService],
 })
 export class TracksModule {}

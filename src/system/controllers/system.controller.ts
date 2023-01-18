@@ -1,6 +1,5 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { TokenSetDto } from '../../auth/dto/token-set.dto';
 
 @ApiTags('System')
 @Controller()

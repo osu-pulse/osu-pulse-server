@@ -18,10 +18,10 @@ export class LoggingExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     this.logger.error(exception);
 
-    if (host.getType<GqlContextType>() !== 'graphql') {
-      this.baseExceptionFilter.catch(exception, host);
-    } else {
+    if (host.getType<GqlContextType>() === 'graphql') {
       throw exception;
     }
+
+    this.baseExceptionFilter.catch(exception, host);
   }
 }
