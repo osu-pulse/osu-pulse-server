@@ -1,16 +1,16 @@
-import { TokenSetModel } from '../../../src/auth/models/token-set.model';
+import { TokenSet } from '../../../src/auth/types/token-set';
 import { tokenSetDtoConvertor } from '../../../src/auth/convertors/token-set-dto.convertor';
 import { OsuTokenSet } from '../../../src/osu/types/osu-token-set';
 
 describe('tokenSetDtoConvertor', () => {
   describe('fromTokenSetModel', () => {
     it('should transform token set model to token set dto', () => {
-      const tokenSetModel: TokenSetModel = {
+      const tokenSetModel: TokenSet = {
         accessToken: 'access',
         refreshToken: 'refresh',
       };
 
-      const tokenSetDto = tokenSetDtoConvertor.fromTokenSetModel(tokenSetModel);
+      const tokenSetDto = tokenSetDtoConvertor.fromTokenSet(tokenSetModel);
 
       expect(tokenSetDto).toStrictEqual({
         access_token: 'access',

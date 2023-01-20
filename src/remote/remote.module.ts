@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { RemoteGateway } from './gateways/remote.gateway';
-import { ClientsService } from './services/clients.service';
 import { AuthModule } from '../auth/auth.module';
 import { DevicesService } from './services/devices.service';
 import { RemoteControlService } from './services/remote-control.service';
@@ -11,7 +10,6 @@ import { DevicesSubService } from './services/devices-sub.service';
   imports: [AuthModule],
   providers: [
     RemoteGateway,
-    ClientsService,
     DevicesService,
     RemoteControlService,
     DevicesResolver,
