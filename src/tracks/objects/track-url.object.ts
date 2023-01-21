@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('TrackUrl')
+@ObjectType()
 export class TrackUrlObject {
   @Field(() => String)
   page: string;

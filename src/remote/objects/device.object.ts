@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { DeviceInfoObject } from './device-info.object';
 import { DeviceStatusObject } from './device-status.object';
 
-@ObjectType('Device')
+@ObjectType()
 export class DeviceObject {
   @Field(() => ID)
   deviceId: string;

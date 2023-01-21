@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { TrackObject } from './track.object';
 
-@ObjectType('TracksWithCursor')
+@ObjectType()
 export class TracksWithCursorObject {
   @Field(() => [TrackObject])
   data: TrackObject[];

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('TrackCover')
+@ObjectType()
 export class TrackCoverObject {
   @Field(() => String)
   small: string;

@@ -6,6 +6,7 @@ import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackModel } from '../models/track.model';
 import { cursorConvertor } from '../../shared/convertors/cursor.convertor';
 import { TracksService } from './tracks.service';
+import { CreateLibrary } from '../types/create-library';
 
 @Injectable()
 export class LibrariesService {
@@ -18,7 +19,7 @@ export class LibrariesService {
     return Boolean(await this.libraryModel.exists({ userId }).lean());
   }
 
-  async create(userId: string): Promise<LibraryModel> {
-    return this.libraryModel.create({ userId, trackIds: [] });
+  async create(payload: CreateLibrary): Promise<LibraryModel> {
+    return this.libraryModel.create({ ...payload, trackIds: [] });
   }
 }
