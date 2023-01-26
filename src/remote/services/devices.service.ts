@@ -2,21 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { DeviceModel } from '../models/device.model';
 import { DeviceInfoModel } from '../models/device-info.model';
 import { DeviceStatusModel } from '../models/device-status.model';
-import { DevicesSubService } from './devices-sub.service';
+import { DevicesSubscriptionService } from './devices-subscription.service';
 import { Socket } from 'socket.io';
-import { deviceIdConvertor } from '../../shared/convertors/device-id.convertor';
+import { deviceIdConvertor } from '../convertors/device-id.convertor';
+import { DevicesSocketService } from './devices-socket.service';
 
 type UserId = string;
 type DeviceId = string;
 
 @Injectable()
 export class DevicesService {
-  private clients: Map<DeviceId, Socket>;
   private users: Map<DeviceId, UserId>;
   private devices: Map<UserId, Map<DeviceId, DeviceModel>>;
 
-  constructor(private devicesSubService: DevicesSubService) {
-    this.clients = new Map();
+  constructor(
+    private devicesSubscriptionService: DevicesSubscriptionService,
+    private devicesSocketService: DevicesSocketService,
+  ) {
     this.users = new Map();
     this.devices = new Map();
   }
@@ -33,21 +35,17 @@ export class DevicesService {
     const deviceId = deviceIdConvertor.fromClientId(client.id);
 
     const userId = this.users.get(deviceId);
-    return this.devices.get(userId).get(deviceId);
-  }
-
-  getClientByDeviceId(deviceId: string): Socket {
-    return this.clients.get(deviceId);
+    return this.devices.get(userId)?.get(deviceId);
   }
 
   add(client: Socket, userId: string, info: DeviceInfoModel): void {
-    const deviceId = deviceIdConvertor.fromClientId(client.id);
+    this.devicesSocketService.addClient(client);
 
-    this.clients.set(deviceId, client);
+    const deviceId = deviceIdConvertor.fromClientId(client.id);
     this.users.set(deviceId, userId);
 
     const device: DeviceModel = {
-      deviceId,
+      id: deviceId,
       userId,
       info,
       status: {},
@@ -61,10 +59,10 @@ export class DevicesService {
   }
 
   remove(client: Socket): void {
-    const deviceId = deviceIdConvertor.fromClientId(client.id);
+    this.devicesSocketService.removeClient(client);
 
+    const deviceId = deviceIdConvertor.fromClientId(client.id);
     this.users.delete(deviceId);
-    this.clients.delete(deviceId);
 
     const userId = this.users.get(deviceId);
     this.devices.get(userId)?.delete(deviceId);
@@ -73,7 +71,7 @@ export class DevicesService {
     }
   }
 
-  async updateStatus(
+  async refreshStatus(
     deviceId: string,
     status: DeviceStatusModel,
   ): Promise<DeviceModel> {
@@ -82,7 +80,30 @@ export class DevicesService {
     const updatedDevice: DeviceModel = { ...device, status };
     this.devices.get(userId).set(deviceId, updatedDevice);
 
-    await this.devicesSubService.publish('deviceStatusUpdated', updatedDevice);
+    await this.devicesSubscriptionService.publish(
+      'deviceStatusUpdated',
+      updatedDevice,
+    );
+
+    return updatedDevice;
+  }
+
+  async setStatus(
+    deviceId: string,
+    status: DeviceStatusModel,
+  ): Promise<DeviceModel> {
+    const userId = this.users.get(deviceId);
+    const device = this.devices.get(userId).get(deviceId);
+    const updatedDevice: DeviceModel = { ...device, status };
+    this.devices.get(userId).set(deviceId, updatedDevice);
+
+    const clientId = deviceIdConvertor.toClientId(deviceId);
+    await this.devicesSocketService.emit(clientId, 'SET_DEVICE_STATUS', status);
+
+    await this.devicesSubscriptionService.publish(
+      'deviceStatusUpdated',
+      updatedDevice,
+    );
 
     return updatedDevice;
   }

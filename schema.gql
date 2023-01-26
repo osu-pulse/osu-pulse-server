@@ -2,34 +2,34 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type TrackCover {
+type TrackCoverObject {
   small: String!
   normal: String!
 }
 
-type TrackUrl {
+type TrackUrlObject {
   page: String!
   file: String!
   audio: String!
 }
 
-type Track {
-  id: String!
+type TrackObject {
+  id: ID!
   title: String!
   artist: String!
   played: Float!
   liked: Float!
-  cover: TrackCover!
-  url: TrackUrl!
+  cover: TrackCoverObject!
+  url: TrackUrlObject!
   cached: Boolean!
 }
 
-type TracksWithCursor {
-  data: [Track!]!
+type TracksWithCursorObject {
+  data: [TrackObject!]!
   cursor: String
 }
 
-type DeviceInfo {
+type DeviceInfoObject {
   type: DeviceType!
   device: String!
   client: String!
@@ -41,35 +41,65 @@ enum DeviceType {
   OTHER
 }
 
-type DeviceStatus {
+type DeviceStatusObject {
   playing: Boolean
   volume: Float
   progress: Float
   trackId: String
 }
 
-type Device {
-  deviceId: ID!
+type DeviceObject {
+  id: ID!
   userId: String!
-  info: DeviceInfo!
-  status: DeviceStatus!
+  info: DeviceInfoObject!
+  status: DeviceStatusObject!
+}
+
+type PlaylistObject {
+  id: ID!
+  title: String!
+  public: String!
+  cover: String
+  userId: String!
+  trackIds: [String!]!
+  tracks: [TrackObject!]!
 }
 
 type Query {
-  tracks(search: String, cursor: String): TracksWithCursor!
-  track(trackId: String!): Track!
-  myTracks(cursor: String, limit: Float = 50): TracksWithCursor!
+  tracks(search: String, cursor: String): TracksWithCursorObject!
+  track(trackId: String!): TrackObject!
+  myTracks(cursor: String, limit: Float = 50): TracksWithCursorObject!
   health: Boolean!
-  devices: [Device!]!
+  devices: [DeviceObject!]!
+  publicPlaylists(search: String): [PlaylistObject!]!
+  publicPlaylist(playlistId: String!): PlaylistObject!
+  myPlaylists(search: String): [PlaylistObject!]!
+  myPlaylist(playlistId: String!): PlaylistObject!
 }
 
 type Mutation {
-  cacheTrack(trackId: String!): Track!
-  addMyTrack(trackId: String!): Track!
-  removeMyTrack(trackId: String!): Track!
-  moveMyTrack(trackId: String!, position: Float!): Track!
+  cacheTrack(trackId: String!): TrackObject!
+  addMyTrack(trackId: String!): TrackObject!
+  removeMyTrack(trackId: String!): TrackObject!
+  moveMyTrack(trackId: String!, position: Float!): TrackObject!
+  copyPlaylist(playlistId: String!): PlaylistObject!
+  createMyPlaylist(payload: CreatePlaylistInput!): PlaylistObject!
+  updateMyPlaylist(playlistId: String!, payload: UpdatePlaylistInput!): PlaylistObject!
+  deleteMyPlaylist(playlistId: String!): PlaylistObject!
+}
+
+input CreatePlaylistInput {
+  title: String!
+  public: String!
+  cover: String
+}
+
+input UpdatePlaylistInput {
+  title: String
+  public: String
+  cover: String
 }
 
 type Subscription {
-  deviceStatusUpdated: Device!
+  deviceStatusUpdated: DeviceObject!
 }

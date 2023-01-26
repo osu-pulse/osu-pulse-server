@@ -13,7 +13,6 @@ import { AuthService } from '../../auth/services/auth.service';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
-import { RemoteControlService } from '../services/remote-control.service';
 import { NotConnectedException } from '../exceptions/not-connected.exception';
 import { ConfigService } from '@nestjs/config';
 import { Env } from '../../core/types/env';
@@ -29,7 +28,6 @@ const configService = new ConfigService<Env, true>();
 export class RemoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private devicesService: DevicesService,
-    private remoteControlService: RemoteControlService,
     private authService: AuthService,
   ) {}
 
@@ -72,17 +70,21 @@ export class RemoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new NotConnectedException();
     }
 
-    await this.remoteControlService.setDeviceStatus(data.deviceId, data.status);
+    await this.devicesService.setStatus(data.deviceId, data.status);
   }
 
   @SubscribeMessage('REFRESH_DEVICE_STATUS')
   @UseGuards(OauthGuard)
   async refreshDeviceStatus(
-    @MessageBody() data: DeviceStatusDto,
+    @MessageBody() payload: DeviceStatusDto,
     @Auth() userId: string,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    const { deviceId } = this.devicesService.getByClient(client);
-    await this.remoteControlService.setDeviceStatus(deviceId, data);
+    const device = this.devicesService.getByClient(client);
+    if (!device) {
+      throw new NotConnectedException();
+    }
+
+    await this.devicesService.refreshStatus(device.id, payload);
   }
 }

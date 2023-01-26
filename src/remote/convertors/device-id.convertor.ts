@@ -1,8 +1,8 @@
 export const deviceIdConvertor = {
   fromClientId(value: string): string {
-    return Buffer.from(value, 'utf-8').toString('hex');
+    return btoa(value);
   },
   toClientId(value: string): string {
-    return Buffer.from(value, 'hex').toString('utf-8');
+    return atob(value);
   },
 };

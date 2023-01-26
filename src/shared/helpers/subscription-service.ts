@@ -1,6 +1,6 @@
 import { PubSub } from 'graphql-subscriptions';
 
-export abstract class SubService<
+export abstract class SubscriptionService<
   E extends (trigger: any, payload: any) => void,
 > {
   protected constructor(private pubSub: PubSub) {}

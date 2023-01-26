@@ -5,7 +5,7 @@ import { DeviceStatusObject } from './device-status.object';
 @ObjectType()
 export class DeviceObject {
   @Field(() => ID)
-  deviceId: string;
+  id: string;
 
   @Field(() => String)
   userId: string;

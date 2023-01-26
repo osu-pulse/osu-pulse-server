@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { TrackCoverObject } from './track-cover.object';
 import { TrackUrlObject } from './track-url.object';
 
 @ObjectType()
 export class TrackObject {
-  @Field(() => String)
+  @Field(() => ID)
   id: string;
 
   @Field(() => String)

@@ -68,7 +68,10 @@ export class LibraryTracksService {
     trackId: string,
     position: number,
   ): Promise<void> {
-    let { trackIds } = await this.libraryModel.findOne({ userId }).lean();
+    let { trackIds } = await this.libraryModel
+      .findOne({ userId })
+      .select('trackIds')
+      .lean();
     trackIds = trackIds.filter((id) => id !== trackId);
     trackIds.splice(position, 0, trackId);
 
