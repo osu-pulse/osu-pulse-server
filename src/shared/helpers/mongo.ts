@@ -1,4 +1,9 @@
-import { Connection } from 'mongoose';
+import {
+  Connection,
+  FilterQuery,
+  RootQuerySelector,
+  SortOrder,
+} from 'mongoose';
 import { MaybePromise } from '../types/maybe-promise';
 
 export async function withTransaction<T>(
@@ -19,4 +24,20 @@ export async function withTransaction<T>(
   } finally {
     await session.endSession();
   }
+}
+
+export function searchFilter<M extends Record<string, any>>(
+  search: string | undefined,
+  fields: (keyof M)[],
+): RootQuerySelector<M> | undefined {
+  return search !== '' && search != null
+    ? {
+        $or: fields.map(
+          (field) =>
+            ({
+              [field]: { $regex: new RegExp(`.*${search}.*`, 'i') },
+            } as FilterQuery<keyof M>),
+        ),
+      }
+    : undefined;
 }

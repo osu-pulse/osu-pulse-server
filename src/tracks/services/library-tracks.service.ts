@@ -6,6 +6,7 @@ import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackModel } from '../models/track.model';
 import { cursorConvertor } from '../../shared/convertors/cursor.convertor';
 import { TracksService } from './tracks.service';
+import { sliceArrayByCursor } from '../../shared/helpers/cursor';
 
 @Injectable()
 export class LibraryTracksService {
@@ -17,22 +18,16 @@ export class LibraryTracksService {
 
   async getAllTracksByUserId(
     userId: string,
+    limit: number,
     cursor?: string,
-    limit?: number,
   ): Promise<WithCursor<TrackModel>> {
     const { trackIds } = await this.libraryModel
       .findOne({ userId })
       .select('trackIds')
-      .lean({ virtuals: true });
+      .lean();
 
-    const cursorId = cursor && cursorConvertor.toString(cursor);
-    const cursorIndex = trackIds.findIndex((id) => id === cursorId);
-    const chunkTrackIds = trackIds.slice(
-      cursorIndex + 1,
-      cursorIndex + 1 + limit,
-    );
-
-    const data = await this.tracksService.getAllByIds(chunkTrackIds);
+    const trackIdsSlice = sliceArrayByCursor(trackIds, limit, cursor);
+    const data = await this.tracksService.getAllByIds(trackIdsSlice);
 
     const newCursorId = data.at(-1)?.id;
     const newCursor = newCursorId && cursorConvertor.fromString(newCursorId);
@@ -63,12 +58,15 @@ export class LibraryTracksService {
     );
   }
 
-  async moveTrackByUserId(
+  async moveTrackIdByUserId(
     userId: string,
     trackId: string,
     position: number,
   ): Promise<void> {
-    let { trackIds } = await this.libraryModel.findOne({ userId }).lean();
+    let { trackIds } = await this.libraryModel
+      .findOne({ userId })
+      .select('trackIds')
+      .lean();
     trackIds = trackIds.filter((id) => id !== trackId);
     trackIds.splice(position, 0, trackId);
 

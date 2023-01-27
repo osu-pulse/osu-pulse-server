@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('TrackUrl')
+@ObjectType()
 export class TrackUrlObject {
   @Field(() => String)
   page: string;
@@ -8,6 +8,6 @@ export class TrackUrlObject {
   @Field(() => String)
   file: string;
 
-  @Field(() => String)
-  audio: string;
+  @Field(() => String, { nullable: true })
+  audio?: string;
 }

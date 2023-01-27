@@ -1,3 +1,4 @@
 export enum BucketName {
-  TRACKS = 'tracks',
+  TRACK_CACHES = 'track-caches',
+  PLAYLIST_COVERS = 'playlist-covers',
 }

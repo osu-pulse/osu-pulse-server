@@ -5,13 +5,13 @@ import { DeviceObject } from '../objects/device.object';
 import { Auth } from '../../auth/decorators/auth.decorator';
 import { DeviceModel } from '../models/device.model';
 import { DevicesService } from '../services/devices.service';
-import { DevicesSubService } from '../services/devices-sub.service';
+import { DevicesSubscriptionService } from '../services/devices-subscription.service';
 
 @Resolver(() => DeviceObject)
 export class DevicesResolver {
   constructor(
     private devicesService: DevicesService,
-    private devicesSubService: DevicesSubService,
+    private devicesSubService: DevicesSubscriptionService,
   ) {}
 
   @UseGuards(OauthGuard)

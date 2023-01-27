@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('DeviceStatus')
+@ObjectType()
 export class DeviceStatusObject {
   @Field(() => Boolean, { nullable: true })
   playing?: boolean;

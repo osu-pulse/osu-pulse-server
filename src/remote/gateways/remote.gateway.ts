@@ -7,18 +7,17 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { ClientsService } from '../services/clients.service';
 import { userAgentConvertor } from '../convertors/user-agent.convertor';
 import { DevicesService } from '../services/devices.service';
 import { AuthService } from '../../auth/services/auth.service';
-import { DeviceTargetCommand } from '../constants/device-target-command';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
-import { RemoteControlService } from '../services/remote-control.service';
 import { NotConnectedException } from '../exceptions/not-connected.exception';
 import { ConfigService } from '@nestjs/config';
 import { Env } from '../../core/types/env';
+import { SetDeviceStatusDto } from '../dto/set-device-status.dto';
+import { DeviceStatusDto } from '../dto/device-status.dto';
 
 const configService = new ConfigService<Env, true>();
 
@@ -28,9 +27,7 @@ const configService = new ConfigService<Env, true>();
 })
 export class RemoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    private clientsService: ClientsService,
     private devicesService: DevicesService,
-    private remoteControlService: RemoteControlService,
     private authService: AuthService,
   ) {}
 
@@ -52,31 +49,42 @@ export class RemoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userAgent = headers['user-agent'];
     const deviceInfo = userAgentConvertor.toDeviceInfoModel(userAgent);
 
-    this.clientsService.add(client);
-    this.devicesService.add(userId, client.id, deviceInfo);
+    this.devicesService.add(client, userId, deviceInfo);
   }
 
   async handleDisconnect(@ConnectedSocket() client: Socket) {
-    if (this.clientsService.has(client.id)) {
-      this.clientsService.remove(client.id);
-      this.devicesService.remove(client.id);
-    }
+    this.devicesService.remove(client);
   }
 
-  @SubscribeMessage('command')
+  @SubscribeMessage('SET_DEVICE_STATUS')
   @UseGuards(OauthGuard)
-  async command(
-    @MessageBody() data: DeviceTargetCommand,
+  async setDeviceStatus(
+    @MessageBody() data: SetDeviceStatusDto,
     @Auth() userId: string,
   ): Promise<void> {
-    const deviceValid = this.devicesService.existsByUserIdAndDeviceId(
+    const deviceConnected = this.devicesService.existsByUserIdAndDeviceId(
       userId,
-      data.target,
+      data.deviceId,
     );
-    if (!deviceValid) {
+    if (!deviceConnected) {
       throw new NotConnectedException();
     }
 
-    await this.remoteControlService.sendCommand(data);
+    await this.devicesService.setStatus(data.deviceId, data.status);
+  }
+
+  @SubscribeMessage('REFRESH_DEVICE_STATUS')
+  @UseGuards(OauthGuard)
+  async refreshDeviceStatus(
+    @MessageBody() payload: DeviceStatusDto,
+    @Auth() userId: string,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    const device = this.devicesService.getByClient(client);
+    if (!device) {
+      throw new NotConnectedException();
+    }
+
+    await this.devicesService.refreshStatus(device.id, payload);
   }
 }
