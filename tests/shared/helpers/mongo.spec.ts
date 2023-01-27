@@ -1,4 +1,4 @@
-import { searchFilter } from 'src/shared/helpers/mongo';
+import { searchFilter } from '../../../src/shared/helpers/mongo';
 
 interface Model {
   firstName: string;
