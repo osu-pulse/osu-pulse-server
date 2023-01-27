@@ -51,7 +51,7 @@ export class OsuService implements OnModuleInit {
 
   async existsBeatmapById(beatmapId): Promise<boolean> {
     try {
-      await this.axiosOsuApi(`beatmaps/${beatmapId}`, {
+      await this.axiosOsuApi.head(`beatmaps/${beatmapId}`, {
         headers: { Authorization: `Bearer ${this.token}` },
       });
       return true;
