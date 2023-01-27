@@ -11,6 +11,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiNoContentResponse,
   ApiOperation,
   ApiTags,
@@ -19,6 +21,7 @@ import { PlaylistsService } from '../services/playlists.service';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
 import { PlaylistNotFoundException } from '../exceptions/playlist-not-found.exception';
+import { FileUploadDto } from '../../shared/dto/file-upload.dto';
 
 @ApiTags('Playlists')
 @Controller()
@@ -28,12 +31,16 @@ export class PlaylistsController {
   @ApiOperation({
     summary: 'Set playlist cover',
   })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: FileUploadDto,
+  })
   @ApiNoContentResponse({
     description: 'Cover has been successfully set',
   })
   @ApiBearerAuth()
   @UseGuards(OauthGuard)
-  @UseInterceptors(FileInterceptor('photo'))
+  @UseInterceptors(FileInterceptor('file'))
   @Put('/playlists/:playlistId/cover')
   @HttpCode(HttpStatus.NO_CONTENT)
   async setCover(

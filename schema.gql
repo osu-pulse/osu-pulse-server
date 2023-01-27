@@ -10,7 +10,7 @@ type TrackCoverObject {
 type TrackUrlObject {
   page: String!
   file: String!
-  audio: String!
+  audio: String
 }
 
 type TrackObject {
@@ -21,7 +21,6 @@ type TrackObject {
   liked: Float!
   cover: TrackCoverObject!
   url: TrackUrlObject!
-  cached: Boolean!
 }
 
 type TracksWithCursorObject {
@@ -62,7 +61,7 @@ type PlaylistObject {
   cover: String
   userId: String!
   trackIds: [String!]!
-  tracks: [TrackObject!]!
+  tracks(cursor: String, limit: Float = 50): TracksWithCursorObject!
 }
 
 type Query {
@@ -75,6 +74,7 @@ type Query {
   publicPlaylist(playlistId: String!): PlaylistObject!
   myPlaylists(search: String): [PlaylistObject!]!
   myPlaylist(playlistId: String!): PlaylistObject!
+  playlistTracks(playlistId: String!, cursor: String, limit: Float = 50): TracksWithCursorObject!
 }
 
 type Mutation {
@@ -86,18 +86,19 @@ type Mutation {
   createMyPlaylist(payload: CreatePlaylistInput!): PlaylistObject!
   updateMyPlaylist(playlistId: String!, payload: UpdatePlaylistInput!): PlaylistObject!
   deleteMyPlaylist(playlistId: String!): PlaylistObject!
+  addPlaylistTrack(playlistId: String!, trackId: String!): TrackObject!
+  removePlaylistTrack(playlistId: String!, trackId: String!): TrackObject!
+  movePlaylistTrack(playlistId: String!, trackId: String!, position: Float!): TrackObject!
 }
 
 input CreatePlaylistInput {
   title: String!
   public: String!
-  cover: String
 }
 
 input UpdatePlaylistInput {
   title: String
   public: String
-  cover: String
 }
 
 type Subscription {

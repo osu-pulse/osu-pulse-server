@@ -56,6 +56,12 @@ export class PlaylistsResolver {
     @Args('playlistId') playlistId: string,
     @Auth() userId: string,
   ): Promise<PlaylistModel> {
+    const playlistExists =
+      await this.playlistsService.existsPublicOrUserIdAndId(userId, playlistId);
+    if (!playlistExists) {
+      throw new PlaylistNotFoundException();
+    }
+
     return this.playlistsService.copy(playlistId, userId);
   }
 
