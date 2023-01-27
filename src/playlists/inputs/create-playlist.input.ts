@@ -7,7 +7,4 @@ export class CreatePlaylistInput {
 
   @Field(() => String)
   public: string;
-
-  @Field(() => String, { nullable: true })
-  cover?: string;
 }

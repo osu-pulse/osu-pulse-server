@@ -70,9 +70,10 @@ export class TracksResolver {
   @ResolveField(() => TrackUrlObject)
   async url(@Parent() track: TrackModel): Promise<TrackUrlModel> {
     const minioUrl = this.configService.get('URL_MINIO');
-    const bucket = BucketName.TRACKS;
+    const bucket = BucketName.TRACK_CACHES;
 
-    const audio = (await this.tracksService.isCached(track.id))
+    const isCached = await this.tracksService.isCached(track.id);
+    const audio = isCached
       ? `${minioUrl}/${bucket}/${track.beatmapSetId}`
       : undefined;
 

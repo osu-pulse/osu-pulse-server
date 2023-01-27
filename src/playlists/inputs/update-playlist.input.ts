@@ -7,7 +7,4 @@ export class UpdatePlaylistInput {
 
   @Field(() => String, { nullable: true })
   public?: string;
-
-  @Field(() => String, { nullable: true })
-  cover?: string;
 }

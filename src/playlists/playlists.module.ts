@@ -5,7 +5,10 @@ import { PlaylistModel, PlaylistSchema } from './models/playlist.model';
 import { PlaylistsService } from './services/playlists.service';
 import { PlaylistsResolver } from './resolvers/playlists.resolver';
 import { MyPlaylistsResolver } from './resolvers/my-playlists.resolver';
-// TODO: Add endpoint to download cover
+import { PlaylistTracksResolver } from './resolvers/playlist-tracks.resolver';
+import { PlaylistTracksService } from './services/playlist-tracks.service';
+import { PlaylistsController } from './controllers/playlists.controller';
+
 @Module({
   imports: [
     ConfigModule,
@@ -13,7 +16,14 @@ import { MyPlaylistsResolver } from './resolvers/my-playlists.resolver';
       { name: PlaylistModel.name, schema: PlaylistSchema },
     ]),
   ],
-  providers: [PlaylistsService, PlaylistsResolver, MyPlaylistsResolver],
-  exports: [PlaylistsService],
+  providers: [
+    PlaylistsService,
+    PlaylistTracksService,
+    PlaylistsResolver,
+    MyPlaylistsResolver,
+    PlaylistTracksResolver,
+  ],
+  controllers: [PlaylistsController],
+  exports: [PlaylistsService, PlaylistTracksService],
 })
 export class PlaylistsModule {}

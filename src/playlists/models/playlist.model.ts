@@ -13,9 +13,6 @@ export class PlaylistModel extends BaseModel {
   @Prop({ required: true })
   public: boolean;
 
-  @Prop()
-  cover?: string;
-
   @Prop({ required: true, immutable: true, unique: true })
   userId: string;
 

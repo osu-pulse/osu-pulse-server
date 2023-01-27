@@ -29,7 +29,6 @@ import { plainToInstance } from 'class-transformer';
 import { Env } from '../../core/types/env';
 import { AuthService } from '../services/auth.service';
 import { parseJwt } from '../helpers/jwt';
-import { use } from 'passport';
 
 @ApiTags('Authorization')
 @Controller('oauth')
