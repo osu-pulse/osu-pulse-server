@@ -6,6 +6,4 @@ export enum DeviceType {
   OTHER = 'OTHER',
 }
 
-registerEnumType(DeviceType, {
-  name: 'DeviceType',
-});
+registerEnumType(DeviceType, { name: 'DeviceType' });

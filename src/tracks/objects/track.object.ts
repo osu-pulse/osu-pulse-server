@@ -1,10 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { TrackCoverObject } from './track-cover.object';
 import { TrackUrlObject } from './track-url.object';
+import { TrackCoverModel } from '../models/track-cover.model';
+import { TrackUrlModel } from '../models/track-url.model';
 
-@ObjectType('Track')
+@ObjectType()
 export class TrackObject {
-  @Field(() => String)
+  @Field(() => ID)
   id: string;
 
   @Field(() => String)
@@ -20,11 +22,8 @@ export class TrackObject {
   liked: number;
 
   @Field(() => TrackCoverObject)
-  cover: TrackCoverObject;
+  cover: TrackCoverModel;
 
   @Field(() => TrackUrlObject)
-  url: TrackUrlObject;
-
-  @Field(() => Boolean)
-  cached: boolean;
+  url: TrackUrlModel;
 }

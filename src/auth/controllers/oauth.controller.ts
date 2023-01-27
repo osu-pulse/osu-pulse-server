@@ -21,7 +21,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { OsuAuthService } from '../../osu/services/osu-auth.service';
-import { TokenSetModel } from '../models/token-set.model';
+import { TokenSet } from '../types/token-set';
 import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
@@ -29,7 +29,6 @@ import { plainToInstance } from 'class-transformer';
 import { Env } from '../../core/types/env';
 import { AuthService } from '../services/auth.service';
 import { parseJwt } from '../helpers/jwt';
-import { use } from 'passport';
 
 @ApiTags('Authorization')
 @Controller('oauth')
@@ -65,16 +64,16 @@ export class OauthController {
   @Get('callback')
   async callback(
     @Res() res: Response,
-    @Auth() tokenSet: TokenSetModel,
+    @Auth() tokenSet: TokenSet,
   ): Promise<void> {
-    const query = tokenSetDtoConvertor.fromTokenSetModel(tokenSet);
+    const query = tokenSetDtoConvertor.fromTokenSet(tokenSet);
     const queryString = new URLSearchParams(query as any);
 
     const userId = parseJwt(tokenSet.accessToken).sub;
     await this.authService.registerUser(userId);
 
     return res.redirect(
-      302,
+      HttpStatus.TEMPORARY_REDIRECT,
       this.configService.get('URL_WEB_CLIENT') + '?' + queryString,
     );
   }
@@ -103,14 +102,14 @@ export class OauthController {
     );
 
     if (!tokenSet) {
-      return res.status(401);
+      return res.status(HttpStatus.UNAUTHORIZED);
     } else {
-      const dto = plainToInstance(
+      const tokenSetDto = plainToInstance(
         TokenSetDto,
         tokenSetDtoConvertor.fromOsuTokenSet(tokenSet),
       );
 
-      return res.status(200).send(dto);
+      return res.status(HttpStatus.OK).send(tokenSetDto);
     }
   }
 }
