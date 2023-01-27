@@ -43,14 +43,14 @@ export class TracksService {
   }
 
   async isCached(trackId: string): Promise<boolean> {
-    return this.bucketService.exists(BucketName.TRACKS, trackId);
+    return this.bucketService.exists(BucketName.TRACK_CACHES, trackId);
   }
 
   async cache(trackId: string): Promise<void> {
     const track = await this.getById(trackId);
     const file = await this.kitsuService.getFile(track.beatmapSetId);
     await this.bucketService.create(
-      BucketName.TRACKS,
+      BucketName.TRACK_CACHES,
       track.id,
       file,
       AudioFileType.MP3,

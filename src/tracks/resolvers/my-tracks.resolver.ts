@@ -8,13 +8,12 @@ import { TrackModel } from '../models/track.model';
 import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
 import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackNotFoundException } from '../exceptions/track-not-found.exception';
-import { LibrariesService } from '../services/libraries.service';
 import { LibraryTracksService } from '../services/library-tracks.service';
 
 @Resolver(() => TrackObject)
 export class MyTracksResolver {
   constructor(
-    private librariesService: LibraryTracksService,
+    private libraryTracksService: LibraryTracksService,
     private tracksService: TracksService,
   ) {}
 
@@ -24,11 +23,15 @@ export class MyTracksResolver {
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
     @Args('limit', { nullable: true, defaultValue: 50 })
-    limit: number | undefined,
+    limit: number,
     @Auth()
     userId: string,
   ): Promise<WithCursor<TrackModel>> {
-    return this.librariesService.getAllTracksByUserId(userId, cursor, limit);
+    return this.libraryTracksService.getAllTracksByUserId(
+      userId,
+      limit,
+      cursor,
+    );
   }
 
   @UseGuards(OauthGuard)
@@ -44,7 +47,7 @@ export class MyTracksResolver {
       throw new TrackNotFoundException();
     }
 
-    await this.librariesService.addTrackIdByUserId(userId, trackId);
+    await this.libraryTracksService.addTrackIdByUserId(userId, trackId);
     return this.tracksService.getById(trackId);
   }
 
@@ -61,7 +64,7 @@ export class MyTracksResolver {
       throw new TrackNotFoundException();
     }
 
-    await this.librariesService.removeTrackIdByUserId(userId, trackId);
+    await this.libraryTracksService.removeTrackIdByUserId(userId, trackId);
     return this.tracksService.getById(trackId);
   }
 
@@ -80,7 +83,11 @@ export class MyTracksResolver {
       throw new TrackNotFoundException();
     }
 
-    await this.librariesService.moveTrackByUserId(userId, trackId, position);
+    await this.libraryTracksService.moveTrackIdByUserId(
+      userId,
+      trackId,
+      position,
+    );
     return this.tracksService.getById(trackId);
   }
 }

@@ -24,7 +24,7 @@ describe('setupLogger', () => {
   });
 
   it('should enable all log levels if debug is enabled', () => {
-    jest.spyOn(configService, 'get').mockImplementation((key) =>
+    jest.spyOn(ConfigService.prototype, 'get').mockImplementation((key) =>
       switchAssign(key, {
         DEBUG: true,
       }),

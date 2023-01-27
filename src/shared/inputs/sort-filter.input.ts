@@ -1,17 +1,17 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEnum, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
-import { OrderTypeDto } from './order-type.dto';
+import { SortOrderType } from '../constants/sort-order-type';
 
-@InputType('SortFilter')
-export class SortFilterDto {
+@InputType()
+export class SortFilterInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsNotEmpty()
   @MaxLength(50)
   field?: string;
 
-  @Field(() => OrderTypeDto, { nullable: true })
+  @Field(() => SortOrderType, { nullable: true })
   @IsOptional()
-  @IsEnum(OrderTypeDto)
-  order?: OrderTypeDto;
+  @IsEnum(SortOrderType)
+  order?: SortOrderType;
 }

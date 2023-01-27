@@ -3,7 +3,8 @@ export enum AudioFileType {
 }
 
 export enum ImageFileType {
-  JPG = 'image/jpeg',
+  JPEG = 'image/jpeg',
+  WEBP = 'image/webp',
 }
 
 export enum TextFileType {

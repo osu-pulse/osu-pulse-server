@@ -24,7 +24,7 @@ export class AuthService {
   async registerUser(userId: string): Promise<void> {
     const libraryExists = await this.librariesService.existsByUserId(userId);
     if (!libraryExists) {
-      await this.librariesService.create(userId);
+      await this.librariesService.create({ userId });
     }
   }
 }
