@@ -22,11 +22,13 @@ import { ConfigService } from '@nestjs/config';
 import { BucketName } from '../../bucket/constants/bucket-name';
 import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
 import { Env } from '../../core/types/env';
+import { BucketService } from '../../bucket/services/bucket.service';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
   constructor(
     private tracksService: TracksService,
+    private bucketService: BucketService,
     private configService: ConfigService<Env, true>,
   ) {}
 
@@ -70,15 +72,14 @@ export class TracksResolver {
     const minioUrl = this.configService.get('URL_MINIO');
     const bucket = BucketName.TRACKS;
 
+    const audio = (await this.tracksService.isCached(track.id))
+      ? `${minioUrl}/${bucket}/${track.beatmapSetId}`
+      : undefined;
+
     return {
+      audio,
       page: `${osuOauthUrl}/beatmapsets/${track.beatmapSetId}`,
       file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
-      audio: `${minioUrl}/${bucket}/${track.beatmapSetId}`,
     };
-  }
-
-  @ResolveField(() => Boolean)
-  async cached(@Parent() track: TrackModel): Promise<boolean> {
-    return this.tracksService.isCached(track.id);
   }
 }

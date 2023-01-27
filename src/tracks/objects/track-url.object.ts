@@ -8,6 +8,6 @@ export class TrackUrlObject {
   @Field(() => String)
   file: string;
 
-  @Field(() => String)
-  audio: string;
+  @Field(() => String, { nullable: true })
+  audio?: string;
 }
