@@ -7,8 +7,4 @@ export interface OsuBeatmapSet {
   beatmaps: Omit<OsuBeatmap, 'beatmapset'>[];
   favourite_count: number;
   play_count: number;
-  covers: {
-    list: string;
-    'list@2x': string;
-  };
 }

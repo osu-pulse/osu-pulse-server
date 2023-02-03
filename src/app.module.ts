@@ -6,6 +6,7 @@ import { TracksModule } from './tracks/tracks.module';
 import { AuthModule } from './auth/auth.module';
 import { RemoteModule } from './remote/remote.module';
 import { PlaylistsModule } from './playlists/playlists.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PlaylistsModule } from './playlists/playlists.module';
     TracksModule,
     RemoteModule,
     PlaylistsModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

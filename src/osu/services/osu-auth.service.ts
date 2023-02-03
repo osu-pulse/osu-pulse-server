@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError, AxiosInstance } from 'axios';
 import { AXIOS_OSU_API, AXIOS_OSU_OAUTH } from '../constants/injections';
@@ -7,7 +7,11 @@ import { OsuException } from '../exceptions/osu.exception';
 import { Env } from '../../core/types/env';
 
 @Injectable()
-export class OsuAuthService {
+export class OsuAuthService implements OnModuleInit {
+  private readonly logger = new Logger(OsuAuthService.name);
+  private readonly offset = 10;
+  private token: string;
+
   constructor(
     private configService: ConfigService<Env, true>,
     @Inject(AXIOS_OSU_OAUTH)
@@ -15,6 +19,34 @@ export class OsuAuthService {
     @Inject(AXIOS_OSU_API)
     private axiosOsuApi: AxiosInstance,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    await this.login();
+  }
+
+  private async login(): Promise<void> {
+    try {
+      const response = await this.getTokenByClientCredentials(
+        this.configService.get('OSU_CLIENT_ID'),
+        this.configService.get('OSU_CLIENT_SECRET'),
+      );
+
+      this.logger.verbose(`Access token received: ${response.access_token}`);
+
+      this.token = response.access_token;
+      setTimeout(
+        () => this.login(),
+        (response.expires_in - this.offset) * 1000,
+      );
+    } catch (e) {
+      this.logger.error(e);
+      setTimeout(() => this.login(), this.offset * 1000);
+    }
+  }
+
+  getToken(): string {
+    return this.token;
+  }
 
   async validateToken(token: string): Promise<boolean> {
     try {

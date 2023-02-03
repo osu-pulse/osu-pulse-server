@@ -12,47 +12,18 @@ import { Env } from '../../core/types/env';
 import { splitChunks } from '../../shared/helpers/array';
 
 @Injectable()
-export class OsuService implements OnModuleInit {
-  private readonly logger = new Logger(OsuService.name);
-  private readonly offset = 10;
-  private token: string;
-
+export class OsuBeatmapsService {
   constructor(
-    private configService: ConfigService<Env, true>,
     private osuAuthService: OsuAuthService,
-    private accessTokenHolderService: AccessTokenHolderService,
     @Inject(AXIOS_OSU_API)
     private axiosOsuApi: AxiosInstance,
   ) {}
 
-  async onModuleInit(): Promise<void> {
-    await this.login();
-  }
-
-  private async login(): Promise<void> {
-    try {
-      const response = await this.osuAuthService.getTokenByClientCredentials(
-        this.configService.get('OSU_CLIENT_ID'),
-        this.configService.get('OSU_CLIENT_SECRET'),
-      );
-
-      this.logger.verbose(`Access token received: ${response.access_token}`);
-
-      this.token = response.access_token;
-      setTimeout(
-        () => this.login(),
-        (response.expires_in - this.offset) * 1000,
-      );
-    } catch (e) {
-      this.logger.error(e);
-      setTimeout(() => this.login(), this.offset * 1000);
-    }
-  }
-
   async existsBeatmapById(beatmapId): Promise<boolean> {
     try {
+      const token = this.osuAuthService.getToken();
       await this.axiosOsuApi.head(`beatmaps/${beatmapId}`, {
-        headers: { Authorization: `Bearer ${this.token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       return true;
     } catch (e) {
@@ -73,11 +44,12 @@ export class OsuService implements OnModuleInit {
     cursor?: string,
   ): Promise<OsuBeatmapSetsWithCursor> {
     try {
+      const token = this.osuAuthService.getToken();
       const { data } = await this.axiosOsuApi.get<{
         beatmapsets: OsuBeatmapSet[];
         cursor_string?: string;
       }>('beatmapsets/search', {
-        headers: { Authorization: `Bearer ${this.token}` },
+        headers: { Authorization: `Bearer ${token}` },
         params: { q: search, cursor_string: cursor },
       });
       return {
@@ -92,10 +64,11 @@ export class OsuService implements OnModuleInit {
 
   async getBeatmapById(beatmapId: string): Promise<OsuBeatmap> {
     try {
+      const token = this.osuAuthService.getToken();
       const { data } = await this.axiosOsuApi.get<OsuBeatmap>(
         `beatmaps/${beatmapId}`,
         {
-          headers: { Authorization: `Bearer ${this.token}` },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
       return data;
@@ -107,12 +80,13 @@ export class OsuService implements OnModuleInit {
 
   async getBeatmapsByIds(beatmapIds: string[]): Promise<OsuBeatmap[]> {
     try {
+      const token = this.osuAuthService.getToken();
       const chunks = await Promise.all(
         splitChunks(beatmapIds, 50).map((ids) =>
           this.axiosOsuApi.get<{
             beatmaps: OsuBeatmap[];
           }>(`beatmaps`, {
-            headers: { Authorization: `Bearer ${this.token}` },
+            headers: { Authorization: `Bearer ${token}` },
             params: Object.fromEntries(
               ids.map((id, i) => [`ids[${i}]`, Number(id)]),
             ),

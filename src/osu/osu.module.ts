@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { OsuService } from './services/osu.service';
+import { OsuBeatmapsService } from './services/osu-beatmaps.service';
 import { ConfigModule } from '@nestjs/config';
 import axios from 'axios';
 import {
@@ -11,6 +11,7 @@ import { kitsuApiUrl, osuApiUrl, osuOauthUrl } from './constants/api-url';
 import { KitsuService } from './services/kitsu.service';
 import { OsuAuthService } from './services/osu-auth.service';
 import { AuthModule } from '../auth/auth.module';
+import { OsuUsersService } from './services/osu-users.service';
 
 @Module({
   imports: [ConfigModule, AuthModule],
@@ -28,9 +29,10 @@ import { AuthModule } from '../auth/auth.module';
       useValue: axios.create({ baseURL: kitsuApiUrl }),
     },
     OsuAuthService,
-    OsuService,
+    OsuBeatmapsService,
+    OsuUsersService,
     KitsuService,
   ],
-  exports: [OsuService, OsuAuthService, KitsuService],
+  exports: [OsuBeatmapsService, OsuUsersService, OsuAuthService, KitsuService],
 })
 export class OsuModule {}
