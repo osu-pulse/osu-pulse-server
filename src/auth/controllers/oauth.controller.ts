@@ -31,7 +31,7 @@ import { AuthService } from '../services/auth.service';
 import { parseJwt } from '../helpers/jwt';
 
 @ApiTags('Authorization')
-@Controller('oauth')
+@Controller('auth')
 export class OauthController {
   constructor(
     private configService: ConfigService<Env, true>,
@@ -43,11 +43,11 @@ export class OauthController {
     summary: 'Oauth authorize',
   })
   @ApiResponse({
-    status: HttpStatus.TEMPORARY_REDIRECT,
+    status: HttpStatus.FOUND,
     description: 'Authentication has been successfully started',
   })
   @UseGuards(OsuGuard)
-  @HttpCode(HttpStatus.TEMPORARY_REDIRECT)
+  @HttpCode(HttpStatus.FOUND)
   @Get('authorize')
   async auth() {}
 
@@ -74,7 +74,7 @@ export class OauthController {
 
     return res.redirect(
       HttpStatus.TEMPORARY_REDIRECT,
-      this.configService.get('URL_WEB_CLIENT') + '?' + queryString,
+      `${this.configService.get('URL_WEB_CLIENT')}?${queryString}`,
     );
   }
 

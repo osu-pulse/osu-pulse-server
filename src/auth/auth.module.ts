@@ -9,7 +9,6 @@ import { AuthService } from './services/auth.service';
 import { AccessTokenHolderInterceptor } from './interceptors/access-token-holder.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenHolderService } from './services/access-token-holder.service';
-import { LibraryModel } from '../tracks/models/library.model';
 import { TracksModule } from '../tracks/tracks.module';
 
 @Module({

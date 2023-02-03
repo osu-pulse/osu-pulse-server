@@ -12,7 +12,7 @@ export class OsuStrategy
 {
   constructor(private configService: ConfigService<Env, true>) {
     super({
-      callbackURL: `${configService.get('URL_OAUTH')}/callback`,
+      callbackURL: `${configService.get('URL_AUTH')}/callback`,
       clientID: configService.get('OSU_CLIENT_ID'),
       clientSecret: configService.get('OSU_CLIENT_SECRET'),
     });
