@@ -32,7 +32,7 @@ import { parseJwt } from '../helpers/jwt';
 
 @ApiTags('Authorization')
 @Controller('auth')
-export class OauthController {
+export class AuthController {
   constructor(
     private configService: ConfigService<Env, true>,
     private osuAuthService: OsuAuthService,

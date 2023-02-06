@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { OauthStrategy } from './strategies/oauth.strategy';
-import { OauthController } from './controllers/oauth.controller';
+import { AuthController } from './controllers/auth.controller';
 import { OsuStrategy } from './strategies/osu.strategy';
 import { OsuModule } from '../osu/osu.module';
 import { AuthService } from './services/auth.service';
@@ -28,7 +28,7 @@ import { TracksModule } from '../tracks/tracks.module';
       useClass: AccessTokenHolderInterceptor,
     },
   ],
-  controllers: [OauthController],
+  controllers: [AuthController],
   exports: [OauthStrategy, AuthService, AccessTokenHolderService],
 })
 export class AuthModule {}
