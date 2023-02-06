@@ -2,9 +2,10 @@ import { pick } from '../../shared/helpers/object';
 import { TrackModel } from '../models/track.model';
 import { OsuBeatmapSet } from '../../osu/types/osu-beatmap-set';
 import { OsuBeatmap } from '../../osu/types/osu-beatmap';
+import { osuAssetsUrl } from '../../osu/constants/api-url';
 
-export const trackConvertor = {
-  fromBeatmapSet(beatmapSet: OsuBeatmapSet): TrackModel {
+export const trackModelConvertor = {
+  fromOsuBeatmapSet(beatmapSet: OsuBeatmapSet): TrackModel {
     const beatmapId = Math.min(...beatmapSet.beatmaps.map(({ id }) => id));
 
     return {
@@ -15,12 +16,12 @@ export const trackConvertor = {
       played: beatmapSet.play_count,
       liked: beatmapSet.favourite_count,
       cover: {
-        small: beatmapSet.covers['list'],
-        normal: beatmapSet.covers['list@2x'],
+        small: `${osuAssetsUrl}/beatmaps/${beatmapSet.id}/list.jpg`,
+        normal: `${osuAssetsUrl}/beatmaps/${beatmapSet.id}/list@2x.jpg`,
       },
     };
   },
-  fromBeatmap(beatmap: OsuBeatmap): TrackModel {
+  fromOsuBeatmap(beatmap: OsuBeatmap): TrackModel {
     return {
       ...pick(beatmap.beatmapset, ['title', 'artist']),
       id: String(beatmap.id),
@@ -29,8 +30,8 @@ export const trackConvertor = {
       played: beatmap.beatmapset.play_count,
       liked: beatmap.beatmapset.favourite_count,
       cover: {
-        small: beatmap.beatmapset.covers['list'],
-        normal: beatmap.beatmapset.covers['list@2x'],
+        small: `${osuAssetsUrl}/beatmaps/${beatmap.beatmapset.id}/list.jpg`,
+        normal: `${osuAssetsUrl}/beatmaps/${beatmap.beatmapset.id}/list@2x.jpg`,
       },
     };
   },

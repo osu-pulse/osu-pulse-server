@@ -64,6 +64,18 @@ type PlaylistObject {
   tracks(cursor: String, limit: Float = 50): TracksWithCursorObject!
 }
 
+type UserUrlObject {
+  avatar: String!
+  cover: String!
+  profile: String!
+}
+
+type UserObject {
+  id: ID!
+  username: String!
+  url: UserUrlObject!
+}
+
 type Query {
   tracks(search: String, cursor: String): TracksWithCursorObject!
   track(trackId: String!): TrackObject!
@@ -75,6 +87,7 @@ type Query {
   myPlaylists(search: String): [PlaylistObject!]!
   myPlaylist(playlistId: String!): PlaylistObject!
   playlistTracks(playlistId: String!, cursor: String, limit: Float = 50): TracksWithCursorObject!
+  me: UserObject!
 }
 
 type Mutation {

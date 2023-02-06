@@ -20,9 +20,15 @@ import { TrackUrlObject } from '../objects/track-url.object';
 import { TrackUrlModel } from '../models/track-url.model';
 import { ConfigService } from '@nestjs/config';
 import { BucketName } from '../../bucket/constants/bucket-name';
-import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
+import {
+  kitsuApiUrl,
+  osuAssetsUrl,
+  osuOauthUrl,
+} from '../../osu/constants/api-url';
 import { Env } from '../../core/types/env';
 import { BucketService } from '../../bucket/services/bucket.service';
+import { TrackCoverObject } from '../objects/track-cover.object';
+import { TrackCoverModel } from '../models/track-cover.model';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {

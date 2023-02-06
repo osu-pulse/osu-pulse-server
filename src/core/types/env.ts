@@ -25,7 +25,7 @@ export class Env {
   URL_API: string;
 
   @IsString()
-  URL_OAUTH: string;
+  URL_AUTH: string;
 
   @IsString()
   URL_WEB_CLIENT: string;

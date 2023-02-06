@@ -62,7 +62,7 @@ describe('validateConfig', () => {
       CORS: 'true',
       DEBUG: 'true',
       URL_API: 'http://localhost/api',
-      URL_OAUTH: 'http://localhost/oauth',
+      URL_AUTH: 'http://localhost/oauth',
       URL_WEB_CLIENT: 'http://localhost',
       URL_MINIO: 'http://localhost/minio',
       DB_ENDPOINT: '127.0.0.1',
