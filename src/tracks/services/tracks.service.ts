@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { OsuService } from '../../osu/services/osu.service';
-import { trackConvertor } from '../convertors/track.convertor';
+import { OsuBeatmapsService } from '../../osu/services/osu-beatmaps.service';
+import { trackModelConvertor } from '../convertors/track-model.convertor';
 import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackModel } from '../models/track.model';
 import { BucketService } from '../../bucket/services/bucket.service';
@@ -11,21 +11,24 @@ import { AudioFileType } from '../../bucket/constants/file-type';
 @Injectable()
 export class TracksService {
   constructor(
-    private osuService: OsuService,
+    private osuBeatmapsService: OsuBeatmapsService,
     private kitsuService: KitsuService,
     private bucketService: BucketService,
   ) {}
 
   async existsById(trackId: string): Promise<boolean> {
-    return this.osuService.existsBeatmapById(trackId);
+    return this.osuBeatmapsService.existsBeatmapById(trackId);
   }
 
   async getAllBySearch(
     search?: string,
     cursor?: string,
   ): Promise<WithCursor<TrackModel>> {
-    const response = await this.osuService.getAllBeatmapSets(search, cursor);
-    const tracks = response.data.map(trackConvertor.fromBeatmapSet);
+    const response = await this.osuBeatmapsService.getAllBeatmapSets(
+      search,
+      cursor,
+    );
+    const tracks = response.data.map(trackModelConvertor.fromOsuBeatmapSet);
     return {
       data: tracks,
       cursor: response.cursor,
@@ -33,13 +36,13 @@ export class TracksService {
   }
 
   async getAllByIds(trackIds: string[]): Promise<TrackModel[]> {
-    const beatmaps = await this.osuService.getBeatmapsByIds(trackIds);
-    return beatmaps.map(trackConvertor.fromBeatmap);
+    const beatmaps = await this.osuBeatmapsService.getBeatmapsByIds(trackIds);
+    return beatmaps.map(trackModelConvertor.fromOsuBeatmap);
   }
 
   async getById(trackId: string): Promise<TrackModel> {
-    const beatmap = await this.osuService.getBeatmapById(trackId);
-    return trackConvertor.fromBeatmap(beatmap);
+    const beatmap = await this.osuBeatmapsService.getBeatmapById(trackId);
+    return trackModelConvertor.fromOsuBeatmap(beatmap);
   }
 
   async isCached(trackId: string): Promise<boolean> {
