@@ -2,10 +2,11 @@ name: Build
 
 on:
   release:
-    types: [published]
+    types:
+      - published
 
 jobs:
-  build:
+  docker:
     runs-on: ubuntu-latest
 
     steps:
