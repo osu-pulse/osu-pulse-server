@@ -21,7 +21,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { OsuAuthService } from '../../osu/services/osu-auth.service';
-import { TokenSet } from '../types/token-set';
+import { TokenSetModel } from '../models/token-set.model';
 import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
@@ -64,9 +64,9 @@ export class AuthController {
   @Get('callback')
   async callback(
     @Res() res: Response,
-    @Auth() tokenSet: TokenSet,
+    @Auth() tokenSet: TokenSetModel,
   ): Promise<void> {
-    const query = tokenSetDtoConvertor.fromTokenSet(tokenSet);
+    const query = tokenSetDtoConvertor.fromTokenSetModel(tokenSet);
     const queryString = new URLSearchParams(query as any);
 
     const userId = parseJwt(tokenSet.accessToken).sub;
@@ -106,7 +106,7 @@ export class AuthController {
     } else {
       const tokenSetDto = plainToInstance(
         TokenSetDto,
-        tokenSetDtoConvertor.fromOsuTokenSet(tokenSet),
+        tokenSetDtoConvertor.fromOsuTokenSetModel(tokenSet),
       );
 
       return res.status(HttpStatus.OK).send(tokenSetDto);

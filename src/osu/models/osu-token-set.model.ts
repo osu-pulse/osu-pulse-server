@@ -1,4 +1,4 @@
-export class OsuTokenSet {
+export class OsuTokenSetModel {
   access_token: string;
   refresh_token: string;
   token_type: string;

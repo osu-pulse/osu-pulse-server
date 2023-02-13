@@ -5,6 +5,7 @@
 type TrackCoverObject {
   small: String!
   normal: String!
+  wide: String!
 }
 
 type TrackUrlObject {
@@ -80,7 +81,6 @@ type Query {
   tracks(search: String, cursor: String): TracksWithCursorObject!
   track(trackId: String!): TrackObject!
   myTracks(cursor: String, limit: Float = 50): TracksWithCursorObject!
-  health: Boolean!
   devices: [DeviceObject!]!
   publicPlaylists(search: String): [PlaylistObject!]!
   publicPlaylist(playlistId: String!): PlaylistObject!
@@ -92,6 +92,7 @@ type Query {
 
 type Mutation {
   cacheTrack(trackId: String!): TrackObject!
+  cancelCacheTrack(trackId: String!): TrackObject!
   addMyTrack(trackId: String!): TrackObject!
   removeMyTrack(trackId: String!): TrackObject!
   moveMyTrack(trackId: String!, position: Float!): TrackObject!

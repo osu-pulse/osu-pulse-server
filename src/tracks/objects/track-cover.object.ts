@@ -7,4 +7,7 @@ export class TrackCoverObject {
 
   @Field(() => String)
   normal: string;
+
+  @Field(() => String)
+  wide: string;
 }

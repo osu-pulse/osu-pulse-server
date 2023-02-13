@@ -1,7 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { TrackModel } from '../../tracks/models/track.model';
 import { TracksWithCursorObject } from '../../tracks/objects/tracks-with-cursor.object';
-import { WithCursor } from '../../shared/types/with-cursor';
 
 @ObjectType()
 export class PlaylistObject {
@@ -24,5 +22,5 @@ export class PlaylistObject {
   trackIds: string[];
 
   @Field(() => TracksWithCursorObject)
-  tracks: WithCursor<TrackModel>;
+  tracks: TracksWithCursorObject;
 }

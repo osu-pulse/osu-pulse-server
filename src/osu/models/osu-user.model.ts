@@ -1,4 +1,4 @@
-export interface OsuUser {
+export interface OsuUserModel {
   id: number;
   username: string;
   cover_url: string;

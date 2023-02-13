@@ -2,7 +2,7 @@ import Strategy from 'passport-osu';
 import { AbstractStrategy, PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { TokenSet } from '../types/token-set';
+import { TokenSetModel } from '../models/token-set.model';
 import { Env } from '../../core/types/env';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class OsuStrategy
     });
   }
 
-  validate(accessToken: string, refreshToken: string): TokenSet {
+  validate(accessToken: string, refreshToken: string): TokenSetModel {
     return {
       accessToken,
       refreshToken,

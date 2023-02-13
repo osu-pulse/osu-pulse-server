@@ -9,6 +9,6 @@ export class UsersService {
 
   async getMe(userId: string): Promise<UserModel> {
     const user = await this.osuUsersService.getMe(userId);
-    return userModelConvertor.fromOsuUser(user);
+    return userModelConvertor.fromOsuUserModel(user);
   }
 }

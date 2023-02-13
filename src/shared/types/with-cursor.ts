@@ -1,4 +1,4 @@
-export class WithCursor<T> {
+export interface WithCursor<T> {
   data: T[];
   cursor?: string;
 }
