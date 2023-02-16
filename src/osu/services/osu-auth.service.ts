@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { AxiosError, AxiosInstance } from 'axios';
 import { AXIOS_OSU_API, AXIOS_OSU_OAUTH } from '../constants/injections';
 import { OsuException } from '../exceptions/osu.exception';
-import { Env } from '../../core/types/env';
+import { EnvModel } from '../../core/models/env.model';
 import { OsuTokenSetModel } from '../models/osu-token-set.model';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class OsuAuthService implements OnModuleInit {
   private token: string;
 
   constructor(
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvModel, true>,
     @Inject(AXIOS_OSU_OAUTH)
     private axiosOsuOauth: AxiosInstance,
     @Inject(AXIOS_OSU_API)

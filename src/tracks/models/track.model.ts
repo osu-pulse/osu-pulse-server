@@ -1,5 +1,3 @@
-import { TrackCoverModel } from './track-cover.model';
-
 export class TrackModel {
   id: string;
   beatmapId: string;
@@ -8,5 +6,4 @@ export class TrackModel {
   artist: string;
   played: number;
   liked: number;
-  cover: TrackCoverModel;
 }

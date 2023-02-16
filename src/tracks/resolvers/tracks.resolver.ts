@@ -19,16 +19,18 @@ import { TrackUrlModel } from '../models/track-url.model';
 import { ConfigService } from '@nestjs/config';
 import { BucketName } from '../../bucket/constants/bucket-name';
 import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
-import { Env } from '../../core/types/env';
+import { EnvModel } from '../../core/models/env.model';
 import { BucketService } from '../../bucket/services/bucket.service';
 import { Auth } from '../../auth/decorators/auth.decorator';
+import { TrackCoverObject } from '../objects/track-cover.object';
+import { TrackCoverModel } from '../models/track-cover.model';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
   constructor(
     private tracksService: TracksService,
     private bucketService: BucketService,
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvModel, true>,
   ) {}
 
   @UseGuards(OauthGuard)
@@ -94,6 +96,17 @@ export class TracksResolver {
       audio,
       page: `${osuOauthUrl}/beatmapsets/${track.beatmapSetId}`,
       file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
+    };
+  }
+
+  @ResolveField(() => TrackCoverObject)
+  cover(@Parent() track: TrackModel): TrackCoverModel {
+    const assetsUrl = `${this.configService.get('URL_OSU')}/assets`;
+
+    return {
+      small: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list.jpg`,
+      normal: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list@2x.jpg`,
+      wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
     };
   }
 }

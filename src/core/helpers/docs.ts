@@ -1,9 +1,9 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Env } from '../types/env';
+import { EnvModel } from '../models/env.model';
 
-const configService = new ConfigService<Env, true>();
+const configService = new ConfigService<EnvModel, true>();
 
 export function setupDocs(app: INestApplication) {
   const config = new DocumentBuilder()

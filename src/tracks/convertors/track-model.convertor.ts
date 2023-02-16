@@ -14,11 +14,6 @@ export const trackModelConvertor = {
       beatmapSetId: String(beatmapSet.id),
       played: beatmapSet.play_count,
       liked: beatmapSet.favourite_count,
-      cover: {
-        small: beatmapSet.covers.list,
-        normal: beatmapSet.covers['list@2x'],
-        wide: beatmapSet.covers['slimcover@2x'],
-      },
     };
   },
   fromOsuBeatmapModel(beatmap: OsuBeatmapModel): TrackModel {
@@ -29,11 +24,6 @@ export const trackModelConvertor = {
       beatmapSetId: String(beatmap.beatmapset.id),
       played: beatmap.beatmapset.play_count,
       liked: beatmap.beatmapset.favourite_count,
-      cover: {
-        small: beatmap.beatmapset.covers.list,
-        normal: beatmap.beatmapset.covers['list@2x'],
-        wide: beatmap.beatmapset.covers['slimcover@2x'],
-      },
     };
   },
 };

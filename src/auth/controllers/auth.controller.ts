@@ -26,7 +26,7 @@ import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
 import { plainToInstance } from 'class-transformer';
-import { Env } from '../../core/types/env';
+import { EnvModel } from '../../core/models/env.model';
 import { AuthService } from '../services/auth.service';
 import { parseJwt } from '../helpers/jwt';
 
@@ -34,7 +34,7 @@ import { parseJwt } from '../helpers/jwt';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvModel, true>,
     private osuAuthService: OsuAuthService,
     private authService: AuthService,
   ) {}

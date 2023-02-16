@@ -15,11 +15,11 @@ import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
 import { NotConnectedException } from '../exceptions/not-connected.exception';
 import { ConfigService } from '@nestjs/config';
-import { Env } from '../../core/types/env';
+import { EnvModel } from '../../core/models/env.model';
 import { SetDeviceStatusDto } from '../dto/set-device-status.dto';
 import { DeviceStatusDto } from '../dto/device-status.dto';
 
-const configService = new ConfigService<Env, true>();
+const configService = new ConfigService<EnvModel, true>();
 
 @WebSocketGateway({
   namespace: '/remote',

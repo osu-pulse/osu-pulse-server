@@ -2,7 +2,7 @@ import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsIn, IsString } from 'class-validator';
 import { NodeEnv } from '../constants/node-env';
 
-export class Env {
+export class EnvModel {
   /*
    * Server
    */
@@ -32,6 +32,9 @@ export class Env {
 
   @IsString()
   URL_MINIO: string;
+
+  @IsString()
+  URL_OSU: string;
 
   /*
    * Database

@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { INestApplication, LogLevel } from '@nestjs/common';
-import { Env } from '../types/env';
+import { EnvModel } from '../models/env.model';
 
-const configService = new ConfigService<Env, true>();
+const configService = new ConfigService<EnvModel, true>();
 
 export function setupLogger(app: INestApplication) {
   const logLevels: LogLevel[] = configService.get('DEBUG')

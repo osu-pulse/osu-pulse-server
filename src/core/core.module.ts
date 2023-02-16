@@ -1,6 +1,5 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE, BaseExceptionFilter } from '@nestjs/core';
-import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getEnvPath, validateEnv } from './helpers/env';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -12,7 +11,7 @@ import { lowercaseKeys } from '../shared/helpers/case';
 import mongooseLeanGetters from 'mongoose-lean-getters';
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
 import mongoose from 'mongoose';
-import { Env } from './types/env';
+import { EnvModel } from './models/env.model';
 
 @Module({
   imports: [
@@ -24,7 +23,7 @@ import { Env } from './types/env';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<Env, true>) => ({
+      useFactory: (configService: ConfigService<EnvModel, true>) => ({
         uri: `mongodb://${configService.get('DB_ENDPOINT')}:${configService.get(
           'DB_PORT',
         )}`,
@@ -45,7 +44,7 @@ import { Env } from './types/env';
       imports: [ConfigModule],
       inject: [ConfigService],
       driver: ApolloDriver,
-      useFactory: (configService: ConfigService<Env, true>) => ({
+      useFactory: (configService: ConfigService<EnvModel, true>) => ({
         cors: configService.get('CORS') && { origin: true, credentials: true },
         debug: configService.get('DEBUG'),
         playground: configService.get('DEBUG'),
