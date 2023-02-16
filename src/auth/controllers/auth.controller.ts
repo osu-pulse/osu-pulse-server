@@ -74,7 +74,7 @@ export class AuthController {
 
     return res.redirect(
       HttpStatus.TEMPORARY_REDIRECT,
-      `${this.configService.get('URL_WEB_CLIENT')}?${queryString}`,
+      `${this.configService.get('URL_CLIENT')}?${queryString}`,
     );
   }
 

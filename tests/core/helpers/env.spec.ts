@@ -63,7 +63,7 @@ describe('validateConfig', () => {
       DEBUG: 'true',
       URL_API: 'http://localhost/api',
       URL_AUTH: 'http://localhost/oauth',
-      URL_WEB_CLIENT: 'http://localhost',
+      URL_CLIENT: 'http://localhost',
       URL_MINIO: 'http://localhost/minio',
       URL_OSU: 'http://localhost/osu',
       DB_ENDPOINT: '127.0.0.1',
