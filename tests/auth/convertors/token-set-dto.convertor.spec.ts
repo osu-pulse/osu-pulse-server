@@ -1,16 +1,16 @@
-import { TokenSet } from '../../../src/auth/types/token-set';
+import { TokenSetModel } from '../../../src/auth/models/token-set.model';
 import { tokenSetDtoConvertor } from '../../../src/auth/convertors/token-set-dto.convertor';
 import { OsuTokenSet } from '../../../src/osu/types/osu-token-set';
 
 describe('tokenSetDtoConvertor', () => {
   describe('fromTokenSetModel', () => {
     it('should transform token set model to token set dto', () => {
-      const tokenSetModel: TokenSet = {
+      const tokenSetModel: TokenSetModel = {
         accessToken: 'access',
         refreshToken: 'refresh',
       };
 
-      const tokenSetDto = tokenSetDtoConvertor.fromTokenSet(tokenSetModel);
+      const tokenSetDto = tokenSetDtoConvertor.fromTokenSetModel(tokenSetModel);
 
       expect(tokenSetDto).toStrictEqual({
         access_token: 'access',
@@ -28,7 +28,8 @@ describe('tokenSetDtoConvertor', () => {
         expires_in: 3600,
       };
 
-      const tokenSetDto = tokenSetDtoConvertor.fromOsuTokenSet(osuTokenSet);
+      const tokenSetDto =
+        tokenSetDtoConvertor.fromOsuTokenSetModel(osuTokenSet);
 
       expect(tokenSetDto).toStrictEqual({
         access_token: 'access',

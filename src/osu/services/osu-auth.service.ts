@@ -2,9 +2,9 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError, AxiosInstance } from 'axios';
 import { AXIOS_OSU_API, AXIOS_OSU_OAUTH } from '../constants/injections';
-import { OsuTokenSet } from '../types/osu-token-set';
 import { OsuException } from '../exceptions/osu.exception';
-import { Env } from '../../core/types/env';
+import { EnvModel } from '../../core/models/env.model';
+import { OsuTokenSetModel } from '../models/osu-token-set.model';
 
 @Injectable()
 export class OsuAuthService implements OnModuleInit {
@@ -13,7 +13,7 @@ export class OsuAuthService implements OnModuleInit {
   private token: string;
 
   constructor(
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvModel, true>,
     @Inject(AXIOS_OSU_OAUTH)
     private axiosOsuOauth: AxiosInstance,
     @Inject(AXIOS_OSU_API)
@@ -70,14 +70,17 @@ export class OsuAuthService implements OnModuleInit {
   async getTokenByClientCredentials(
     clientId: string,
     clientSecret: string,
-  ): Promise<OsuTokenSet> {
+  ): Promise<OsuTokenSetModel> {
     try {
-      const { data } = await this.axiosOsuOauth.post<OsuTokenSet>('token', {
-        grant_type: 'client_credentials',
-        client_id: clientId,
-        client_secret: clientSecret,
-        scope: 'public',
-      });
+      const { data } = await this.axiosOsuOauth.post<OsuTokenSetModel>(
+        'token',
+        {
+          grant_type: 'client_credentials',
+          client_id: clientId,
+          client_secret: clientSecret,
+          scope: 'public',
+        },
+      );
       return data;
     } catch (e) {
       const { message } = e as AxiosError;
@@ -89,15 +92,18 @@ export class OsuAuthService implements OnModuleInit {
     clientId: string,
     clientSecret: string,
     refreshToken: string,
-  ): Promise<OsuTokenSet | null> {
+  ): Promise<OsuTokenSetModel | null> {
     try {
-      const { data } = await this.axiosOsuOauth.post<OsuTokenSet>('token', {
-        grant_type: 'refresh_token',
-        client_id: clientId,
-        client_secret: clientSecret,
-        refresh_token: refreshToken,
-        scope: 'identify',
-      });
+      const { data } = await this.axiosOsuOauth.post<OsuTokenSetModel>(
+        'token',
+        {
+          grant_type: 'refresh_token',
+          client_id: clientId,
+          client_secret: clientSecret,
+          refresh_token: refreshToken,
+          scope: 'identify',
+        },
+      );
       return data;
     } catch (e) {
       const {

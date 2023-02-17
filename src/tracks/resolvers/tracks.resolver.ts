@@ -1,12 +1,10 @@
 import {
   Args,
-  ID,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
-  Subscription,
 } from '@nestjs/graphql';
 import { TracksService } from '../services/tracks.service';
 import { TrackObject } from '../objects/track.object';
@@ -20,13 +18,10 @@ import { TrackUrlObject } from '../objects/track-url.object';
 import { TrackUrlModel } from '../models/track-url.model';
 import { ConfigService } from '@nestjs/config';
 import { BucketName } from '../../bucket/constants/bucket-name';
-import {
-  kitsuApiUrl,
-  osuAssetsUrl,
-  osuOauthUrl,
-} from '../../osu/constants/api-url';
-import { Env } from '../../core/types/env';
+import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
+import { EnvModel } from '../../core/models/env.model';
 import { BucketService } from '../../bucket/services/bucket.service';
+import { Auth } from '../../auth/decorators/auth.decorator';
 import { TrackCoverObject } from '../objects/track-cover.object';
 import { TrackCoverModel } from '../models/track-cover.model';
 
@@ -35,7 +30,7 @@ export class TracksResolver {
   constructor(
     private tracksService: TracksService,
     private bucketService: BucketService,
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvModel, true>,
   ) {}
 
   @UseGuards(OauthGuard)
@@ -63,13 +58,27 @@ export class TracksResolver {
   async cacheTrack(
     @Args('trackId')
     trackId: string,
+    @Auth()
+    userId: string,
   ): Promise<TrackModel> {
     const isCached = await this.tracksService.isCached(trackId);
     if (isCached) {
       throw new AlreadyCachedException();
     }
 
-    await this.tracksService.cache(trackId);
+    await this.tracksService.cache(userId, trackId);
+    return this.tracksService.getById(trackId);
+  }
+
+  @UseGuards(OauthGuard)
+  @Mutation(() => TrackObject)
+  async cancelCacheTrack(
+    @Args('trackId')
+    trackId: string,
+    @Auth()
+    userId: string,
+  ): Promise<TrackModel> {
+    await this.tracksService.cancelCache(userId, trackId);
     return this.tracksService.getById(trackId);
   }
 
@@ -80,13 +89,24 @@ export class TracksResolver {
 
     const isCached = await this.tracksService.isCached(track.id);
     const audio = isCached
-      ? `${minioUrl}/${bucket}/${track.beatmapSetId}`
+      ? `${minioUrl}/${bucket}/${track.beatmapId}`
       : undefined;
 
     return {
       audio,
       page: `${osuOauthUrl}/beatmapsets/${track.beatmapSetId}`,
       file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
+    };
+  }
+
+  @ResolveField(() => TrackCoverObject)
+  cover(@Parent() track: TrackModel): TrackCoverModel {
+    const assetsUrl = `${this.configService.get('URL_OSU')}/assets`;
+
+    return {
+      small: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list.jpg`,
+      normal: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list@2x.jpg`,
+      wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
     };
   }
 }

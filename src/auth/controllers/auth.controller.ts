@@ -21,12 +21,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { OsuAuthService } from '../../osu/services/osu-auth.service';
-import { TokenSet } from '../types/token-set';
+import { TokenSetModel } from '../models/token-set.model';
 import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
 import { plainToInstance } from 'class-transformer';
-import { Env } from '../../core/types/env';
+import { EnvModel } from '../../core/models/env.model';
 import { AuthService } from '../services/auth.service';
 import { parseJwt } from '../helpers/jwt';
 
@@ -34,7 +34,7 @@ import { parseJwt } from '../helpers/jwt';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvModel, true>,
     private osuAuthService: OsuAuthService,
     private authService: AuthService,
   ) {}
@@ -64,9 +64,9 @@ export class AuthController {
   @Get('callback')
   async callback(
     @Res() res: Response,
-    @Auth() tokenSet: TokenSet,
+    @Auth() tokenSet: TokenSetModel,
   ): Promise<void> {
-    const query = tokenSetDtoConvertor.fromTokenSet(tokenSet);
+    const query = tokenSetDtoConvertor.fromTokenSetModel(tokenSet);
     const queryString = new URLSearchParams(query as any);
 
     const userId = parseJwt(tokenSet.accessToken).sub;
@@ -74,7 +74,7 @@ export class AuthController {
 
     return res.redirect(
       HttpStatus.TEMPORARY_REDIRECT,
-      `${this.configService.get('URL_WEB_CLIENT')}?${queryString}`,
+      `${this.configService.get('URL_CLIENT')}?${queryString}`,
     );
   }
 
@@ -106,7 +106,7 @@ export class AuthController {
     } else {
       const tokenSetDto = plainToInstance(
         TokenSetDto,
-        tokenSetDtoConvertor.fromOsuTokenSet(tokenSet),
+        tokenSetDtoConvertor.fromOsuTokenSetModel(tokenSet),
       );
 
       return res.status(HttpStatus.OK).send(tokenSetDto);

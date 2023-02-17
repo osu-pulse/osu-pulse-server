@@ -19,14 +19,14 @@ import { TracksWithCursorObject } from '../../tracks/objects/tracks-with-cursor.
 import { WithCursor } from '../../shared/types/with-cursor';
 import { BucketName } from '../../bucket/constants/bucket-name';
 import { ConfigService } from '@nestjs/config';
-import { Env } from '../../core/types/env';
+import { EnvModel } from '../../core/models/env.model';
 
 @Resolver(() => PlaylistObject)
 export class PlaylistsResolver {
   constructor(
     private playlistsService: PlaylistsService,
     private playlistTracksService: PlaylistTracksService,
-    private configService: ConfigService<Env, true>,
+    private configService: ConfigService<EnvModel, true>,
   ) {}
 
   @UseGuards(OauthGuard)

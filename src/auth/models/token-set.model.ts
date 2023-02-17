@@ -1,4 +1,4 @@
-export interface TokenSet {
+export interface TokenSetModel {
   accessToken: string;
   refreshToken: string;
 }

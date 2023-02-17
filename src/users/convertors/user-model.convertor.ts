@@ -1,9 +1,9 @@
 import { UserModel } from '../models/user.model';
-import { OsuUser } from '../../osu/types/osu-user';
-import { osuAssetsUrl, osuUrl } from '../../osu/constants/api-url';
+import { osuUrl } from '../../osu/constants/api-url';
+import { OsuUserModel } from '../../osu/models/osu-user.model';
 
 export const userModelConvertor = {
-  fromOsuUser(user: OsuUser): UserModel {
+  fromOsuUserModel(user: OsuUserModel): UserModel {
     return {
       id: String(user.id),
       username: user.username,

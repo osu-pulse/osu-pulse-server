@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { getEnvPath, validateEnv } from '../../../src/core/helpers/env';
-import { Env } from '../../../src/core/types/env';
+import { EnvModel } from '../../../src/core/models/env.model';
 
 describe('getEnvPath', () => {
   beforeEach(() => {
@@ -53,8 +53,8 @@ describe('getEnvPath', () => {
 });
 
 describe('validateConfig', () => {
-  let configMock: Record<keyof Env, string>;
-  let configInvalidMock: Partial<Record<keyof Env, string>>;
+  let configMock: Record<keyof EnvModel, string>;
+  let configInvalidMock: Partial<Record<keyof EnvModel, string>>;
 
   beforeEach(() => {
     configMock = {
@@ -63,8 +63,9 @@ describe('validateConfig', () => {
       DEBUG: 'true',
       URL_API: 'http://localhost/api',
       URL_AUTH: 'http://localhost/oauth',
-      URL_WEB_CLIENT: 'http://localhost',
+      URL_CLIENT: 'http://localhost',
       URL_MINIO: 'http://localhost/minio',
+      URL_OSU: 'http://localhost/osu',
       DB_ENDPOINT: '127.0.0.1',
       DB_PORT: '27017',
       DB_NAME: 'pulse',
@@ -88,7 +89,7 @@ describe('validateConfig', () => {
   it('should parse config if config is valid', () => {
     const env = validateEnv(configMock);
 
-    expect(env).toBeInstanceOf(Env);
+    expect(env).toBeInstanceOf(EnvModel);
   });
 
   it('should throw if config is invalid', () => {

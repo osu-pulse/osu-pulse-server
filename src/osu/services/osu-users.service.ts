@@ -1,17 +1,10 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
 import { AxiosError, AxiosInstance } from 'axios';
 import { AXIOS_OSU_API } from '../constants/injections';
-import { OsuBeatmapSet } from '../types/osu-beatmap-set';
 import { OsuException } from '../exceptions/osu.exception';
 import { OsuAuthService } from './osu-auth.service';
-import { OsuBeatmap } from '../types/osu-beatmap';
-import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
 import { AccessTokenHolderService } from '../../auth/services/access-token-holder.service';
-import { Env } from '../../core/types/env';
-import { splitChunks } from '../../shared/helpers/array';
-import { OsuUser } from '../types/osu-user';
-import { use } from 'passport';
+import { OsuUserModel } from '../models/osu-user.model';
 
 @Injectable()
 export class OsuUsersService {
@@ -22,10 +15,10 @@ export class OsuUsersService {
     private axiosOsuApi: AxiosInstance,
   ) {}
 
-  async getMe(userId: string): Promise<OsuUser> {
+  async getMe(userId: string): Promise<OsuUserModel> {
     try {
       const token = this.accessTokenHolderService.get(userId);
-      const { data } = await this.axiosOsuApi.get<OsuUser>('me', {
+      const { data } = await this.axiosOsuApi.get<OsuUserModel>('me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       return data;
