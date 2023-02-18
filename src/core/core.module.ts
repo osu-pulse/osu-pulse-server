@@ -12,6 +12,7 @@ import mongooseLeanGetters from 'mongoose-lean-getters';
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
 import mongoose from 'mongoose';
 import { EnvModel } from './models/env.model';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { EnvModel } from './models/env.model';
         },
       }),
     }),
+    ScheduleModule.forRoot(),
   ],
   providers: [
     BaseExceptionFilter,
