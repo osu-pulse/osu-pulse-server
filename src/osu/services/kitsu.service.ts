@@ -36,6 +36,6 @@ export class KitsuService {
   }
 
   cancelGetFile(beatmapSetId: string): void {
-    this.controllers.get(beatmapSetId).abort();
+    this.controllers.get(beatmapSetId)?.abort();
   }
 }
