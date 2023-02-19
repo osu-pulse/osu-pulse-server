@@ -7,6 +7,9 @@ export class TrackMetaModel extends BaseModel {
   @Prop({ required: true, immutable: true, index: true, unique: true })
   trackId: string;
 
+  @Prop({ required: true, immutable: true, index: true, unique: true })
+  beatmapSetId: string;
+
   @Prop({ required: true, immutable: true })
   duration: number;
 }

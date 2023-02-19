@@ -78,6 +78,7 @@ export class TracksService {
 
       await this.trackMetasService.create({
         trackId,
+        beatmapSetId: track.beatmapSetId,
         duration: await mp3Duration(file),
       });
       await this.bucketService.create(
