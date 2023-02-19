@@ -35,16 +35,4 @@ export class TrackMetasService {
   async create(payload: CreateTrackMeta): Promise<TrackMetaModel> {
     return this.trackMetaModel.create(payload);
   }
-
-  async removeBefore(date: Date): Promise<TrackMetaModel[]> {
-    const deleted = await this.trackMetaModel
-      .find({
-        createdAt: { $lt: date },
-      })
-      .lean({ virtuals: true });
-    await this.trackMetaModel.deleteMany({
-      id: { $in: deleted.map(({ id }) => id) },
-    });
-    return deleted;
-  }
 }
