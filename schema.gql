@@ -20,6 +20,8 @@ type TrackObject {
   artist: String!
   played: Float!
   liked: Float!
+  cached: Boolean!
+  duration: Float
   cover: TrackCoverObject!
   url: TrackUrlObject!
 }

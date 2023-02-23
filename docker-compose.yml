@@ -18,3 +18,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: 1234
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "5050:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro

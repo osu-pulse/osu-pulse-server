@@ -1,13 +1,7 @@
-import {
-  Connection,
-  FilterQuery,
-  RootQuerySelector,
-  SortOrder,
-} from 'mongoose';
+import { connection, FilterQuery, RootQuerySelector } from 'mongoose';
 import { MaybePromise } from '../types/maybe-promise';
 
 export async function withTransaction<T>(
-  connection: Connection,
   action: () => MaybePromise<T>,
 ): Promise<T> {
   const session = await connection.startSession();

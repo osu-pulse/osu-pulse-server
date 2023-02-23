@@ -9,6 +9,9 @@ import { MyTracksResolver } from './resolvers/my-tracks.resolver';
 import { LibraryModel, LibrarySchema } from './models/library.model';
 import { LibrariesService } from './services/libraries.service';
 import { LibraryTracksService } from './services/library-tracks.service';
+import { TracksCronService } from './services/tracks-cron.service';
+import { TrackMetaModel, TrackMetaSchema } from './models/track-meta.model';
+import { TrackMetasService } from './services/track-metas.service';
 
 @Module({
   imports: [
@@ -17,6 +20,7 @@ import { LibraryTracksService } from './services/library-tracks.service';
     ConfigModule,
     MongooseModule.forFeature([
       { name: LibraryModel.name, schema: LibrarySchema },
+      { name: TrackMetaModel.name, schema: TrackMetaSchema },
     ]),
   ],
   providers: [
@@ -25,6 +29,8 @@ import { LibraryTracksService } from './services/library-tracks.service';
     LibraryTracksService,
     TracksResolver,
     MyTracksResolver,
+    TrackMetasService,
+    TracksCronService,
   ],
   exports: [TracksService, LibrariesService],
 })
