@@ -39,7 +39,7 @@ export class OsuStrategy
       const id = crypto.randomUUID();
 
       this.states.set(id, { redirectUrl, state });
-      setTimeout(() => this.states.delete(state), 60 * 1000);
+      setTimeout(() => this.states.delete(state), 3600 * 1000);
 
       super.authenticate(req, { ...options, state: id });
     } else {
