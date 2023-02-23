@@ -35,6 +35,7 @@
     "dayjs": "^1.11.7",
     "device-detector-js": "^3.0.3",
     "dotenv": "^16.0.2",
+    "express-session": "^1.17.3",
     "graphql": "^16.6.0",
     "graphql-subscriptions": "^2.0.0",
     "graphql-ws": "^5.11.2",

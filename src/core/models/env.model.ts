@@ -28,9 +28,6 @@ export class EnvModel {
   URL_AUTH: string;
 
   @IsString()
-  URL_CLIENT: string;
-
-  @IsString()
   URL_MINIO: string;
 
   @IsString()

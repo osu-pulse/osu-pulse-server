@@ -16,12 +16,13 @@ import { Auth } from '../decorators/auth.decorator';
 import {
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { OsuAuthService } from '../../osu/services/osu-auth.service';
-import { TokenSetModel } from '../models/token-set.model';
+import { CallbackResponseModel } from '../models/callback-response.model';
 import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
@@ -41,6 +42,10 @@ export class AuthController {
 
   @ApiOperation({
     summary: 'Oauth authorize',
+  })
+  @ApiQuery({
+    name: 'redirect_url',
+    description: 'Url to redirect after authorization with tokens',
   })
   @ApiResponse({
     status: HttpStatus.FOUND,
@@ -64,17 +69,20 @@ export class AuthController {
   @Get('callback')
   async callback(
     @Res() res: Response,
-    @Auth() tokenSet: TokenSetModel,
+    @Auth() callback: CallbackResponseModel,
   ): Promise<void> {
-    const query = tokenSetDtoConvertor.fromTokenSetModel(tokenSet);
-    const queryString = new URLSearchParams(query as any);
-
-    const userId = parseJwt(tokenSet.accessToken).sub;
+    const userId = parseJwt(callback.accessToken).sub;
     await this.authService.registerUser(userId);
+
+    const query = {
+      access_token: callback.accessToken,
+      refresh_token: callback.refreshToken,
+      state: callback.session.state,
+    };
 
     return res.redirect(
       HttpStatus.TEMPORARY_REDIRECT,
-      `${this.configService.get('URL_CLIENT')}?${queryString}`,
+      `${callback.session.redirectUrl}?${new URLSearchParams(query)}`,
     );
   }
 

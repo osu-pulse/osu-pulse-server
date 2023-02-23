@@ -1,11 +1,11 @@
-import { TokenSetModel } from '../../../src/auth/models/token-set.model';
+import { CallbackResponseModel } from '../../../src/auth/models/callback-response.model';
 import { tokenSetDtoConvertor } from '../../../src/auth/convertors/token-set-dto.convertor';
 import { OsuTokenSet } from '../../../src/osu/types/osu-token-set';
 
 describe('tokenSetDtoConvertor', () => {
   describe('fromTokenSetModel', () => {
     it('should transform token set model to token set dto', () => {
-      const tokenSetModel: TokenSetModel = {
+      const tokenSetModel: CallbackResponseModel = {
         accessToken: 'access',
         refreshToken: 'refresh',
       };
