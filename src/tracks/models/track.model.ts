@@ -4,6 +4,7 @@ export class TrackModel {
   beatmapSetId: string;
   title: string;
   artist: string;
+  duration: number;
   played: number;
   liked: number;
 }

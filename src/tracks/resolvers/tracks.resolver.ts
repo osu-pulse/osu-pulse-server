@@ -85,25 +85,6 @@ export class TracksResolver {
     return this.tracksService.getById(trackId);
   }
 
-  @ResolveField(() => Number, { nullable: true })
-  async duration(
-    @Parent() track: TrackModel,
-    @Context()
-    context: DataLoadersContext<{
-      durationLoader: [string, number | undefined];
-    }>,
-  ): Promise<number | undefined> {
-    return initDataLoader(context, 'durationLoader', async (trackIds) => {
-      const trackMetas = await this.trackMetasService.getAllByTrackIds(
-        trackIds,
-      );
-      const trackMetasMap = new Map(
-        trackMetas.map(({ trackId, duration }) => [trackId, duration]),
-      );
-      return trackIds.map((trackId) => trackMetasMap.get(trackId));
-    }).load(track.id);
-  }
-
   @ResolveField(() => TrackUrlObject)
   async url(
     @Parent() track: TrackModel,
@@ -128,20 +109,6 @@ export class TracksResolver {
         file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
       }));
     }).load(track);
-  }
-
-  @ResolveField(() => Boolean)
-  async cached(
-    @Parent() track: TrackModel,
-    @Context()
-    context: DataLoadersContext<{ cachedLoader: [string, boolean] }>,
-  ): Promise<boolean> {
-    return initDataLoader(context, 'cachedLoader', async (trackIds) => {
-      const existsSet = new Set(
-        await this.trackMetasService.existsAllByTrackIds(trackIds),
-      );
-      return trackIds.map((trackId) => existsSet.has(trackId));
-    }).load(track.id);
   }
 
   @ResolveField(() => TrackCoverObject)

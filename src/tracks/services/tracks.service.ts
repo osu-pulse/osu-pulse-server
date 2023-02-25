@@ -10,7 +10,6 @@ import { AudioFileType } from '../../bucket/constants/file-type';
 import { firstValueFrom, Subject } from 'rxjs';
 import { CacheCanceledException } from '../exceptions/cache-canceled.exception';
 import { TrackMetasService } from './track-metas.service';
-import mp3Duration from 'mp3-duration';
 
 @Injectable()
 export class TracksService {
@@ -76,11 +75,7 @@ export class TracksService {
       const track = await this.getById(trackId);
       const file = await this.kitsuService.getFile(track.beatmapSetId);
 
-      await this.trackMetasService.create({
-        trackId,
-        beatmapSetId: track.beatmapSetId,
-        duration: await mp3Duration(file, true),
-      });
+      await this.trackMetasService.create({ trackId });
       await this.bucketService.create(
         BucketName.TRACK_CACHES,
         track.id,
