@@ -19,9 +19,6 @@ export class TrackObject {
   @Field(() => Number)
   liked: number;
 
-  @Field(() => Boolean)
-  cached: boolean;
-
   @Field(() => Number)
   duration: number;
 
