@@ -22,8 +22,8 @@ export class TrackObject {
   @Field(() => Boolean)
   cached: boolean;
 
-  @Field(() => Number, { nullable: true })
-  duration?: number;
+  @Field(() => Number)
+  duration: number;
 
   @Field(() => TrackCoverObject)
   cover: TrackCoverObject;
