@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
@@ -27,8 +27,8 @@ export class PlaylistTracksResolver {
     playlistId: string,
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
-    @Args('limit', { nullable: true })
-    limit: number,
+    @Args('limit', { type: () => Int, nullable: true })
+    limit: number | undefined,
     @Auth()
     userId: string,
   ): Promise<WithCursor<TrackModel>> {
