@@ -20,15 +20,18 @@ export class MyTracksResolver {
   @UseGuards(OauthGuard)
   @Query(() => TracksWithCursorObject)
   async myTracks(
+    @Args('search', { nullable: true })
+    search: string | undefined,
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
-    @Args('limit', { nullable: true, defaultValue: 50 })
+    @Args('limit', { nullable: true })
     limit: number,
     @Auth()
     userId: string,
   ): Promise<WithCursor<TrackModel>> {
     return this.libraryTracksService.getAllTracksByUserId(
       userId,
+      search,
       limit,
       cursor,
     );
