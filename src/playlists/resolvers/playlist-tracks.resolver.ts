@@ -27,7 +27,7 @@ export class PlaylistTracksResolver {
     playlistId: string,
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
-    @Args('limit', { nullable: true, defaultValue: 50 })
+    @Args('limit', { nullable: true })
     limit: number,
     @Auth()
     userId: string,

@@ -6,7 +6,6 @@ import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackModel } from '../models/track.model';
 import { cursorConvertor } from '../../shared/convertors/cursor.convertor';
 import { TracksService } from './tracks.service';
-import { sliceArrayByCursor } from '../../shared/helpers/cursor';
 
 @Injectable()
 export class LibraryTracksService {
@@ -18,7 +17,8 @@ export class LibraryTracksService {
 
   async getAllTracksByUserId(
     userId: string,
-    limit: number,
+    search?: string,
+    limit?: number,
     cursor?: string,
   ): Promise<WithCursor<TrackModel>> {
     const { trackIds } = await this.libraryModel
@@ -26,13 +26,30 @@ export class LibraryTracksService {
       .select('trackIds')
       .lean();
 
-    const trackIdsSlice = sliceArrayByCursor(trackIds, limit, cursor);
-    const data = await this.tracksService.getAllByIds(trackIdsSlice);
+    let tracks = await this.tracksService.getAllByIds(trackIds);
 
-    const newCursorId = data.at(-1)?.id;
-    const newCursor = newCursorId && cursorConvertor.fromString(newCursorId);
+    if (search) {
+      const searchRegExp = new RegExp(search, 'i');
+      tracks = tracks.filter(
+        ({ artist, title }) =>
+          searchRegExp.test(artist) || searchRegExp.test(title),
+      );
+    }
 
-    return { data, cursor: newCursor };
+    if (cursor) {
+      const cursorId = cursorConvertor.toString(cursor);
+      const cursorIndex = tracks.findIndex(({ id }) => id === cursorId);
+      tracks = tracks.slice(cursorIndex + 1);
+    }
+
+    if (limit != null) {
+      tracks = tracks.slice(0, limit);
+    }
+
+    return {
+      data: tracks,
+      cursor: tracks.length && cursorConvertor.fromString(tracks.at(-1).id),
+    };
   }
 
   async addTrackIdByUserId(userId: string, trackId: string): Promise<void> {
