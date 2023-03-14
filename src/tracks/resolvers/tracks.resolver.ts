@@ -116,9 +116,10 @@ export class TracksResolver {
     const assetsUrl = `${this.configService.get('URL_OSU')}/assets`;
 
     return {
-      small: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list.jpg`,
-      normal: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list@2x.jpg`,
-      wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
+      list: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list.jpg`,
+      list2x: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list@2x.jpg`,
+      wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover.jpg`,
+      wide2x: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
     };
   }
 }
