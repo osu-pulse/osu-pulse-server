@@ -107,6 +107,7 @@ export class TracksResolver {
           : undefined,
         page: `${osuOauthUrl}/beatmapsets/${track.beatmapSetId}`,
         file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
+        map: `${kitsuApiUrl}/d/${track.beatmapSetId}`,
       }));
     }).load(track);
   }
