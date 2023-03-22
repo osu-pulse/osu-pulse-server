@@ -47,7 +47,7 @@ export class OsuBeatmapsService {
         cursor_string?: string;
       }>('beatmapsets/search', {
         headers: { Authorization: `Bearer ${token}` },
-        params: { q: search, nsfw: '', cursor_string: cursor },
+        params: { q: search, nsfw: '', s: 'any', cursor_string: cursor },
       });
       return {
         data: data.beatmapsets,
