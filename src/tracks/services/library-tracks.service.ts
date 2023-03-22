@@ -56,7 +56,7 @@ export class LibraryTracksService {
     await this.libraryModel.updateOne(
       { userId },
       {
-        $addToSet: {
+        $push: {
           trackIds: {
             $each: [trackId],
             $position: 0,

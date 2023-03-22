@@ -36,7 +36,7 @@ export class TracksService {
     search?: string,
     cursor?: string,
   ): Promise<WithCursor<TrackModel>> {
-    const response = await this.osuBeatmapsService.getAllBeatmapSets(
+    const response = await this.osuBeatmapsService.searchBeatmapSets(
       search,
       cursor,
     );

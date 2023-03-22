@@ -50,7 +50,7 @@ export class PlaylistTracksService {
     await this.playlistModel.updateOne(
       { playlistId },
       {
-        $addToSet: {
+        $push: {
           trackIds: {
             $each: [trackId],
             $position: 0,
