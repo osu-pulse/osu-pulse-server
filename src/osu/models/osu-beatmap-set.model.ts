@@ -10,6 +10,7 @@ export interface OsuBeatmapSetModel {
   covers: {
     list: string;
     'list@2x': string;
+    slimcover: string;
     'slimcover@2x': string;
   };
 }

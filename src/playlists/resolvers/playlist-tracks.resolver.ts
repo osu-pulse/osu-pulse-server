@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
@@ -9,8 +9,8 @@ import { TracksService } from '../../tracks/services/tracks.service';
 import { TrackModel } from '../../tracks/models/track.model';
 import { TracksWithCursorObject } from '../../tracks/objects/tracks-with-cursor.object';
 import { PlaylistTracksService } from '../services/playlist-tracks.service';
-import { PlaylistNotFoundException } from '../exceptions/playlist-not-found.exception';
 import { PlaylistsService } from '../services/playlists.service';
+import { TrackAlreadyInPlaylistException } from '../exceptions/track-already-in-playlist.exception';
 
 @Resolver(() => TrackObject)
 export class PlaylistTracksResolver {
@@ -27,18 +27,12 @@ export class PlaylistTracksResolver {
     playlistId: string,
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
-    @Args('limit', { nullable: true })
-    limit: number,
+    @Args('limit', { type: () => Int, nullable: true })
+    limit: number | undefined,
     @Auth()
     userId: string,
   ): Promise<WithCursor<TrackModel>> {
-    const playlistExists = await this.playlistsService.existsByUserIdAndId(
-      userId,
-      playlistId,
-    );
-    if (!playlistExists) {
-      throw new PlaylistNotFoundException();
-    }
+    await this.checkPlaylistExists(userId, playlistId);
 
     return this.playlistTracksService.getAllTracksByPlaylistId(
       playlistId,
@@ -57,23 +51,11 @@ export class PlaylistTracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
-    const playlistExists = await this.playlistsService.existsByUserIdAndId(
-      userId,
-      playlistId,
-    );
-    if (!playlistExists) {
-      throw new PlaylistNotFoundException();
-    }
+    await this.checkPlaylistExists(userId, playlistId);
+    await this.checkTrackExists(trackId);
+    await this.checkTrackNotInPlaylist(userId, trackId);
 
-    const trackExists = await this.tracksService.existsById(trackId);
-    if (!trackExists) {
-      throw new TrackNotFoundException();
-    }
-
-    await this.playlistTracksService.addTrackIdByPlaylistId(
-      playlistId,
-      trackId,
-    );
+    await this.playlistTracksService.addByPlaylistId(playlistId, trackId);
     return this.tracksService.getById(trackId);
   }
 
@@ -87,23 +69,11 @@ export class PlaylistTracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
-    const playlistExists = await this.playlistsService.existsByUserIdAndId(
-      userId,
-      playlistId,
-    );
-    if (!playlistExists) {
-      throw new PlaylistNotFoundException();
-    }
+    await this.checkPlaylistExists(userId, playlistId);
+    await this.checkTrackExists(trackId);
+    await this.checkTrackInPlaylist(userId, playlistId);
 
-    const trackExists = await this.tracksService.existsById(trackId);
-    if (!trackExists) {
-      throw new TrackNotFoundException();
-    }
-
-    await this.playlistTracksService.removeTrackIdByPlaylistId(
-      playlistId,
-      trackId,
-    );
+    await this.playlistTracksService.removeByPlaylistId(playlistId, trackId);
     return this.tracksService.getById(trackId);
   }
 
@@ -119,24 +89,61 @@ export class PlaylistTracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
-    const playlistExists = await this.playlistsService.existsByUserIdAndId(
-      userId,
-      playlistId,
-    );
-    if (!playlistExists) {
-      throw new PlaylistNotFoundException();
-    }
+    await this.checkPlaylistExists(userId, playlistId);
+    await this.checkTrackExists(trackId);
+    await this.checkTrackInPlaylist(userId, playlistId);
 
-    const trackExists = await this.tracksService.existsById(trackId);
-    if (!trackExists) {
-      throw new TrackNotFoundException();
-    }
-
-    await this.playlistTracksService.moveTrackIdByPlaylistId(
+    await this.playlistTracksService.moveByPlaylistId(
       playlistId,
       trackId,
       position,
     );
     return this.tracksService.getById(trackId);
+  }
+
+  private async checkPlaylistExists(
+    userId: string,
+    playlistId: string,
+  ): Promise<void> | never {
+    const trackExists = await this.playlistsService.existsByUserIdAndId(
+      userId,
+      playlistId,
+    );
+    if (!trackExists) {
+      throw new TrackNotFoundException();
+    }
+  }
+
+  private async checkTrackExists(trackId: string): Promise<void> | never {
+    const trackExists = await this.tracksService.existsById(trackId);
+    if (!trackExists) {
+      throw new TrackNotFoundException();
+    }
+  }
+
+  private async checkTrackNotInPlaylist(
+    userId: string,
+    trackId: string,
+  ): Promise<void> | never {
+    const trackInPlaylist = await this.playlistTracksService.existsByUserId(
+      userId,
+      trackId,
+    );
+    if (trackInPlaylist) {
+      throw new TrackAlreadyInPlaylistException();
+    }
+  }
+
+  private async checkTrackInPlaylist(
+    userId: string,
+    trackId: string,
+  ): Promise<void> | never {
+    const trackInPlaylist = await this.playlistTracksService.existsByUserId(
+      userId,
+      trackId,
+    );
+    if (!trackInPlaylist) {
+      throw new TrackAlreadyInPlaylistException();
+    }
   }
 }

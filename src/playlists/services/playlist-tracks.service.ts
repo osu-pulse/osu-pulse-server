@@ -15,6 +15,12 @@ export class PlaylistTracksService {
     private tracksService: TracksService,
   ) {}
 
+  async existsByUserId(userId: string, trackId: string): Promise<boolean> {
+    return Boolean(
+      await this.playlistModel.exists({ userId, trackIds: trackId }).lean(),
+    );
+  }
+
   async getAllTracksByPlaylistId(
     playlistId: string,
     limit?: number,
@@ -43,10 +49,7 @@ export class PlaylistTracksService {
     };
   }
 
-  async addTrackIdByPlaylistId(
-    playlistId: string,
-    trackId: string,
-  ): Promise<void> {
+  async addByPlaylistId(playlistId: string, trackId: string): Promise<void> {
     await this.playlistModel.updateOne(
       { playlistId },
       {
@@ -60,10 +63,7 @@ export class PlaylistTracksService {
     );
   }
 
-  async removeTrackIdByPlaylistId(
-    playlistId: string,
-    trackId: string,
-  ): Promise<void> {
+  async removeByPlaylistId(playlistId: string, trackId: string): Promise<void> {
     await this.playlistModel.updateOne(
       { playlistId },
       {
@@ -72,7 +72,7 @@ export class PlaylistTracksService {
     );
   }
 
-  async moveTrackIdByPlaylistId(
+  async moveByPlaylistId(
     playlistId: string,
     trackId: string,
     position: number,

@@ -36,7 +36,7 @@ export class TracksService {
     search?: string,
     cursor?: string,
   ): Promise<WithCursor<TrackModel>> {
-    const response = await this.osuBeatmapsService.getAllBeatmapSets(
+    const response = await this.osuBeatmapsService.searchBeatmapSets(
       search,
       cursor,
     );
@@ -83,15 +83,17 @@ export class TracksService {
         AudioFileType.MP3,
       );
 
-      const { subject, userIds } = this.cacheThreads.get(trackId);
-      userIds.delete(userId);
-      subject.next();
-      subject.complete();
-      this.cacheThreads.delete(trackId);
-
       this.logger.verbose(
         `Track ${trackId} finished caching by user ${userId}`,
       );
+
+      if (this.cacheThreads.has(trackId)) {
+        const { subject, userIds } = this.cacheThreads.get(trackId);
+        userIds.delete(userId);
+        subject.next();
+        subject.complete();
+        this.cacheThreads.delete(trackId);
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 export class TrackCoverModel {
-  small: string;
-  normal: string;
+  list: string;
+  list2x: string;
   wide: string;
+  wide2x: string;
 }

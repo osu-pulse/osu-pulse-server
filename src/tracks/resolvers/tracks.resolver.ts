@@ -64,10 +64,7 @@ export class TracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
-    const cached = await this.trackMetasService.existsByTrackId(trackId);
-    if (cached) {
-      throw new AlreadyCachedException();
-    }
+    await this.checkTrackNotCached(trackId);
 
     await this.tracksService.cache(userId, trackId);
     return this.tracksService.getById(trackId);
@@ -107,6 +104,7 @@ export class TracksResolver {
           : undefined,
         page: `${osuOauthUrl}/beatmapsets/${track.beatmapSetId}`,
         file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
+        map: `${kitsuApiUrl}/d/${track.beatmapSetId}`,
       }));
     }).load(track);
   }
@@ -116,9 +114,17 @@ export class TracksResolver {
     const assetsUrl = `${this.configService.get('URL_OSU')}/assets`;
 
     return {
-      small: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list.jpg`,
-      normal: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list@2x.jpg`,
-      wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
+      list: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list.jpg`,
+      list2x: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list@2x.jpg`,
+      wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover.jpg`,
+      wide2x: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
     };
+  }
+
+  private async checkTrackNotCached(trackId: string): Promise<void> | never {
+    const trackCached = await this.trackMetasService.existsByTrackId(trackId);
+    if (trackCached) {
+      throw new AlreadyCachedException();
+    }
   }
 }

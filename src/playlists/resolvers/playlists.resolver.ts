@@ -20,6 +20,7 @@ import { WithCursor } from '../../shared/types/with-cursor';
 import { BucketName } from '../../bucket/constants/bucket-name';
 import { ConfigService } from '@nestjs/config';
 import { EnvModel } from '../../core/models/env.model';
+import { TrackNotFoundException } from '../../tracks/exceptions/track-not-found.exception';
 
 @Resolver(() => PlaylistObject)
 export class PlaylistsResolver {
@@ -56,11 +57,7 @@ export class PlaylistsResolver {
     @Args('playlistId') playlistId: string,
     @Auth() userId: string,
   ): Promise<PlaylistModel> {
-    const playlistExists =
-      await this.playlistsService.existsPublicOrUserIdAndId(userId, playlistId);
-    if (!playlistExists) {
-      throw new PlaylistNotFoundException();
-    }
+    await this.checkPlaylistExists(userId, playlistId);
 
     return this.playlistsService.copy(playlistId, userId);
   }
@@ -85,5 +82,18 @@ export class PlaylistsResolver {
 
     const hasCover = await this.playlistsService.hasCover(playlist.id);
     return hasCover ? `${minioUrl}/${bucket}/${playlist.id}` : undefined;
+  }
+
+  private async checkPlaylistExists(
+    userId: string,
+    playlistId: string,
+  ): Promise<void> | never {
+    const trackExists = await this.playlistsService.existsByUserIdAndId(
+      userId,
+      playlistId,
+    );
+    if (!trackExists) {
+      throw new TrackNotFoundException();
+    }
   }
 }

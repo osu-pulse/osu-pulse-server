@@ -36,7 +36,7 @@ export class OsuBeatmapsService {
     }
   }
 
-  async getAllBeatmapSets(
+  async searchBeatmapSets(
     search?: string,
     cursor?: string,
   ): Promise<OsuBeatmapSetsWithCursorModel> {
@@ -47,7 +47,7 @@ export class OsuBeatmapsService {
         cursor_string?: string;
       }>('beatmapsets/search', {
         headers: { Authorization: `Bearer ${token}` },
-        params: { q: search, cursor_string: cursor },
+        params: { q: search, nsfw: '', cursor_string: cursor },
       });
       return {
         data: data.beatmapsets,
