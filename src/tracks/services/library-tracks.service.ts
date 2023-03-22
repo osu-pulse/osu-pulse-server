@@ -15,7 +15,13 @@ export class LibraryTracksService {
     private tracksService: TracksService,
   ) {}
 
-  async getAllTracksByUserId(
+  async existsByUserId(userId: string, trackId: string): Promise<boolean> {
+    return Boolean(
+      await this.libraryModel.exists({ userId, trackIds: trackId }).lean(),
+    );
+  }
+
+  async getAllByUserId(
     userId: string,
     search?: string,
     limit?: number,
@@ -52,7 +58,7 @@ export class LibraryTracksService {
     };
   }
 
-  async addTrackIdByUserId(userId: string, trackId: string): Promise<void> {
+  async addByUserId(userId: string, trackId: string): Promise<void> {
     await this.libraryModel.updateOne(
       { userId },
       {
@@ -66,7 +72,7 @@ export class LibraryTracksService {
     );
   }
 
-  async removeTrackIdByUserId(userId: string, trackId: string): Promise<void> {
+  async removeByUserId(userId: string, trackId: string): Promise<void> {
     await this.libraryModel.updateOne(
       { userId },
       {
@@ -75,7 +81,7 @@ export class LibraryTracksService {
     );
   }
 
-  async moveTrackIdByUserId(
+  async moveByUserId(
     userId: string,
     trackId: string,
     position: number,

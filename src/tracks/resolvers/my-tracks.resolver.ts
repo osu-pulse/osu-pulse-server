@@ -9,6 +9,8 @@ import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
 import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackNotFoundException } from '../exceptions/track-not-found.exception';
 import { LibraryTracksService } from '../services/library-tracks.service';
+import { TrackAlreadyInLibraryException } from '../exceptions/track-already-in-library.exception';
+import { TrackNotInLibraryException } from '../exceptions/track-not-in-library.exception';
 
 @Resolver(() => TrackObject)
 export class MyTracksResolver {
@@ -29,7 +31,7 @@ export class MyTracksResolver {
     @Auth()
     userId: string,
   ): Promise<WithCursor<TrackModel>> {
-    return this.libraryTracksService.getAllTracksByUserId(
+    return this.libraryTracksService.getAllByUserId(
       userId,
       search,
       limit,
@@ -45,12 +47,10 @@ export class MyTracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
-    const trackExists = await this.tracksService.existsById(trackId);
-    if (!trackExists) {
-      throw new TrackNotFoundException();
-    }
+    await this.checkTrackExists(trackId);
+    await this.checkTrackNotInLibrary(userId, trackId);
 
-    await this.libraryTracksService.addTrackIdByUserId(userId, trackId);
+    await this.libraryTracksService.addByUserId(userId, trackId);
     return this.tracksService.getById(trackId);
   }
 
@@ -62,12 +62,10 @@ export class MyTracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
-    const trackExists = await this.tracksService.existsById(trackId);
-    if (!trackExists) {
-      throw new TrackNotFoundException();
-    }
+    await this.checkTrackExists(trackId);
+    await this.checkTrackInLibrary(userId, trackId);
 
-    await this.libraryTracksService.removeTrackIdByUserId(userId, trackId);
+    await this.libraryTracksService.removeByUserId(userId, trackId);
     return this.tracksService.getById(trackId);
   }
 
@@ -81,16 +79,43 @@ export class MyTracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
+    await this.checkTrackExists(trackId);
+    await this.checkTrackInLibrary(userId, trackId);
+
+    await this.libraryTracksService.moveByUserId(userId, trackId, position);
+    return this.tracksService.getById(trackId);
+  }
+
+  private async checkTrackExists(trackId: string): Promise<void> | never {
     const trackExists = await this.tracksService.existsById(trackId);
     if (!trackExists) {
       throw new TrackNotFoundException();
     }
+  }
 
-    await this.libraryTracksService.moveTrackIdByUserId(
+  private async checkTrackNotInLibrary(
+    userId: string,
+    trackId: string,
+  ): Promise<void> | never {
+    const trackInLibrary = await this.libraryTracksService.existsByUserId(
       userId,
       trackId,
-      position,
     );
-    return this.tracksService.getById(trackId);
+    if (trackInLibrary) {
+      throw new TrackAlreadyInLibraryException();
+    }
+  }
+
+  private async checkTrackInLibrary(
+    userId: string,
+    trackId: string,
+  ): Promise<void> | never {
+    const trackInLibrary = await this.libraryTracksService.existsByUserId(
+      userId,
+      trackId,
+    );
+    if (!trackInLibrary) {
+      throw new TrackNotInLibraryException();
+    }
   }
 }

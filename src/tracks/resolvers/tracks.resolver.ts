@@ -64,10 +64,7 @@ export class TracksResolver {
     @Auth()
     userId: string,
   ): Promise<TrackModel> {
-    const cached = await this.trackMetasService.existsByTrackId(trackId);
-    if (cached) {
-      throw new AlreadyCachedException();
-    }
+    await this.checkTrackNotCached(trackId);
 
     await this.tracksService.cache(userId, trackId);
     return this.tracksService.getById(trackId);
@@ -122,5 +119,12 @@ export class TracksResolver {
       wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover.jpg`,
       wide2x: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
     };
+  }
+
+  private async checkTrackNotCached(trackId: string): Promise<void> | never {
+    const trackCached = await this.trackMetasService.existsByTrackId(trackId);
+    if (trackCached) {
+      throw new AlreadyCachedException();
+    }
   }
 }

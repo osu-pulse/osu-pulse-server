@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { parseJwt } from '../helpers/jwt';
 import { OsuAuthService } from '../../osu/services/osu-auth.service';
 import { LibrariesService } from '../../tracks/services/libraries.service';
-import { use } from 'passport';
 
 @Injectable()
 export class AuthService {

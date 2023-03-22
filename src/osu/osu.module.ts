@@ -4,8 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import axios from 'axios';
 import {
   AXIOS_KITSU,
-  AXIOS_OSU_OAUTH,
   AXIOS_OSU_API,
+  AXIOS_OSU_OAUTH,
 } from './constants/injections';
 import { kitsuApiUrl, osuApiUrl, osuOauthUrl } from './constants/api-url';
 import { KitsuService } from './services/kitsu.service';

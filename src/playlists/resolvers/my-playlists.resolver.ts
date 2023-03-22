@@ -5,9 +5,9 @@ import { PlaylistObject } from '../objects/playlist.object';
 import { PlaylistsService } from '../services/playlists.service';
 import { Auth } from '../../auth/decorators/auth.decorator';
 import { PlaylistModel } from '../models/playlist.model';
-import { PlaylistNotFoundException } from '../exceptions/playlist-not-found.exception';
 import { CreatePlaylistInput } from '../inputs/create-playlist.input';
 import { UpdatePlaylistInput } from '../inputs/update-playlist.input';
+import { TrackNotFoundException } from '../../tracks/exceptions/track-not-found.exception';
 
 @Resolver(() => PlaylistObject)
 export class MyPlaylistsResolver {
@@ -32,15 +32,9 @@ export class MyPlaylistsResolver {
     @Auth()
     userId: string,
   ): Promise<PlaylistModel> {
-    const foundPlaylist = await this.playlistsService.getByUserIdAndId(
-      userId,
-      playlistId,
-    );
-    if (!foundPlaylist) {
-      throw new PlaylistNotFoundException();
-    }
+    await this.checkPlaylistExists(userId, playlistId);
 
-    return foundPlaylist;
+    return this.playlistsService.getByUserIdAndId(userId, playlistId);
   }
 
   @UseGuards(OauthGuard)
@@ -64,13 +58,7 @@ export class MyPlaylistsResolver {
     @Auth()
     userId: string,
   ): Promise<PlaylistModel> {
-    const playlistExists = await this.playlistsService.existsByUserIdAndId(
-      userId,
-      playlistId,
-    );
-    if (!playlistExists) {
-      throw new PlaylistNotFoundException();
-    }
+    await this.checkPlaylistExists(userId, playlistId);
 
     return this.playlistsService.update(payload, playlistId);
   }
@@ -83,14 +71,21 @@ export class MyPlaylistsResolver {
     @Auth()
     userId: string,
   ): Promise<PlaylistModel> {
-    const playlistExists = await this.playlistsService.existsByUserIdAndId(
+    await this.checkPlaylistExists(userId, playlistId);
+
+    return this.playlistsService.delete(playlistId);
+  }
+
+  private async checkPlaylistExists(
+    userId: string,
+    playlistId: string,
+  ): Promise<void> | never {
+    const trackExists = await this.playlistsService.existsByUserIdAndId(
       userId,
       playlistId,
     );
-    if (!playlistExists) {
-      throw new PlaylistNotFoundException();
+    if (!trackExists) {
+      throw new TrackNotFoundException();
     }
-
-    return this.playlistsService.delete(playlistId);
   }
 }
