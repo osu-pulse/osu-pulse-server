@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AxiosError, AxiosInstance } from 'axios';
 import { AXIOS_OSU_API } from '../constants/injections';
 import { OsuException } from '../exceptions/osu.exception';
-import { OsuAuthService } from './osu-auth.service';
 import { splitChunks } from '../../shared/helpers/array';
-import { OsuBeatmapSetsWithCursorModel } from '../models/osu-beatmap-sets-with-cursor.model';
-import { OsuBeatmapSetModel } from '../models/osu-beatmap-set.model';
-import { OsuBeatmapModel } from '../models/osu-beatmap.model';
+import { OsuBeatmapSetsWithCursor } from '../types/osu-beatmap-sets-with-cursor';
+import { OsuBeatmapSet } from '../types/osu-beatmap-set';
+import { OsuBeatmap } from '../types/osu-beatmap';
+import { OsuAuthService } from './osu-auth.service';
 
 @Injectable()
 export class OsuBeatmapsService {
@@ -16,7 +16,7 @@ export class OsuBeatmapsService {
     private axiosOsuApi: AxiosInstance,
   ) {}
 
-  async existsBeatmapById(beatmapId): Promise<boolean> {
+  async existsBeatmapById(beatmapId: string): Promise<boolean> {
     try {
       const token = this.osuAuthService.getToken();
       await this.axiosOsuApi.head(`beatmaps/${beatmapId}`, {
@@ -39,11 +39,11 @@ export class OsuBeatmapsService {
   async searchBeatmapSets(
     search?: string,
     cursor?: string,
-  ): Promise<OsuBeatmapSetsWithCursorModel> {
+  ): Promise<OsuBeatmapSetsWithCursor> {
     try {
       const token = this.osuAuthService.getToken();
       const { data } = await this.axiosOsuApi.get<{
-        beatmapsets: OsuBeatmapSetModel[];
+        beatmapsets: OsuBeatmapSet[];
         cursor_string?: string;
       }>('beatmapsets/search', {
         headers: { Authorization: `Bearer ${token}` },
@@ -59,10 +59,10 @@ export class OsuBeatmapsService {
     }
   }
 
-  async getBeatmapById(beatmapId: string): Promise<OsuBeatmapModel> {
+  async getBeatmapById(beatmapId: string): Promise<OsuBeatmap> {
+    const token = this.osuAuthService.getToken();
     try {
-      const token = this.osuAuthService.getToken();
-      const { data } = await this.axiosOsuApi.get<OsuBeatmapModel>(
+      const { data } = await this.axiosOsuApi.get<OsuBeatmap>(
         `beatmaps/${beatmapId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -75,13 +75,13 @@ export class OsuBeatmapsService {
     }
   }
 
-  async getBeatmapsByIds(beatmapIds: string[]): Promise<OsuBeatmapModel[]> {
+  async getBeatmapsByIds(beatmapIds: string[]): Promise<OsuBeatmap[]> {
     try {
       const token = this.osuAuthService.getToken();
       const chunks = await Promise.all(
         splitChunks(beatmapIds, 50).map((ids) =>
           this.axiosOsuApi.get<{
-            beatmaps: OsuBeatmapModel[];
+            beatmaps: OsuBeatmap[];
           }>(`beatmaps`, {
             headers: { Authorization: `Bearer ${token}` },
             params: Object.fromEntries(

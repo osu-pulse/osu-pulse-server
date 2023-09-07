@@ -21,8 +21,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { OsuAuthService } from '../../osu/services/osu-auth.service';
-import { CallbackResponseModel } from '../models/callback-response.model';
+import { OsuOauthService } from '../../osu/services/osu-oauth.service';
+import { CallbackResponse } from '../types/callback-response';
 import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
@@ -36,7 +36,7 @@ import { parseJwt } from '../helpers/jwt';
 export class AuthController {
   constructor(
     private configService: ConfigService<EnvModel, true>,
-    private osuAuthService: OsuAuthService,
+    private osuAuthService: OsuOauthService,
     private authService: AuthService,
   ) {}
 
@@ -69,7 +69,7 @@ export class AuthController {
   @Get('callback')
   async callback(
     @Res() res: Response,
-    @Auth() callback: CallbackResponseModel,
+    @Auth() callback: CallbackResponse,
   ): Promise<void> {
     const userId = parseJwt(callback.accessToken).sub;
     await this.authService.registerUser(userId);
@@ -77,12 +77,12 @@ export class AuthController {
     const query = {
       access_token: callback.accessToken,
       refresh_token: callback.refreshToken,
-      state: callback.session.state,
+      state: callback.state,
     };
 
     return res.redirect(
       HttpStatus.TEMPORARY_REDIRECT,
-      `${callback.session.redirectUrl}?${new URLSearchParams(query)}`,
+      `${callback.redirectUrl}?${new URLSearchParams(query)}`,
     );
   }
 

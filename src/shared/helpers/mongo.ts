@@ -30,7 +30,7 @@ export function searchFilter<M extends Record<string, any>>(
           (field) =>
             ({
               [field]: { $regex: new RegExp(`.*${search}.*`, 'i') },
-            } as FilterQuery<keyof M>),
+            }) as FilterQuery<keyof M>,
         ),
       }
     : undefined;

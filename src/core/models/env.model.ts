@@ -31,7 +31,7 @@ export class EnvModel {
   URL_MINIO: string;
 
   @IsString()
-  URL_OSU: string;
+  URL_OSU_PROXY: string;
 
   /*
    * Database

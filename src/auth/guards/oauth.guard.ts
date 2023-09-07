@@ -9,6 +9,6 @@ export class OauthGuard
   implements GuardWithUnknownContext
 {
   getRequest(context: ExecutionContext) {
-    return unknownContextConvertor.toHttpRequest(context);
+    return unknownContextConvertor.toHttpRequest(context) as any;
   }
 }

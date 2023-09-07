@@ -11,9 +11,8 @@ type TrackCoverObject {
 
 type TrackUrlObject {
   page: String!
-  file: String!
   map: String!
-  audio: String
+  audio: String!
 }
 
 type TrackObject {
@@ -22,7 +21,6 @@ type TrackObject {
   artist: String!
   played: Float!
   liked: Float!
-  duration: Float!
   cover: TrackCoverObject!
   url: TrackUrlObject!
 }
@@ -94,8 +92,6 @@ type Query {
 }
 
 type Mutation {
-  cacheTrack(trackId: String!): TrackObject!
-  cancelCacheTrack(trackId: String!): TrackObject!
   addMyTrack(trackId: String!): TrackObject!
   removeMyTrack(trackId: String!): TrackObject!
   moveMyTrack(trackId: String!, position: Float!): TrackObject!

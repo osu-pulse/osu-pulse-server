@@ -64,7 +64,7 @@ describe('validateConfig', () => {
       URL_API: 'http://localhost/api',
       URL_AUTH: 'http://localhost/oauth',
       URL_MINIO: 'http://localhost/minio',
-      URL_OSU: 'http://localhost/osu',
+      URL_OSU_PROXY: 'http://localhost/osu',
       DB_ENDPOINT: '127.0.0.1',
       DB_PORT: '27017',
       DB_NAME: 'pulse',

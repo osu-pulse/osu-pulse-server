@@ -19,9 +19,6 @@ export class TrackObject {
   @Field(() => Number)
   liked: number;
 
-  @Field(() => Number)
-  duration: number;
-
   @Field(() => TrackCoverObject)
   cover: TrackCoverObject;
 

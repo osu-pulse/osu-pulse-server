@@ -6,7 +6,7 @@ import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackNotFoundException } from '../../tracks/exceptions/track-not-found.exception';
 import { TrackObject } from '../../tracks/objects/track.object';
 import { TracksService } from '../../tracks/services/tracks.service';
-import { TrackModel } from '../../tracks/models/track.model';
+import { Track } from '../../tracks/types/track';
 import { TracksWithCursorObject } from '../../tracks/objects/tracks-with-cursor.object';
 import { PlaylistTracksService } from '../services/playlist-tracks.service';
 import { PlaylistsService } from '../services/playlists.service';
@@ -31,7 +31,7 @@ export class PlaylistTracksResolver {
     limit: number | undefined,
     @Auth()
     userId: string,
-  ): Promise<WithCursor<TrackModel>> {
+  ): Promise<WithCursor<Track>> {
     await this.checkPlaylistExists(userId, playlistId);
 
     return this.playlistTracksService.getAllTracksByPlaylistId(
@@ -50,7 +50,7 @@ export class PlaylistTracksResolver {
     trackId: string,
     @Auth()
     userId: string,
-  ): Promise<TrackModel> {
+  ): Promise<Track> {
     await this.checkPlaylistExists(userId, playlistId);
     await this.checkTrackExists(trackId);
     await this.checkTrackNotInPlaylist(userId, trackId);
@@ -68,7 +68,7 @@ export class PlaylistTracksResolver {
     trackId: string,
     @Auth()
     userId: string,
-  ): Promise<TrackModel> {
+  ): Promise<Track> {
     await this.checkPlaylistExists(userId, playlistId);
     await this.checkTrackExists(trackId);
     await this.checkTrackInPlaylist(userId, playlistId);
@@ -88,7 +88,7 @@ export class PlaylistTracksResolver {
     position: number,
     @Auth()
     userId: string,
-  ): Promise<TrackModel> {
+  ): Promise<Track> {
     await this.checkPlaylistExists(userId, playlistId);
     await this.checkTrackExists(trackId);
     await this.checkTrackInPlaylist(userId, playlistId);

@@ -1,7 +1,6 @@
 import {
   Args,
   Context,
-  Mutation,
   Parent,
   Query,
   ResolveField,
@@ -10,29 +9,24 @@ import {
 import { TracksService } from '../services/tracks.service';
 import { TrackObject } from '../objects/track.object';
 import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
-import { TrackModel } from '../models/track.model';
+import { Track } from '../types/track';
 import { WithCursor } from '../../shared/types/with-cursor';
-import { AlreadyCachedException } from '../exceptions/already-cached.exception';
 import { UseGuards } from '@nestjs/common';
 import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { TrackUrlObject } from '../objects/track-url.object';
-import { TrackUrlModel } from '../models/track-url.model';
+import { TrackUrl } from '../types/track-url';
 import { ConfigService } from '@nestjs/config';
-import { BucketName } from '../../bucket/constants/bucket-name';
-import { kitsuApiUrl, osuOauthUrl } from '../../osu/constants/api-url';
+import { osuDirectUrl, osuUrl } from '../../osu/constants/api-url';
 import { EnvModel } from '../../core/models/env.model';
-import { Auth } from '../../auth/decorators/auth.decorator';
 import { TrackCoverObject } from '../objects/track-cover.object';
-import { TrackCoverModel } from '../models/track-cover.model';
-import { TrackMetasService } from '../services/track-metas.service';
-import { DataLoadersContext } from '../../shared/types/data-loaders-context';
-import { initDataLoader } from '../../shared/helpers/data-loader';
+import { TrackCover } from '../types/track-cover';
+import { DataLoadersContext } from '../../shared/types/data-loader';
+import { createLoader } from '../../shared/helpers/data-loader';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
   constructor(
     private tracksService: TracksService,
-    private trackMetasService: TrackMetasService,
     private configService: ConfigService<EnvModel, true>,
   ) {}
 
@@ -43,7 +37,7 @@ export class TracksResolver {
     search: string | undefined,
     @Args('cursor', { nullable: true })
     cursor: string | undefined,
-  ): Promise<WithCursor<TrackModel>> {
+  ): Promise<WithCursor<Track>> {
     return this.tracksService.getAllBySearch(search, cursor);
   }
 
@@ -52,79 +46,54 @@ export class TracksResolver {
   async track(
     @Args('trackId')
     trackId: string,
-  ): Promise<TrackModel> {
-    return this.tracksService.getById(trackId);
-  }
-
-  @UseGuards(OauthGuard)
-  @Mutation(() => TrackObject)
-  async cacheTrack(
-    @Args('trackId')
-    trackId: string,
-    @Auth()
-    userId: string,
-  ): Promise<TrackModel> {
-    await this.checkTrackNotCached(trackId);
-
-    await this.tracksService.cache(userId, trackId);
-    return this.tracksService.getById(trackId);
-  }
-
-  @UseGuards(OauthGuard)
-  @Mutation(() => TrackObject)
-  async cancelCacheTrack(
-    @Args('trackId')
-    trackId: string,
-    @Auth()
-    userId: string,
-  ): Promise<TrackModel> {
-    await this.tracksService.cancelCache(userId, trackId);
+  ): Promise<Track> {
     return this.tracksService.getById(trackId);
   }
 
   @ResolveField(() => TrackUrlObject)
   async url(
-    @Parent() track: TrackModel,
+    @Parent() track: Track,
     @Context()
-    context: DataLoadersContext<{ urlLoader: [TrackModel, TrackUrlModel] }>,
-  ): Promise<TrackUrlModel> {
-    return initDataLoader(context, 'urlLoader', async (tracks) => {
-      const minioUrl = this.configService.get('URL_MINIO');
-      const bucket = BucketName.TRACK_CACHES;
+    context: DataLoadersContext<{ url: [Track, TrackUrl] }>,
+  ): Promise<TrackUrl> {
+    const dataLoader = createLoader(
+      context,
+      'url',
+      async (tracks): Promise<TrackUrl[]> =>
+        tracks.map((track) => ({
+          audio: `${osuDirectUrl}/media/audio/${track.beatmapId}`,
+          page: `${osuUrl}/beatmapsets/${track.beatmapSetId}`,
+          map: `${osuDirectUrl}/d/${track.beatmapSetId}`,
+        })),
+    );
 
-      const existsSet = new Set(
-        await this.trackMetasService.existsAllByTrackIds(
-          tracks.map(({ id }) => id),
-        ),
-      );
-
-      return tracks.map((track) => ({
-        audio: existsSet.has(track.id)
-          ? `${minioUrl}/${bucket}/${track.beatmapId}`
-          : undefined,
-        page: `${osuOauthUrl}/beatmapsets/${track.beatmapSetId}`,
-        file: `${kitsuApiUrl}/audio/${track.beatmapSetId}`,
-        map: `${kitsuApiUrl}/d/${track.beatmapSetId}`,
-      }));
-    }).load(track);
+    return dataLoader.load(track);
   }
 
   @ResolveField(() => TrackCoverObject)
-  cover(@Parent() track: TrackModel): TrackCoverModel {
-    const assetsUrl = `${this.configService.get('URL_OSU')}/assets`;
+  async cover(
+    @Parent() track: Track,
+    @Context() context: DataLoadersContext<{ cover: [Track, TrackCover] }>,
+  ): Promise<TrackCover> {
+    const dataLoader = createLoader(
+      context,
+      'cover',
+      async (tracks: Track[]): Promise<TrackCover[]> => {
+        const osuProxyUrl = this.configService.get('URL_OSU_PROXY');
 
-    return {
-      list: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list.jpg`,
-      list2x: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/list@2x.jpg`,
-      wide: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover.jpg`,
-      wide2x: `${assetsUrl}/beatmaps/${track.beatmapSetId}/covers/slimcover@2x.jpg`,
-    };
-  }
+        return tracks.map((track) => {
+          const coversUrl = `${osuProxyUrl}/assets/beatmaps/${track.beatmapSetId}/covers`;
 
-  private async checkTrackNotCached(trackId: string): Promise<void> | never {
-    const trackCached = await this.trackMetasService.existsByTrackId(trackId);
-    if (trackCached) {
-      throw new AlreadyCachedException();
-    }
+          return {
+            list: `${coversUrl}/list.jpg`,
+            list2x: `${coversUrl}/list@2x.jpg`,
+            wide: `${coversUrl}/slimcover.jpg`,
+            wide2x: `${coversUrl}/slimcover@2x.jpg`,
+          };
+        });
+      },
+    );
+
+    return dataLoader.load(track);
   }
 }
