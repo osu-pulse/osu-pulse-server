@@ -3,15 +3,16 @@
 # ------------------------------------------------------
 
 type TrackCoverObject {
-  small: String!
-  normal: String!
+  list: String!
+  list2x: String!
   wide: String!
+  wide2x: String!
 }
 
 type TrackUrlObject {
   page: String!
-  file: String!
-  audio: String
+  map: String!
+  audio: String!
 }
 
 type TrackObject {
@@ -20,8 +21,6 @@ type TrackObject {
   artist: String!
   played: Float!
   liked: Float!
-  cached: Boolean!
-  duration: Float
   cover: TrackCoverObject!
   url: TrackUrlObject!
 }
@@ -82,19 +81,17 @@ type UserObject {
 type Query {
   tracks(search: String, cursor: String): TracksWithCursorObject!
   track(trackId: String!): TrackObject!
-  myTracks(cursor: String, limit: Float = 50): TracksWithCursorObject!
+  myTracks(search: String, cursor: String, limit: Int): TracksWithCursorObject!
   devices: [DeviceObject!]!
   publicPlaylists(search: String): [PlaylistObject!]!
   publicPlaylist(playlistId: String!): PlaylistObject!
   myPlaylists(search: String): [PlaylistObject!]!
   myPlaylist(playlistId: String!): PlaylistObject!
-  playlistTracks(playlistId: String!, cursor: String, limit: Float = 50): TracksWithCursorObject!
+  playlistTracks(playlistId: String!, cursor: String, limit: Int): TracksWithCursorObject!
   me: UserObject!
 }
 
 type Mutation {
-  cacheTrack(trackId: String!): TrackObject!
-  cancelCacheTrack(trackId: String!): TrackObject!
   addMyTrack(trackId: String!): TrackObject!
   removeMyTrack(trackId: String!): TrackObject!
   moveMyTrack(trackId: String!, position: Float!): TrackObject!

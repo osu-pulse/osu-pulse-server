@@ -2,20 +2,19 @@ import Strategy from 'passport-osu';
 import { AbstractStrategy, PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CallbackResponseModel } from '../models/callback-response.model';
+import { CallbackResponse } from '../types/callback-response';
 import { EnvModel } from '../../core/models/env.model';
 import { Request } from 'express';
-import * as crypto from 'crypto';
 import { RedirectUrlAbsentException } from '../exceptions/redirect-url-absent.exception';
 import { InvalidStateException } from '../exceptions/invalid-state.exception';
-import { Session } from '../types/session';
+import { stateConvertor } from '../convertors/state.convertor';
 
 @Injectable()
 export class OsuStrategy
   extends PassportStrategy(Strategy, 'osu')
   implements AbstractStrategy
 {
-  private states: Map<string, Session>;
+  private states: Map<string, string>;
 
   constructor(private configService: ConfigService<EnvModel, true>) {
     super({
@@ -29,40 +28,39 @@ export class OsuStrategy
   }
 
   authenticate(req: Request, options?: Record<string, unknown>) {
-    if (!req.url.includes('callback')) {
-      const redirectUrl = req.query.redirect_url as string;
-      if (!redirectUrl) {
-        throw new RedirectUrlAbsentException();
-      }
-
-      const state = req.query.state as string;
-      const id = crypto.randomUUID();
-
-      this.states.set(id, { redirectUrl, state });
-      setTimeout(() => this.states.delete(state), 3600 * 1000);
-
-      super.authenticate(req, { ...options, state: id });
-    } else {
-      super.authenticate(req, options);
+    if (!req.route.path.endsWith('callback')) {
+      return super.authenticate(req, options);
     }
+
+    const redirectUrl = req.query.redirect_url as string;
+    if (!redirectUrl) {
+      throw new RedirectUrlAbsentException();
+    }
+
+    const state = stateConvertor.toExternal(req.query.state as string);
+
+    this.states.set(state, redirectUrl);
+    setTimeout(() => this.states.delete(state), 24 * 60 * 60 * 1000);
+
+    super.authenticate(req, { ...options, state });
   }
 
   validate(
     req: Request,
     accessToken: string,
     refreshToken: string,
-  ): CallbackResponseModel {
-    const id = req.query.state as string;
-
-    if (!this.states.has(id)) {
+  ): CallbackResponse {
+    const state = req.query.state as string;
+    if (!this.states.has(state)) {
       throw new InvalidStateException();
     }
 
-    const session = this.states.get(id);
-    this.states.delete(id);
+    const redirectUrl = this.states.get(state);
+    this.states.delete(state);
 
     return {
-      session,
+      state: stateConvertor.fromExternal(state),
+      redirectUrl,
       accessToken,
       refreshToken,
     };

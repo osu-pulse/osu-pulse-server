@@ -1,10 +1,9 @@
-export class TrackModel {
+export class Track {
   id: string;
   beatmapId: string;
   beatmapSetId: string;
   title: string;
   artist: string;
-  duration: number;
   played: number;
   liked: number;
 }

@@ -13,6 +13,7 @@ import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
 import mongoose from 'mongoose';
 import { EnvModel } from './models/env.model';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SystemController } from './controllers/system.controller';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         csrfPrevention: true,
         fieldResolverEnhancers: ['guards'],
         installSubscriptionHandlers: true,
+        context: (context) => ({ ...context, loaders: {} }),
         subscriptions: {
           'subscriptions-transport-ws': {
             onConnect: (connectionParams) => lowercaseKeys(connectionParams),
@@ -74,6 +76,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     }),
     ScheduleModule.forRoot(),
   ],
+  controllers: [SystemController],
   providers: [
     BaseExceptionFilter,
     {

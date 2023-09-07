@@ -5,7 +5,7 @@ import { WithCursor } from '../../shared/types/with-cursor';
 import { cursorConvertor } from '../../shared/convertors/cursor.convertor';
 import { PlaylistDocument, PlaylistModel } from '../models/playlist.model';
 import { TracksService } from '../../tracks/services/tracks.service';
-import { TrackModel } from '../../tracks/models/track.model';
+import { Track } from '../../tracks/types/track';
 
 @Injectable()
 export class PlaylistTracksService {
@@ -25,7 +25,7 @@ export class PlaylistTracksService {
     playlistId: string,
     limit?: number,
     cursor?: string,
-  ): Promise<WithCursor<TrackModel>> {
+  ): Promise<WithCursor<Track>> {
     const { trackIds } = await this.playlistModel
       .findOne({ _id: playlistId })
       .select('trackIds')

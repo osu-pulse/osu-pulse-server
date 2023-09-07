@@ -1,10 +1,10 @@
-import { OsuBeatmapModel } from './osu-beatmap.model';
+import { OsuBeatmap } from './osu-beatmap';
 
-export interface OsuBeatmapSetModel {
+export interface OsuBeatmapSet {
   id: number;
   title: string;
   artist: string;
-  beatmaps: Omit<OsuBeatmapModel, 'beatmapset'>[];
+  beatmaps: Omit<OsuBeatmap, 'beatmapset'>[];
   favourite_count: number;
   play_count: number;
   covers: {

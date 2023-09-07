@@ -1,17 +1,20 @@
-import { DataLoadersContext } from '../types/data-loaders-context';
+import { DataLoaderFn, DataLoadersContext } from '../types/data-loader';
 import DataLoader from 'dataloader';
 
-export function initDataLoader<
+export function createLoader<
   C extends DataLoadersContext<any>,
-  K extends keyof C,
+  K extends keyof C['loaders'],
 >(
   context: C,
   name: K,
-  fn: (key: Parameters<C[K]['load']>[0][]) => ReturnType<C[K]['loadMany']>,
-): C[K] {
-  if (!context[name]) {
-    context[name] = new DataLoader(fn as any) as any;
+  fn: DataLoaderFn<
+    Parameters<C['loaders'][K]['load']>[0],
+    Awaited<ReturnType<C['loaders'][K]['load']>>
+  >,
+): C['loaders'][K] {
+  if (!context.loaders[name]) {
+    context.loaders[name] = new DataLoader(fn as any) as any;
   }
 
-  return context[name];
+  return context.loaders[name];
 }

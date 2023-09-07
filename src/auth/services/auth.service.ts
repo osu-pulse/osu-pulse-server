@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { parseJwt } from '../helpers/jwt';
-import { OsuAuthService } from '../../osu/services/osu-auth.service';
+import { OsuOauthService } from '../../osu/services/osu-oauth.service';
 import { LibrariesService } from '../../tracks/services/libraries.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private osuAuthService: OsuAuthService,
+    private osuAuthService: OsuOauthService,
     private librariesService: LibrariesService,
   ) {}
 

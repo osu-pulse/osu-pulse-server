@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LibraryDocument, LibraryModel } from '../models/library.model';
 import { WithCursor } from '../../shared/types/with-cursor';
-import { TrackModel } from '../models/track.model';
+import { Track } from '../types/track';
 import { cursorConvertor } from '../../shared/convertors/cursor.convertor';
 import { TracksService } from './tracks.service';
 
@@ -26,7 +26,7 @@ export class LibraryTracksService {
     search?: string,
     limit?: number,
     cursor?: string,
-  ): Promise<WithCursor<TrackModel>> {
+  ): Promise<WithCursor<Track>> {
     const { trackIds } = await this.libraryModel
       .findOne({ userId })
       .select('trackIds')
