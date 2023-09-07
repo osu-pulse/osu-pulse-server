@@ -16,7 +16,9 @@ export class OsuUsersService {
   async getMe(userId: string): Promise<OsuUser> {
     try {
       const token = this.accessTokenHolderService.get(userId);
-      const { data } = await this.axiosOsuApi.get<OsuUser>('me');
+      const { data } = await this.axiosOsuApi.get<OsuUser>('me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return data;
     } catch (e) {
       const { message } = e as AxiosError;
