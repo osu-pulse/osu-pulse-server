@@ -13,7 +13,7 @@ import { PlaylistsService } from '../services/playlists.service';
 import { PlaylistModel } from '../models/playlist.model';
 import { PlaylistNotFoundException } from '../exceptions/playlist-not-found.exception';
 import { Auth } from '../../auth/decorators/auth.decorator';
-import { TrackModel } from '../../tracks/models/track.model';
+import { Track } from '../../tracks/types/track';
 import { PlaylistTracksService } from '../services/playlist-tracks.service';
 import { TracksWithCursorObject } from '../../tracks/objects/tracks-with-cursor.object';
 import { WithCursor } from '../../shared/types/with-cursor';
@@ -67,7 +67,7 @@ export class PlaylistsResolver {
     @Args('cursor', { nullable: true }) cursor: string | undefined,
     @Args('limit', { nullable: true, defaultValue: 50 }) limit: number,
     @Parent() playlist: PlaylistModel,
-  ): Promise<WithCursor<TrackModel>> {
+  ): Promise<WithCursor<Track>> {
     return this.playlistTracksService.getAllTracksByPlaylistId(
       playlist.id,
       limit,

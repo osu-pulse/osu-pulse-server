@@ -1,4 +1,4 @@
-export class TrackCoverModel {
+export class TrackCover {
   list: string;
   list2x: string;
   wide: string;

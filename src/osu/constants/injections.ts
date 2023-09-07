@@ -1,3 +1,3 @@
 export const AXIOS_OSU_OAUTH = 'AXIOS_OSU_OAUTH';
 export const AXIOS_OSU_API = 'AXIOS_OSU_API';
-export const AXIOS_KITSU = 'AXIOS_KITSU';
+export const AXIOS_OSU_DIRECT = 'AXIOS_OSU_DIRECT';

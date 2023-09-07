@@ -4,9 +4,6 @@ import { BaseModel } from '../../shared/models/base.model';
 
 @Schema({ collection: 'playlists', versionKey: false, timestamps: true })
 export class PlaylistModel extends BaseModel {
-  @Prop({ index: true })
-  createdAt: Date;
-
   @Prop({ required: true })
   title: string;
 

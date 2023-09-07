@@ -1,9 +1,9 @@
 import { TokenSetDto } from '../dto/token-set.dto';
-import { OsuTokenSetModel } from '../../osu/models/osu-token-set.model';
+import { OsuTokenSet } from '../../osu/types/osu-token-set';
 import { pick } from '../../shared/helpers/object';
 
 export const tokenSetDtoConvertor = {
-  fromOsuTokenSetModel(tokenSet: OsuTokenSetModel): TokenSetDto {
+  fromOsuTokenSetModel(tokenSet: OsuTokenSet): TokenSetDto {
     return pick(tokenSet, ['access_token', 'refresh_token']);
   },
 };

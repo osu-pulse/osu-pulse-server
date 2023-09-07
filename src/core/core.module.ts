@@ -55,6 +55,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         csrfPrevention: true,
         fieldResolverEnhancers: ['guards'],
         installSubscriptionHandlers: true,
+        context: (context) => ({ ...context, loaders: {} }),
         subscriptions: {
           'subscriptions-transport-ws': {
             onConnect: (connectionParams) => lowercaseKeys(connectionParams),

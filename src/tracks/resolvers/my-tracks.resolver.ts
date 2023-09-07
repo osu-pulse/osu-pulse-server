@@ -4,7 +4,7 @@ import { OauthGuard } from '../../auth/guards/oauth.guard';
 import { Auth } from '../../auth/decorators/auth.decorator';
 import { TrackObject } from '../objects/track.object';
 import { TracksService } from '../services/tracks.service';
-import { TrackModel } from '../models/track.model';
+import { Track } from '../types/track';
 import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
 import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackNotFoundException } from '../exceptions/track-not-found.exception';
@@ -30,7 +30,7 @@ export class MyTracksResolver {
     limit: number | undefined,
     @Auth()
     userId: string,
-  ): Promise<WithCursor<TrackModel>> {
+  ): Promise<WithCursor<Track>> {
     return this.libraryTracksService.getAllByUserId(
       userId,
       search,
@@ -46,7 +46,7 @@ export class MyTracksResolver {
     trackId: string,
     @Auth()
     userId: string,
-  ): Promise<TrackModel> {
+  ): Promise<Track> {
     await this.checkTrackExists(trackId);
     await this.checkTrackNotInLibrary(userId, trackId);
 
@@ -61,7 +61,7 @@ export class MyTracksResolver {
     trackId: string,
     @Auth()
     userId: string,
-  ): Promise<TrackModel> {
+  ): Promise<Track> {
     await this.checkTrackExists(trackId);
     await this.checkTrackInLibrary(userId, trackId);
 
@@ -78,7 +78,7 @@ export class MyTracksResolver {
     position: number,
     @Auth()
     userId: string,
-  ): Promise<TrackModel> {
+  ): Promise<Track> {
     await this.checkTrackExists(trackId);
     await this.checkTrackInLibrary(userId, trackId);
 
