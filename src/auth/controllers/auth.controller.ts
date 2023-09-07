@@ -21,7 +21,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { OsuOAuthService } from '../../osu/services/osu-oauth.service';
+import { OsuOauthService } from '../../osu/services/osu-oauth.service';
 import { CallbackResponseModel } from '../models/callback-response.model';
 import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
@@ -36,7 +36,7 @@ import { parseJwt } from '../helpers/jwt';
 export class AuthController {
   constructor(
     private configService: ConfigService<EnvModel, true>,
-    private osuAuthService: OsuOAuthService,
+    private osuAuthService: OsuOauthService,
     private authService: AuthService,
   ) {}
 

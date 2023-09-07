@@ -6,8 +6,8 @@ import { OsuTokenSet } from '../types/osu-token-set';
 import { OsuToken } from '../types/osu-token';
 
 @Injectable()
-export class OsuOAuthService {
-  private readonly logger = new Logger(OsuOAuthService.name);
+export class OsuOauthService {
+  private readonly logger = new Logger(OsuOauthService.name);
   constructor(
     @Inject(AXIOS_OSU_OAUTH)
     private axiosOsuOauth: AxiosInstance,

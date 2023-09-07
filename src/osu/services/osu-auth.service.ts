@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EnvModel } from '../../core/models/env.model';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
-import { OsuOAuthService } from './osu-oauth.service';
+import { OsuOauthService } from './osu-oauth.service';
 
 @Injectable()
 export class OsuAuthService implements OnModuleInit {
@@ -11,7 +11,7 @@ export class OsuAuthService implements OnModuleInit {
 
   constructor(
     private configService: ConfigService<EnvModel, true>,
-    private osuOAuthService: OsuOAuthService,
+    private osuOAuthService: OsuOauthService,
   ) {}
 
   async onModuleInit(): Promise<void> {

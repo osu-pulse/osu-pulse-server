@@ -6,7 +6,7 @@ import {
   AXIOS_OSU_DIRECT,
   AXIOS_OSU_OAUTH,
 } from './constants/injections';
-import { OsuOAuthService } from './services/osu-oauth.service';
+import { OsuOauthService } from './services/osu-oauth.service';
 import { AuthModule } from '../auth/auth.module';
 import { OsuUsersService } from './services/osu-users.service';
 import { axiosOsuApi, axiosOsuDirect, axiosOsuOauth } from './helpers/axios';
@@ -19,10 +19,10 @@ import { OsuAuthService } from './services/osu-auth.service';
     { provide: AXIOS_OSU_API, useValue: axiosOsuApi },
     { provide: AXIOS_OSU_DIRECT, useValue: axiosOsuDirect },
     OsuAuthService,
-    OsuOAuthService,
+    OsuOauthService,
     OsuBeatmapsService,
     OsuUsersService,
   ],
-  exports: [OsuBeatmapsService, OsuUsersService, OsuOAuthService],
+  exports: [OsuBeatmapsService, OsuUsersService, OsuOauthService],
 })
 export class OsuModule {}

@@ -1,5 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
-import { osuApiUrl, osuDirectUrl, osuOAuthUrl } from '../constants/api-url';
+import { osuApiUrl, osuDirectUrl, osuOauthUrl } from '../constants/api-url';
 import { app } from '../../main';
 import { OsuAuthService } from '../services/osu-auth.service';
 
@@ -20,7 +20,7 @@ export const axiosOsuApi = axios.create({
 axiosOsuApi.interceptors.request.use(authInterceptor);
 
 export const axiosOsuOauth = axios.create({
-  baseURL: osuOAuthUrl,
+  baseURL: osuOauthUrl,
 });
 
 export const axiosOsuDirect = axios.create({
