@@ -1,7 +1,7 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE, BaseExceptionFilter } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getEnvPath, validateEnv } from './helpers/env';
+import { Env, getEnvPath, validateEnv } from './helpers/env';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -11,9 +11,12 @@ import { lowercaseKeys } from '../shared/helpers/case';
 import mongooseLeanGetters from 'mongoose-lean-getters';
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
 import mongoose from 'mongoose';
-import { EnvModel } from './models/env.model';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SystemController } from './controllers/system.controller';
+import { CacheModule } from '@nestjs/cache-manager';
+import { days } from 'milliseconds';
+import { redisStore } from 'cache-manager-redis-yet';
+import { RedisClientOptions } from 'redis';
 
 @Module({
   imports: [
@@ -22,18 +25,32 @@ import { SystemController } from './controllers/system.controller';
       validate: validateEnv,
       cache: true,
     }),
+    CacheModule.registerAsync<RedisClientOptions>({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<Env, true>) => ({
+        ttl: days(1),
+        store: redisStore,
+        socket: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+        },
+      }),
+    }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<EnvModel, true>) => ({
-        uri: `mongodb://${configService.get('DB_ENDPOINT')}:${configService.get(
-          'DB_PORT',
+      useFactory: (configService: ConfigService<Env, true>) => ({
+        uri: `mongodb://${configService.get('MONGO_HOST')}:${configService.get(
+          'MONGO_PORT',
         )}`,
-        dbName: configService.get('DB_NAME'),
+        dbName: configService.get('MONGO_NAME'),
         autoCreate: true,
         auth: {
-          username: configService.get('DB_USERNAME'),
-          password: configService.get('DB_PASSWORD'),
+          username: configService.get('MONGO_USERNAME'),
+          password: configService.get('MONGO_PASSWORD'),
         },
         connectionFactory: (connection: mongoose.Connection) => {
           connection.plugin(mongooseLeanGetters);
@@ -46,7 +63,7 @@ import { SystemController } from './controllers/system.controller';
       imports: [ConfigModule],
       inject: [ConfigService],
       driver: ApolloDriver,
-      useFactory: (configService: ConfigService<EnvModel, true>) => ({
+      useFactory: (configService: ConfigService<Env, true>) => ({
         cors: configService.get('CORS') && { origin: true, credentials: true },
         debug: configService.get('DEBUG'),
         playground: configService.get('DEBUG'),
@@ -74,7 +91,6 @@ import { SystemController } from './controllers/system.controller';
         },
       }),
     }),
-    ScheduleModule.forRoot(),
   ],
   controllers: [SystemController],
   providers: [

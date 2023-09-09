@@ -5,8 +5,6 @@ import { Auth } from '../../auth/decorators/auth.decorator';
 import { TrackObject } from '../objects/track.object';
 import { TracksService } from '../services/tracks.service';
 import { Track } from '../types/track';
-import { TracksWithCursorObject } from '../objects/tracks-with-cursor.object';
-import { WithCursor } from '../../shared/types/with-cursor';
 import { TrackNotFoundException } from '../exceptions/track-not-found.exception';
 import { LibraryTracksService } from '../services/library-tracks.service';
 import { TrackAlreadyInLibraryException } from '../exceptions/track-already-in-library.exception';
@@ -20,22 +18,22 @@ export class MyTracksResolver {
   ) {}
 
   @UseGuards(OauthGuard)
-  @Query(() => TracksWithCursorObject)
+  @Query(() => [TrackObject])
   async myTracks(
     @Args('search', { nullable: true })
     search: string | undefined,
-    @Args('cursor', { nullable: true })
-    cursor: string | undefined,
-    @Args('limit', { type: () => Int, nullable: true })
+    @Args('limit', { nullable: true, type: () => Int })
     limit: number | undefined,
+    @Args('offset', { nullable: true, type: () => Int })
+    offset: number | undefined,
     @Auth()
     userId: string,
-  ): Promise<WithCursor<Track>> {
+  ): Promise<Track[]> {
     return this.libraryTracksService.getAllByUserId(
       userId,
       search,
       limit,
-      cursor,
+      offset,
     );
   }
 

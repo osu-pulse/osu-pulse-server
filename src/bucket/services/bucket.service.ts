@@ -4,12 +4,12 @@ import Minio from 'minio';
 import { ConfigService } from '@nestjs/config';
 import { FileType } from '../constants/file-type';
 import { BucketName } from '../constants/bucket-name';
-import { EnvModel } from '../../core/models/env.model';
+import { Env } from '../../core/helpers/env';
 
 @Injectable()
 export class BucketService implements OnModuleInit {
   constructor(
-    private configService: ConfigService<EnvModel, true>,
+    private configService: ConfigService<Env, true>,
     private minioService: MinioService,
   ) {}
 

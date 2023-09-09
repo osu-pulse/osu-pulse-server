@@ -6,4 +6,5 @@ export class Track {
   artist: string;
   played: number;
   liked: number;
+  duration: number;
 }

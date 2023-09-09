@@ -14,6 +14,7 @@ export const trackConvertor = {
       beatmapSetId: String(beatmapSet.id),
       played: beatmapSet.play_count,
       liked: beatmapSet.favourite_count,
+      duration: beatmap.total_length,
     };
   },
   fromOsuBeatmap(beatmap: OsuBeatmap): Track {
@@ -24,6 +25,7 @@ export const trackConvertor = {
       beatmapSetId: String(beatmap.beatmapset.id),
       played: beatmap.beatmapset.play_count,
       liked: beatmap.beatmapset.favourite_count,
+      duration: beatmap.total_length,
     };
   },
 };
