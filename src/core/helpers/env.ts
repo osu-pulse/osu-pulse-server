@@ -1,11 +1,5 @@
 import { plainToInstance, Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsIn,
-  IsString,
-  IsUrl,
-  validateSync,
-} from 'class-validator';
+import { IsBoolean, IsIn, IsString, validateSync } from 'class-validator';
 import fs from 'fs';
 import { validationOptions } from '../../shared/constants/validation-options';
 import { NodeEnv } from '../constants/node-env';
@@ -50,16 +44,16 @@ export class Env {
   /*
    * URLs
    */
-  @IsUrl()
+  @IsString()
   URL_API: string;
 
-  @IsUrl()
+  @IsString()
   URL_AUTH: string;
 
-  @IsUrl()
+  @IsString()
   URL_MINIO: string;
 
-  @IsUrl()
+  @IsString()
   URL_PROXY: string;
 
   /*
