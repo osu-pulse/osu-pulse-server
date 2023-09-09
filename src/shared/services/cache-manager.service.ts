@@ -15,16 +15,28 @@ export class CacheManagerService {
   }
 
   async has<I = unknown>(prefix: string, id: I): Promise<boolean> {
-    return (
-      (await this.cacheManager.get(this.parseKey(prefix, id))) === undefined
-    );
+    return (await this.get(prefix, id)) === undefined;
   }
 
   async hasAll<I = unknown>(prefix: string, ids: I[]): Promise<boolean[]> {
     return Promise.all(ids.map((id) => this.has<I>(prefix, id)));
   }
 
-  async get<
+  async get<V = unknown, I = unknown>(
+    prefix: string,
+    id: I,
+  ): Promise<V | undefined> {
+    return this.cacheManager.get<V>(this.parseKey(prefix, id));
+  }
+
+  async getAll<V = unknown, I = unknown>(
+    prefix: string,
+    ids: I[],
+  ): Promise<(V | undefined)[]> {
+    return Promise.all(ids.map((id) => this.get<V>(prefix, id)));
+  }
+
+  async merge<
     V = unknown,
     I = unknown,
     F extends undefined | ((id: I) => MaybePromise<V>) = undefined,
@@ -33,7 +45,7 @@ export class CacheManagerService {
     id: I,
     fallback?: F,
   ): Promise<F extends undefined ? V | undefined : V> {
-    const value = await this.cacheManager.get<V>(this.parseKey(prefix, id));
+    const value = await this.get<V>(prefix, id);
     if (value !== undefined || fallback === undefined) {
       return value;
     }
@@ -44,7 +56,7 @@ export class CacheManagerService {
     return result;
   }
 
-  async getAll<
+  async mergeAll<
     V = unknown,
     I = unknown,
     F extends undefined | ((ids: I[]) => MaybePromise<V[]>) = undefined,
@@ -53,9 +65,7 @@ export class CacheManagerService {
     ids: I[],
     fallback?: F,
   ): Promise<F extends undefined ? (V | undefined)[] : V[]> {
-    const values = await Promise.all(
-      ids.map((id) => this.cacheManager.get<V>(this.parseKey(prefix, id))),
-    );
+    const values = await Promise.all(ids.map((id) => this.get<V>(prefix, id)));
     if (fallback === undefined) {
       return values;
     }

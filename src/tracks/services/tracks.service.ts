@@ -23,7 +23,7 @@ export class TracksService {
     const fetch = async (trackId: string) =>
       this.osuBeatmapsService.existsBeatmapById(trackId);
 
-    return this.cacheManagerService.get('track:exists:', trackId, fetch);
+    return this.cacheManagerService.merge('track:exists:', trackId, fetch);
   }
 
   async getAllBySearch(
@@ -45,7 +45,7 @@ export class TracksService {
       return beatmaps.map(trackConvertor.fromOsuBeatmap);
     };
 
-    return this.cacheManagerService.getAll('track:get:', trackIds, fetch);
+    return this.cacheManagerService.mergeAll('track:get:', trackIds, fetch);
   }
 
   async getById(trackId: string): Promise<Track> {
@@ -54,7 +54,7 @@ export class TracksService {
       return trackConvertor.fromOsuBeatmap(beatmap);
     };
 
-    return this.cacheManagerService.get('track:get:', trackId, fetch);
+    return this.cacheManagerService.merge('track:get:', trackId, fetch);
   }
 
   getUrl(track: Track): TrackUrl {
