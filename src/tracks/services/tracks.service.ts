@@ -3,11 +3,8 @@ import { OsuBeatmapsService } from '../../osu/services/osu-beatmaps.service';
 import { trackConvertor } from '../convertors/track.convertor';
 import { Track } from '../types/track';
 import { OsuDirectBeatmapsService } from '../../osu/services/osu-direct-beatmaps.service';
-import { TrackUrl } from '../types/track-url';
-import { osuUrl } from '../../osu/constants/osu-url';
 import { ConfigService } from '@nestjs/config';
 import { Env } from '../../core/helpers/env';
-import { TrackCover } from '../types/track-cover';
 import { CacheManagerService } from '../../shared/services/cache-manager.service';
 
 @Injectable()
@@ -55,25 +52,5 @@ export class TracksService {
     };
 
     return this.cacheManagerService.merge('track:get:', trackId, fetch);
-  }
-
-  getUrl(track: Track): TrackUrl {
-    return {
-      audio: `${osuUrl.direct}/media/audio/${track.beatmapId}`,
-      page: `${osuUrl.base}/beatmapsets/${track.beatmapSetId}`,
-      map: `${osuUrl.direct}/d/${track.beatmapSetId}`,
-    };
-  }
-
-  getCover(track: Track): TrackCover {
-    const proxyUrl = this.configService.get('URL_PROXY');
-    const coversUrl = `${proxyUrl}/assets.ppy.sh/beatmaps/${track.beatmapSetId}/covers`;
-
-    return {
-      list: `${coversUrl}/list.jpg`,
-      list2x: `${coversUrl}/list@2x.jpg`,
-      wide: `${coversUrl}/slimcover.jpg`,
-      wide2x: `${coversUrl}/slimcover@2x.jpg`,
-    };
   }
 }

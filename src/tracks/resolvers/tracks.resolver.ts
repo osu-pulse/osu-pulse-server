@@ -18,10 +18,16 @@ import { TrackCoverObject } from '../objects/track-cover.object';
 import { TrackCover } from '../types/track-cover';
 import { DataLoadersContext } from '../../shared/types/data-loader';
 import { createLoader } from '../../shared/helpers/data-loader';
+import { ConfigService } from '@nestjs/config';
+import { Env } from '../../core/helpers/env';
+import { osuUrl } from '../../osu/constants/osu-url';
 
 @Resolver(() => TrackObject)
 export class TracksResolver {
-  constructor(private tracksService: TracksService) {}
+  constructor(
+    private tracksService: TracksService,
+    private configService: ConfigService<Env, true>,
+  ) {}
 
   // @UseGuards(OauthGuard)
   @Query(() => [TrackObject])
@@ -55,7 +61,11 @@ export class TracksResolver {
       context,
       'url',
       async (tracks): Promise<TrackUrl[]> =>
-        tracks.map((track) => this.tracksService.getUrl(track)),
+        tracks.map((track) => ({
+          audio: `${osuUrl.direct}/media/audio/${track.beatmapId}`,
+          page: `${osuUrl.base}/beatmapsets/${track.beatmapSetId}`,
+          map: `${osuUrl.direct}/d/${track.beatmapSetId}`,
+        })),
     );
 
     return dataLoader.load(track);
@@ -69,8 +79,17 @@ export class TracksResolver {
     const dataLoader = createLoader(
       context,
       'cover',
-      async (tracks: Track[]): Promise<TrackCover[]> =>
-        tracks.map((track) => this.tracksService.getCover(track)),
+      async (tracks: Track[]): Promise<TrackCover[]> => {
+        const proxyUrl = this.configService.get('URL_PROXY');
+        const coversUrl = `${proxyUrl}/assets.ppy.sh/beatmaps/${track.beatmapSetId}/covers`;
+
+        return tracks.map((track) => ({
+          list: `${coversUrl}/list.jpg`,
+          list2x: `${coversUrl}/list@2x.jpg`,
+          wide: `${coversUrl}/slimcover.jpg`,
+          wide2x: `${coversUrl}/slimcover@2x.jpg`,
+        }));
+      },
     );
 
     return dataLoader.load(track);
