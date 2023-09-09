@@ -11,6 +11,7 @@ import { AuthModule } from '../auth/auth.module';
 import { OsuUsersService } from './services/osu-users.service';
 import { axiosOsuApi, axiosOsuDirect, axiosOsuOauth } from './helpers/axios';
 import { OsuAuthService } from './services/osu-auth.service';
+import { OsuDirectBeatmapsService } from './services/osu-direct-beatmaps.service';
 
 @Module({
   imports: [ConfigModule, AuthModule],
@@ -21,8 +22,14 @@ import { OsuAuthService } from './services/osu-auth.service';
     OsuAuthService,
     OsuOauthService,
     OsuBeatmapsService,
+    OsuDirectBeatmapsService,
     OsuUsersService,
   ],
-  exports: [OsuBeatmapsService, OsuUsersService, OsuOauthService],
+  exports: [
+    OsuBeatmapsService,
+    OsuDirectBeatmapsService,
+    OsuUsersService,
+    OsuOauthService,
+  ],
 })
 export class OsuModule {}

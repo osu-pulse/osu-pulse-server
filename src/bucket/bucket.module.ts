@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { BucketService } from './services/bucket.service';
 import { MinioModule } from 'nestjs-minio-client';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EnvModel } from '../core/models/env.model';
+import { Env } from '../core/helpers/env';
 
 @Module({
   imports: [
@@ -10,11 +10,11 @@ import { EnvModel } from '../core/models/env.model';
     MinioModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<EnvModel, true>) => ({
-        port: Number(configService.get('MI_PORT')),
-        endPoint: configService.get('MI_ENDPOINT'),
-        accessKey: configService.get('MI_USERNAME'),
-        secretKey: configService.get('MI_PASSWORD'),
+      useFactory: (configService: ConfigService<Env, true>) => ({
+        port: Number(configService.get('MINIO_PORT')),
+        endPoint: configService.get('MINIO_HOST'),
+        accessKey: configService.get('MINIO_USERNAME'),
+        secretKey: configService.get('MINIO_PASSWORD'),
         useSSL: false,
       }),
     }),

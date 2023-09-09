@@ -1,6 +1,5 @@
 import fs from 'fs';
-import { getEnvPath, validateEnv } from '../../../src/core/helpers/env';
-import { EnvModel } from '../../../src/core/models/env.model';
+import { Env, getEnvPath, validateEnv } from '../../../src/core/helpers/env';
 
 describe('getEnvPath', () => {
   beforeEach(() => {
@@ -53,8 +52,8 @@ describe('getEnvPath', () => {
 });
 
 describe('validateConfig', () => {
-  let configMock: Record<keyof EnvModel, string>;
-  let configInvalidMock: Partial<Record<keyof EnvModel, string>>;
+  let configMock: Record<keyof Env, string>;
+  let configInvalidMock: Partial<Record<keyof Env, string>>;
 
   beforeEach(() => {
     configMock = {
@@ -64,31 +63,33 @@ describe('validateConfig', () => {
       URL_API: 'http://localhost/api',
       URL_AUTH: 'http://localhost/oauth',
       URL_MINIO: 'http://localhost/minio',
-      URL_OSU_PROXY: 'http://localhost/osu',
-      DB_ENDPOINT: '127.0.0.1',
-      DB_PORT: '27017',
-      DB_NAME: 'pulse',
-      DB_USERNAME: 't1mon',
-      DB_PASSWORD: '1234',
-      MI_ENDPOINT: '127.0.0.1',
-      MI_PORT: '9000',
-      MI_USERNAME: 'access_key',
-      MI_PASSWORD: 'secret_key',
+      URL_PROXY: 'http://localhost/osu',
+      MONGO_HOST: '127.0.0.1',
+      MONGO_PORT: '27017',
+      MONGO_NAME: 'pulse',
+      MONGO_USERNAME: 't1mon',
+      MONGO_PASSWORD: '1234',
+      REDIS_HOST: '127.0.0.1',
+      REDIS_PORT: '6379',
+      MINIO_HOST: '127.0.0.1',
+      MINIO_PORT: '9000',
+      MINIO_USERNAME: 'access_key',
+      MINIO_PASSWORD: 'secret_key',
       OSU_CLIENT_ID: '123',
       OSU_CLIENT_SECRET: 'secret',
     };
     configInvalidMock = {
-      DB_ENDPOINT: 'jisjef',
-      DB_NAME: 'jih',
-      DB_USERNAME: undefined,
-      DB_PASSWORD: undefined,
+      MONGO_HOST: 'jisjef',
+      MONGO_NAME: 'jih',
+      MONGO_USERNAME: undefined,
+      MONGO_PASSWORD: undefined,
     };
   });
 
   it('should parse config if config is valid', () => {
     const env = validateEnv(configMock);
 
-    expect(env).toBeInstanceOf(EnvModel);
+    expect(env).toBeInstanceOf(Env);
   });
 
   it('should throw if config is invalid', () => {

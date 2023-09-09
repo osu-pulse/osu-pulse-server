@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { LibraryDocument, LibraryModel } from '../models/library.model';
-import { WithCursor } from '../../shared/types/with-cursor';
 import { Track } from '../types/track';
-import { cursorConvertor } from '../../shared/convertors/cursor.convertor';
 import { TracksService } from './tracks.service';
+import { isDefined } from 'class-validator';
 
 @Injectable()
 export class LibraryTracksService {
@@ -25,8 +24,8 @@ export class LibraryTracksService {
     userId: string,
     search?: string,
     limit?: number,
-    cursor?: string,
-  ): Promise<WithCursor<Track>> {
+    offset?: number,
+  ): Promise<Track[]> {
     const { trackIds } = await this.libraryModel
       .findOne({ userId })
       .select('trackIds')
@@ -42,20 +41,12 @@ export class LibraryTracksService {
       );
     }
 
-    if (cursor) {
-      const cursorId = cursorConvertor.toString(cursor);
-      const cursorIndex = tracks.findIndex(({ id }) => id === cursorId);
-      tracks = tracks.slice(cursorIndex + 1);
-    }
+    tracks = tracks.slice(
+      isDefined(offset) ? offset : undefined,
+      isDefined(limit) ? offset + limit : undefined,
+    );
 
-    if (limit != null) {
-      tracks = tracks.slice(0, limit);
-    }
-
-    return {
-      data: tracks,
-      cursor: tracks.length && cursorConvertor.fromString(tracks.at(-1).id),
-    };
+    return tracks;
   }
 
   async addByUserId(userId: string, trackId: string): Promise<void> {

@@ -1,5 +1,5 @@
 import { UserModel } from '../models/user.model';
-import { osuUrl } from '../../osu/constants/api-url';
+import { osuUrl } from '../../osu/constants/osu-url';
 import { OsuUser } from '../../osu/types/osu-user';
 
 export const userModelConvertor = {

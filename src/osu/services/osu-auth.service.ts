@@ -1,8 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EnvModel } from '../../core/models/env.model';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { OsuOauthService } from './osu-oauth.service';
+import { Env } from '../../core/helpers/env';
+import { seconds } from 'milliseconds';
 
 @Injectable()
 export class OsuAuthService implements OnModuleInit {
@@ -10,7 +11,7 @@ export class OsuAuthService implements OnModuleInit {
   private accessToken = new ReplaySubject<string>();
 
   constructor(
-    private configService: ConfigService<EnvModel, true>,
+    private configService: ConfigService<Env, true>,
     private osuOAuthService: OsuOauthService,
   ) {}
 
@@ -31,10 +32,10 @@ export class OsuAuthService implements OnModuleInit {
 
       this.accessToken.next(response.access_token);
 
-      setTimeout(() => this.login(), (response.expires_in - 10) * 1000);
+      setTimeout(() => this.login(), (response.expires_in - 10) * seconds(1));
     } catch (e) {
       this.logger.error(e);
-      setTimeout(() => this.login(), 10 * 1000);
+      setTimeout(() => this.login(), 10 * seconds(1));
     }
   }
 

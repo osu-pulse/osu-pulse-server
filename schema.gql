@@ -21,13 +21,9 @@ type TrackObject {
   artist: String!
   played: Float!
   liked: Float!
+  duration: Float!
   cover: TrackCoverObject!
   url: TrackUrlObject!
-}
-
-type TracksWithCursorObject {
-  data: [TrackObject!]!
-  cursor: String
 }
 
 type DeviceInfoObject {
@@ -56,6 +52,11 @@ type DeviceObject {
   status: DeviceStatusObject!
 }
 
+type TracksWithCursorObject {
+  data: [TrackObject!]!
+  cursor: String
+}
+
 type PlaylistObject {
   id: ID!
   title: String!
@@ -79,9 +80,9 @@ type UserObject {
 }
 
 type Query {
-  tracks(search: String, cursor: String): TracksWithCursorObject!
+  tracks(search: String, limit: Int, offset: Int): [TrackObject!]!
   track(trackId: String!): TrackObject!
-  myTracks(search: String, cursor: String, limit: Int): TracksWithCursorObject!
+  myTracks(search: String, limit: Int, offset: Int): [TrackObject!]!
   devices: [DeviceObject!]!
   publicPlaylists(search: String): [PlaylistObject!]!
   publicPlaylist(playlistId: String!): PlaylistObject!

@@ -27,15 +27,15 @@ import { RotateTokenDto } from '../dto/rotate-token.dto';
 import { tokenSetDtoConvertor } from '../convertors/token-set-dto.convertor';
 import { TokenSetDto } from '../dto/token-set.dto';
 import { plainToInstance } from 'class-transformer';
-import { EnvModel } from '../../core/models/env.model';
 import { AuthService } from '../services/auth.service';
 import { parseJwt } from '../helpers/jwt';
+import { Env } from '../../core/helpers/env';
 
 @ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private configService: ConfigService<EnvModel, true>,
+    private configService: ConfigService<Env, true>,
     private osuAuthService: OsuOauthService,
     private authService: AuthService,
   ) {}
