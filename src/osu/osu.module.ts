@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { OsuBeatmapsService } from './services/osu-beatmaps.service';
 import { ConfigModule } from '@nestjs/config';
 import {
@@ -14,7 +14,7 @@ import { OsuAuthService } from './services/osu-auth.service';
 import { OsuDirectBeatmapsService } from './services/osu-direct-beatmaps.service';
 
 @Module({
-  imports: [ConfigModule, AuthModule],
+  imports: [ConfigModule, forwardRef(() => AuthModule)],
   providers: [
     { provide: AXIOS_OSU_OAUTH, useValue: axiosOsuOauth },
     { provide: AXIOS_OSU_API, useValue: axiosOsuApi },

@@ -1,8 +1,11 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum DeviceType {
-  MOBILE = 'MOBILE',
   DESKTOP = 'DESKTOP',
+  MOBILE = 'MOBILE',
+  TABLET = 'TABLET',
+  CONSOLE = 'CONSOLE',
+  TV = 'TV',
   OTHER = 'OTHER',
 }
 

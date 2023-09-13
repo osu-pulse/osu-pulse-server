@@ -26,30 +26,21 @@ type TrackObject {
   url: TrackUrlObject!
 }
 
-type DeviceInfoObject {
-  type: DeviceType!
-  device: String!
-  client: String!
-}
-
-enum DeviceType {
-  MOBILE
-  DESKTOP
-  OTHER
-}
-
-type DeviceStatusObject {
-  playing: Boolean
-  volume: Float
-  progress: Float
-  trackId: String
-}
-
 type DeviceObject {
   id: ID!
   userId: String!
-  info: DeviceInfoObject!
-  status: DeviceStatusObject!
+  type: DeviceType!
+  model: String
+  os: String
+}
+
+enum DeviceType {
+  DESKTOP
+  MOBILE
+  TABLET
+  CONSOLE
+  TV
+  OTHER
 }
 
 type TracksWithCursorObject {
@@ -80,10 +71,10 @@ type UserObject {
 }
 
 type Query {
+  myDevices: [DeviceObject!]!
   tracks(search: String, limit: Int, offset: Int): [TrackObject!]!
   track(trackId: String!): TrackObject!
   myTracks(search: String, limit: Int, offset: Int): [TrackObject!]!
-  devices: [DeviceObject!]!
   publicPlaylists(search: String): [PlaylistObject!]!
   publicPlaylist(playlistId: String!): PlaylistObject!
   myPlaylists(search: String): [PlaylistObject!]!
@@ -116,5 +107,6 @@ input UpdatePlaylistInput {
 }
 
 type Subscription {
-  deviceStatusUpdated: DeviceObject!
+  deviceConnected: DeviceObject!
+  deviceDisconnected: DeviceObject!
 }

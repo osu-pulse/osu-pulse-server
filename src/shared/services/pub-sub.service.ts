@@ -2,7 +2,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { Inject } from '@nestjs/common';
 import { GRAPHQL_PUB_SUB } from '../constants/injections';
 
-export abstract class SubscriptionService<
+export abstract class PubSubService<
   E extends (trigger: any, payload: any) => void,
 > {
   constructor(@Inject(GRAPHQL_PUB_SUB) private pubSub: PubSub) {}

@@ -17,9 +17,14 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { days } from 'milliseconds';
 import { redisStore } from 'cache-manager-redis-yet';
 import { RedisClientOptions } from 'redis';
+import { RemoteModule } from '../remote/remote.module';
+import { AuthModule } from '../auth/auth.module';
+import { ConnectorService } from '../remote/services/connector.service';
 
 @Module({
   imports: [
+    AuthModule,
+    RemoteModule,
     ConfigModule.forRoot({
       envFilePath: getEnvPath(),
       validate: validateEnv,
@@ -60,36 +65,44 @@ import { RedisClientOptions } from 'redis';
       }),
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      imports: [ConfigModule],
-      inject: [ConfigService],
+      imports: [ConfigModule, RemoteModule],
+      inject: [ConfigService, ConnectorService],
       driver: ApolloDriver,
-      useFactory: (configService: ConfigService<Env, true>) => ({
-        cors: configService.get('CORS') && { origin: true, credentials: true },
-        debug: configService.get('DEBUG'),
-        playground: configService.get('DEBUG'),
-        introspection: configService.get('DEBUG'),
-        autoSchemaFile: configService.get('DEBUG') && 'schema.gql',
-        cache: 'bounded',
-        csrfPrevention: true,
-        fieldResolverEnhancers: ['guards'],
-        installSubscriptionHandlers: true,
-        context: (context) => ({ ...context, loaders: {} }),
-        subscriptions: {
-          'subscriptions-transport-ws': {
-            onConnect: (connectionParams) => lowercaseKeys(connectionParams),
-            context: ({ connection }) => ({
-              req: { headers: connection.context },
-            }),
+      useFactory: (
+        configService: ConfigService<Env, true>,
+        connectorService: ConnectorService,
+      ) => {
+        return {
+          cors: configService.get('CORS') && {
+            origin: true,
+            credentials: true,
           },
-          'graphql-ws': {
-            onConnect: ({ connectionParams, extra }) =>
-              Object.assign(extra, {
-                context: lowercaseKeys(connectionParams),
+          debug: configService.get('DEBUG'),
+          playground: configService.get('DEBUG'),
+          introspection: configService.get('DEBUG'),
+          autoSchemaFile: configService.get('DEBUG') && 'schema.gql',
+          cache: 'bounded',
+          csrfPrevention: true,
+          fieldResolverEnhancers: ['guards'],
+          installSubscriptionHandlers: true,
+          context: (context) => ({ ...context, loaders: {} }),
+          subscriptions: {
+            'subscriptions-transport-ws': {
+              onConnect: (connectionParams) => lowercaseKeys(connectionParams),
+              context: ({ connection: { context } }) => ({
+                req: { headers: context },
               }),
-            context: ({ extra }) => ({ req: { headers: extra.context } }),
+            },
+            'graphql-ws': {
+              onConnect: ({ connectionParams, extra }) =>
+                Object.assign(extra, lowercaseKeys(connectionParams)),
+              onDisconnect: async ({ extra }) =>
+                connectorService.disconnect(extra['device']),
+              context: ({ extra }) => ({ req: { headers: extra } }),
+            },
           },
-        },
-      }),
+        };
+      },
     }),
   ],
   controllers: [SystemController],

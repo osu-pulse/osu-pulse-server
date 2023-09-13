@@ -1,110 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { DeviceModel } from '../models/device.model';
-import { DeviceInfoModel } from '../models/device-info.model';
-import { DeviceStatusModel } from '../models/device-status.model';
-import { DevicesSubscriptionService } from './devices-subscription.service';
-import { Socket } from 'socket.io';
-import { deviceIdConvertor } from '../convertors/device-id.convertor';
-import { DevicesSocketService } from './devices-socket.service';
-
-type UserId = string;
-type DeviceId = string;
+import { Device } from '../types/device';
 
 @Injectable()
 export class DevicesService {
-  private users: Map<DeviceId, UserId>;
-  private devices: Map<UserId, Map<DeviceId, DeviceModel>>;
+  private devices: Map<string, Device>;
+  private userDevices: Map<string, Set<string>>;
 
-  constructor(
-    private devicesSubscriptionService: DevicesSubscriptionService,
-    private devicesSocketService: DevicesSocketService,
-  ) {
-    this.users = new Map();
+  constructor() {
     this.devices = new Map();
+    this.userDevices = new Map();
   }
 
-  existsByUserIdAndDeviceId(userId: string, deviceId: string): boolean {
-    return this.users.get(deviceId) === userId;
+  existsByUserIdAndId(userId: string, id: string): boolean {
+    return this.userDevices.has(userId) && this.userDevices.get(userId).has(id);
   }
 
-  getAllByUserId(userId: string): DeviceModel[] {
-    return Array.from(this.devices.get(userId).values());
+  getById(deviceId: string): Device | undefined {
+    return this.devices.get(deviceId);
   }
 
-  getByClient(client: Socket): DeviceModel {
-    const deviceId = deviceIdConvertor.fromClientId(client.id);
+  getAllByUserId(userId: string): Device[] {
+    const deviceIds = this.userDevices.get(userId);
 
-    const userId = this.users.get(deviceId);
-    return this.devices.get(userId)?.get(deviceId);
+    return !deviceIds
+      ? []
+      : Array.from(deviceIds).map((deviceId) => this.devices.get(deviceId));
   }
 
-  add(client: Socket, userId: string, info: DeviceInfoModel): void {
-    this.devicesSocketService.addClient(client);
+  create(device: Device): Device {
+    this.devices.set(device.id, device);
 
-    const deviceId = deviceIdConvertor.fromClientId(client.id);
-    this.users.set(deviceId, userId);
-
-    const device: DeviceModel = {
-      id: deviceId,
-      userId,
-      info,
-      status: {},
-    };
-
-    if (this.devices.has(userId)) {
-      this.devices.get(userId).set(deviceId, device);
+    if (!this.userDevices.has(device.userId)) {
+      this.userDevices.set(device.userId, new Set([device.id]));
     } else {
-      this.devices.set(userId, new Map([[deviceId, device]]));
+      this.userDevices.get(device.userId).add(device.id);
     }
+
+    return device;
   }
 
-  remove(client: Socket): void {
-    this.devicesSocketService.removeClient(client);
+  remove(deviceId: string): Device | undefined {
+    const device = this.devices.get(deviceId);
 
-    const deviceId = deviceIdConvertor.fromClientId(client.id);
-    this.users.delete(deviceId);
-
-    const userId = this.users.get(deviceId);
-    this.devices.get(userId)?.delete(deviceId);
-    if (this.devices.get(userId).size == 0) {
-      this.devices.delete(userId);
+    if (device) {
+      this.devices.delete(deviceId);
+      this.userDevices.get(device.userId).delete(deviceId);
+      if (this.userDevices.get(device.userId).size === 0) {
+        this.userDevices.delete(device.userId);
+      }
     }
-  }
 
-  async refreshStatus(
-    deviceId: string,
-    status: DeviceStatusModel,
-  ): Promise<DeviceModel> {
-    const userId = this.users.get(deviceId);
-    const device = this.devices.get(userId).get(deviceId);
-    const updatedDevice: DeviceModel = { ...device, status };
-    this.devices.get(userId).set(deviceId, updatedDevice);
-
-    await this.devicesSubscriptionService.publish(
-      'deviceStatusUpdated',
-      updatedDevice,
-    );
-
-    return updatedDevice;
-  }
-
-  async setStatus(
-    deviceId: string,
-    status: DeviceStatusModel,
-  ): Promise<DeviceModel> {
-    const userId = this.users.get(deviceId);
-    const device = this.devices.get(userId).get(deviceId);
-    const updatedDevice: DeviceModel = { ...device, status };
-    this.devices.get(userId).set(deviceId, updatedDevice);
-
-    const clientId = deviceIdConvertor.toClientId(deviceId);
-    await this.devicesSocketService.emit(clientId, 'SET_DEVICE_STATUS', status);
-
-    await this.devicesSubscriptionService.publish(
-      'deviceStatusUpdated',
-      updatedDevice,
-    );
-
-    return updatedDevice;
+    return device;
   }
 }

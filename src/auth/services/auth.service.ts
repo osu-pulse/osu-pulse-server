@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { parseJwt } from '../helpers/jwt';
 import { OsuOauthService } from '../../osu/services/osu-oauth.service';
 import { LibrariesService } from '../../tracks/services/libraries.service';
+import DeviceDetector from 'device-detector-js';
 
 @Injectable()
 export class AuthService {
+  private readonly detector = new DeviceDetector({ skipBotDetection: true });
+
   constructor(
     private osuAuthService: OsuOauthService,
     private librariesService: LibrariesService,

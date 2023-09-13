@@ -1,19 +1,21 @@
 import { Module } from '@nestjs/common';
-import { RemoteGateway } from './gateways/remote.gateway';
 import { AuthModule } from '../auth/auth.module';
 import { DevicesService } from './services/devices.service';
 import { DevicesResolver } from './resolvers/devices.resolver';
-import { DevicesSubscriptionService } from './services/devices-subscription.service';
-import { DevicesSocketService } from './services/devices-socket.service';
+import { ConnectorService } from './services/connector.service';
+import { UserStatesService } from './services/user-states.service';
+import { DevicesPubSubService } from './services/devices-pub-sub.service';
 
 @Module({
   imports: [AuthModule],
   providers: [
-    RemoteGateway,
     DevicesService,
     DevicesResolver,
-    DevicesSubscriptionService,
-    DevicesSocketService,
+    DevicesPubSubService,
+    ConnectorService,
+    DevicesService,
+    UserStatesService,
   ],
+  exports: [ConnectorService],
 })
 export class RemoteModule {}

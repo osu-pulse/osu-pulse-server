@@ -1,24 +1,31 @@
-import { DeviceInfoModel } from '../models/device-info.model';
+import { DeviceInfo } from '../types/device';
 import DeviceDetector from 'device-detector-js';
 import { switchAssign } from '../../shared/helpers/switch';
 import { DeviceType } from '../constants/device-type';
 
+const deviceDetector = new DeviceDetector();
+
 export const userAgentConvertor = {
-  toDeviceInfoModel(userAgent: string): DeviceInfoModel {
-    const deviceDetector = new DeviceDetector();
-    const device = deviceDetector.parse(userAgent);
+  toDeviceInfo(userAgent: string): DeviceInfo {
+    const { os, device } = deviceDetector.parse(userAgent);
+
     return {
       type: switchAssign(
-        device.device.type as string,
+        device.type,
         {
           desktop: DeviceType.DESKTOP,
           smartphone: DeviceType.MOBILE,
-          tablet: DeviceType.MOBILE,
+          tablet: DeviceType.TABLET,
+          console: DeviceType.CONSOLE,
+          television: DeviceType.TV,
         },
         DeviceType.OTHER,
       ) as DeviceType,
-      device: device.os.name,
-      client: device.client.name,
+      model:
+        device.brand || device.model
+          ? `${device.brand} ${device.model}`
+          : undefined,
+      os: os.name || os.version ? `${os.name} ${os.version}` : undefined,
     };
   },
 };

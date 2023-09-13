@@ -81,14 +81,17 @@ export class TracksResolver {
       'cover',
       async (tracks: Track[]): Promise<TrackCover[]> => {
         const proxyUrl = this.configService.get('URL_PROXY');
-        const coversUrl = `${proxyUrl}/assets.ppy.sh/beatmaps/${track.beatmapSetId}/covers`;
 
-        return tracks.map((track) => ({
-          list: `${coversUrl}/list.jpg`,
-          list2x: `${coversUrl}/list@2x.jpg`,
-          wide: `${coversUrl}/slimcover.jpg`,
-          wide2x: `${coversUrl}/slimcover@2x.jpg`,
-        }));
+        return tracks.map((track) => {
+          const coversUrl = `${proxyUrl}/assets.ppy.sh/beatmaps/${track.beatmapSetId}/covers`;
+
+          return {
+            list: `${coversUrl}/list.jpg`,
+            list2x: `${coversUrl}/list@2x.jpg`,
+            wide: `${coversUrl}/slimcover.jpg`,
+            wide2x: `${coversUrl}/slimcover@2x.jpg`,
+          };
+        });
       },
     );
 

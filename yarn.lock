@@ -6048,10 +6048,17 @@ passport-osu@^1.2.0:
     passport "^0.4.1"
     passport-oauth2 "^1.5.0"
 
-passport-strategy@1.x.x:
+passport-strategy@1.x.x, passport-strategy@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/passport-strategy/-/passport-strategy-1.0.0.tgz#b5539aa8fc225a3d1ad179476ddf236b440f52e4"
   integrity sha512-CB97UUvDKJde2V0KDWWB3lyf6PC3FaZP7YxZ2G8OAtn9p4HI9j9JLP9qjOGZFvyl8uwNT8qM+hGnz/n16NI7oA==
+
+passport-trusted-header@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/passport-trusted-header/-/passport-trusted-header-1.1.0.tgz#a230fa0f876afb63759948d9ae7acb0d8cffcbea"
+  integrity sha512-Ccm1z3XkLhRhTZG1+o47QjTk/QqDwq+o/GMGvFhqD2EIq6JZTBMhmY6VEwpEW6rKfOf/iGVjeN0unQ+c/hfzrA==
+  dependencies:
+    passport-strategy "^1.0.0"
 
 passport@^0.4.1:
   version "0.4.1"

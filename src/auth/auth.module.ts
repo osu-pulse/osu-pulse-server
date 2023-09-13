@@ -10,12 +10,14 @@ import { AccessTokenHolderInterceptor } from './interceptors/access-token-holder
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenHolderService } from './services/access-token-holder.service';
 import { TracksModule } from '../tracks/tracks.module';
+import { RemoteModule } from '../remote/remote.module';
 
 @Module({
   imports: [
     ConfigModule,
     PassportModule,
     forwardRef(() => OsuModule),
+    forwardRef(() => RemoteModule),
     forwardRef(() => TracksModule),
   ],
   providers: [

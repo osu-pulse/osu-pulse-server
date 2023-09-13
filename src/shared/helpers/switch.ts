@@ -1,3 +1,5 @@
+// TODO: Correct types for default
+
 export function switchAssign<
   V extends string | number | null | undefined,
   M extends Record<Exclude<V, null | undefined>, unknown>,

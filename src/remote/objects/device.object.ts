@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { DeviceInfoObject } from './device-info.object';
-import { DeviceStatusObject } from './device-status.object';
+import { DeviceType } from '../constants/device-type';
 
 @ObjectType()
 export class DeviceObject {
@@ -10,9 +10,12 @@ export class DeviceObject {
   @Field(() => String)
   userId: string;
 
-  @Field(() => DeviceInfoObject)
-  info: DeviceInfoObject;
+  @Field(() => DeviceType)
+  type: DeviceInfoObject;
 
-  @Field(() => DeviceStatusObject)
-  status: DeviceStatusObject;
+  @Field(() => String, { nullable: true })
+  model?: string;
+
+  @Field(() => String, { nullable: true })
+  os?: string;
 }
