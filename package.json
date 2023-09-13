@@ -52,7 +52,6 @@
     "passport": "^0.6.0",
     "passport-http-bearer": "^1.0.1",
     "passport-osu": "^1.2.0",
-    "passport-trusted-header": "^1.1.0",
     "redis": "^4.6.8",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
